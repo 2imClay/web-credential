@@ -420,3 +420,105 @@ Yêu cầu:
 - Không dùng screenshot tham khảo làm background mặc định.
 - Sau khi sửa phải cập nhật PLAN.md.
 ```
+
+## UI revision 06 — recognition / team redesign + page preloader
+
+### Goal
+- Cải thiện cảm giác giao diện và chuyển 2 section quan trọng sang hướng art direction mới mà sếp yêu cầu.
+- Thêm loading animation khi vừa vào trang.
+- Làm lại `Our Recognition` theo bố cục editorial tối, có cảm giác như danh sách bài viết / bài viết nổi bật, hỗ trợ scroll dọc.
+- Làm lại `Our Team` theo bố cục tương tác: vòng tròn lớn bên trái, danh sách cuộn bên phải; khi card bên phải thay đổi thì vòng tròn bên trái xoay và hiển thị đúng số mục hiện tại.
+
+### Implemented
+#### 1) Page preloader
+- Tạo component mới `src/components/Preloader.jsx`.
+- Overlay full-screen xuất hiện khi load trang, có logo DGM, grid nền và 3 thanh loading animation.
+- Tự đóng sau khoảng 1.7 giây.
+- Gắn ở `src/App.jsx` để hiển thị ngay khi user truy cập site.
+
+#### 2) Recognition section redesign
+- Viết lại `src/components/RecognitionShowcase.jsx`.
+- Layout mới:
+  - Cột trái: tiêu đề lớn, intro, meta và CTA.
+  - Cột phải: danh sách card lớn cuộn dọc, style theo hướng editorial / article cards.
+- Card active tự nổi bật khi đi vào viewport của cột cuộn.
+- Có nút lên / xuống để điều hướng nhanh.
+- Vẫn hỗ trợ ảnh upload từ admin; nếu chưa có ảnh sẽ dùng placeholder HTML/CSS.
+- Dùng `IntersectionObserver` để xác định card active theo scroll.
+
+#### 3) Team section redesign
+- Viết lại `src/components/TeamScroll.jsx`.
+- Layout mới:
+  - Bên trái là một cụm vòng tròn lớn (orbit display) với số mục hiện tại ở giữa.
+  - Các node số được phân bố quanh quỹ đạo.
+  - Khi card active bên phải thay đổi, cụm vòng tròn xoay theo mục đó.
+  - Bên phải là danh sách card cuộn dọc, có thể click từng card hoặc dùng nút lên/xuống.
+- Dùng `IntersectionObserver` để cập nhật `activeIndex` theo card đang hiện rõ nhất.
+
+#### 4) Styling / visual polish
+- Tạo file mới `src/styles/v6.css`.
+- Bổ sung toàn bộ CSS cho:
+  - Preloader.
+  - Recognition layout mới.
+  - Team orbit layout mới.
+- Thêm import `v6.css` ở `src/main.jsx`.
+- Giữ nguyên toàn bộ các phần animation nền, reveal và timeline từ revision 05.
+
+### Files added
+- `src/components/Preloader.jsx`
+- `src/styles/v6.css`
+
+### Files updated
+- `src/App.jsx`
+- `src/main.jsx`
+- `src/components/RecognitionShowcase.jsx`
+- `src/components/TeamScroll.jsx`
+- `PLAN.md`
+
+### Validation performed
+- Kiểm tra thủ công syntax JSX của các file mới / sửa.
+- Kiểm tra `App.jsx` đã wrap đúng `Preloader` và `Routes`.
+- Kiểm tra `v6.css` được import sau `v5.css` để đảm bảo override đúng.
+
+### Notes
+- Recognition và Team đều ưu tiên desktop-first nhưng đã thêm responsive fallback cho tablet/mobile.
+- Scroll interaction của hai section dùng chính container nội bộ (`overflow-y: auto`) để tạo cảm giác “lướt section” riêng, tách khỏi scroll toàn trang.
+
+### Next recommended prompt
+```text
+Đọc PLAN.md, tập trung phần “UI revision 06”.
+
+Nhiệm vụ tiếp theo:
+[Mô tả tiếp phần muốn chỉnh]
+
+Yêu cầu:
+- Giữ preloader hiện khi mới vào trang.
+- Giữ recognition theo layout editorial: intro trái, cards cuộn dọc bên phải.
+- Giữ team theo layout orbit: vòng tròn trái xoay theo card active bên phải.
+- Nếu sửa CSS thì ưu tiên thêm trong v6.css hoặc v7.css để dễ quản lý.
+- Không dùng ảnh tham khảo làm background mặc định.
+- Sau khi sửa phải cập nhật PLAN.md.
+```
+
+## UI revision 06.1 — Team layout full width
+
+### User feedback
+- Bỏ toàn bộ khối heading/nội dung mô tả nằm bên trái section `Our Team`.
+- Đưa vòng tròn orbit sát sang trái.
+- Mở rộng vùng card bên phải để tiêu đề và mô tả hiển thị đầy đủ, tránh bị bó hẹp như bản trước.
+
+### Implemented
+- Xóa `team-heading` khỏi `src/pages/HomePage.jsx`.
+- Section Team giờ chỉ còn một `TeamScroll` chiếm toàn bộ `page-shell`.
+- Tạo class `team-fullwidth` và `team-fullwidth-reveal`.
+- Nới chiều rộng tối đa của section Team lên `1500px`.
+- Chia lại layout:
+  - Orbit bên trái: khoảng 430–590px, được kéo nhẹ sát mép trái.
+  - Danh sách card bên phải: chiếm phần lớn chiều ngang.
+- Tăng chiều rộng cột số của card và mở `max-width` cho tiêu đề/mô tả.
+- Giữ responsive: dưới 980px chuyển về một cột, orbit nằm trên danh sách card.
+
+### Files updated
+- `src/pages/HomePage.jsx`
+- `src/styles/v6.css`
+- `PLAN.md`

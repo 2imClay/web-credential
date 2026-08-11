@@ -140,8 +140,8 @@ export default function HomePage() {
       <section className="section recognition-section">
         <SectionMotionBackground variant="recognition" />
         <div className="page-shell">
-          <Reveal><SectionHeading eyebrow="Our recognition" title="Select a milestone. See the full story." intro="Danh sách bên phải có thể cuộn; mỗi mục mở nội dung và hình ảnh lớn ở bên trái." /></Reveal>
-          <Reveal delay={0.08}><RecognitionShowcase items={recognitions} /></Reveal>
+          <Reveal><SectionHeading eyebrow="Our recognition" title="Select a milestone. See the full story." intro="Cuộn trang để xem từng mục; mục đang hiện sẽ tự nổi bật." /></Reveal>
+          <RecognitionShowcase items={recognitions} />
         </div>
       </section>
 
@@ -250,18 +250,8 @@ export default function HomePage() {
 
       <section id="team" className="section team-section">
         <SectionMotionBackground variant="team" />
-        <div className="page-shell team-layout">
-          <div className="team-heading">
-            <Reveal><p className="eyebrow text-cyan-300">Our team</p></Reveal>
-            <TextReveal
-              segments={[
-                { text: 'Specialists connected by one' },
-                { text: 'growth mindset', highlight: true }
-              ]}
-            />
-            <Reveal delay={0.08}><p>Cuộn trong bảng hoặc dùng thanh điều hướng bo tròn bên phải để khám phá các nhóm năng lực.</p></Reveal>
-          </div>
-          <Reveal delay={0.1}><TeamScroll items={teamMembers} /></Reveal>
+        <div className="page-shell team-fullwidth">
+          <TeamScroll items={teamMembers} />
         </div>
       </section>
 

@@ -1,53 +1,120 @@
-import { useMemo, useState } from 'react'
-import { Award, ArrowUpRight } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowDown, ArrowUp, ArrowUpRight, Award } from 'lucide-react'
 
-function RecognitionVisual({ item }) {
-  if (item.image) return <img src={item.image} alt={item.title} />
+function RecognitionCardVisual({ item }) {
+  if (item.image) {
+    return <img src={item.image} alt={item.title} className="recognition-article-card__image" />
+  }
 
   return (
-    <div className="recognition-poster" aria-label={`${item.title} visual placeholder`}>
-      <div className="recognition-poster-top"><span>DGM</span><span>{item.year}</span></div>
-      <Award />
-      <p>{item.subtitle}</p>
-      <strong>{item.title}</strong>
-      <div className="recognition-poster-lines"><i /><i /><i /></div>
+    <div className="recognition-article-card__placeholder" aria-label={`${item.title} placeholder`}>
+      <div className="recognition-article-card__placeholderTop"><span>DGM</span><span>{item.year}</span></div>
+      <div className="recognition-article-card__placeholderCore">
+        <Award />
+        <strong>{item.title}</strong>
+        <p>{item.subtitle}</p>
+      </div>
+      <div className="recognition-article-card__placeholderLines"><i /><i /><i /></div>
     </div>
   )
 }
 
 export default function RecognitionShowcase({ items }) {
-  const firstId = items[0]?.id
-  const [activeId, setActiveId] = useState(firstId)
-  const active = useMemo(() => items.find((item) => item.id === activeId) ?? items[0], [activeId, items])
+  const cardRefs = useRef([])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const active = useMemo(() => items[activeIndex] ?? items[0], [activeIndex, items])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+        if (!visible.length) return
+        const index = Number(visible[0].target.getAttribute('data-index') || 0)
+        setActiveIndex(index)
+      },
+      {
+        root: null,
+        threshold: [0.25, 0.45, 0.65],
+        rootMargin: '-18% 0px -18% 0px'
+      }
+    )
+
+    cardRefs.current.forEach((card) => card && observer.observe(card))
+    return () => observer.disconnect()
+  }, [items])
+
+  function scrollToCard(index) {
+    const target = cardRefs.current[index]
+    target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  function step(direction) {
+    const next = Math.max(0, Math.min(items.length - 1, activeIndex + direction))
+    scrollToCard(next)
+  }
 
   if (!active) return null
 
   return (
-    <div className="recognition-showcase">
-      <div className="recognition-stage">
-        <div className="recognition-media"><RecognitionVisual item={active} /></div>
-        <div className="recognition-copy">
-          <span>{active.year}</span>
-          <h3>{active.title}</h3>
-          <strong>{active.subtitle}</strong>
-          <p>{active.description}</p>
-          <a href="#contact">Discuss our capabilities <ArrowUpRight size={17} /></a>
+    <div className="recognition-flow">
+      <aside className="recognition-flow__aside">
+        <div className="recognition-flow__asideInner">
+          <p className="eyebrow text-cyan-300">Featured recognitions</p>
+          <h3>Our latest recognition &amp; industry mentions</h3>
+          <p>
+            Selected awards, agency rankings and press mentions. Each card is highlighted
+            as it comes into view while you scroll.
+          </p>
+          <div className="recognition-flow__meta">
+            <span>{String(activeIndex + 1).padStart(2, '0')}</span>
+            <i />
+            <small>{active.year}</small>
+          </div>
+          <a href="#contact" className="recognition-flow__cta">
+            Talk with DGM <ArrowUpRight size={16} />
+          </a>
         </div>
-      </div>
-      <div className="recognition-selector" role="tablist" aria-label="Recognition list">
-        {items.map((item, index) => (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={active.id === item.id}
-            className={active.id === item.id ? 'is-active' : ''}
-            key={item.id}
-            onClick={() => setActiveId(item.id)}
-          >
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <div><strong>{item.title}</strong><small>{item.subtitle}</small></div>
-          </button>
-        ))}
+      </aside>
+
+      <div className="recognition-flow__content">
+        <div className="recognition-flow__nav">
+          <button type="button" onClick={() => step(-1)} aria-label="Recognition previous"><ArrowUp size={18} /></button>
+          <button type="button" onClick={() => step(1)} aria-label="Recognition next"><ArrowDown size={18} /></button>
+        </div>
+
+        <div className="recognition-flow__stack">
+          {items.map((item, index) => {
+            const isActive = index === activeIndex
+            return (
+              <article
+                className={`recognition-article-card ${isActive ? 'is-active' : ''}`}
+                key={item.id}
+                data-index={index}
+                ref={(node) => { cardRefs.current[index] = node }}
+                onClick={() => scrollToCard(index)}
+              >
+                <div className="recognition-article-card__copy">
+                  <div className="recognition-article-card__eyebrow">
+                    <span>{item.year}</span>
+                    <i />
+                    <small>{item.subtitle}</small>
+                  </div>
+                  <h4>{item.title}</h4>
+                  <p>{item.description}</p>
+                  <div className="recognition-article-card__footer">
+                    <strong>{String(index + 1).padStart(2, '0')}</strong>
+                    <span>Recognition</span>
+                  </div>
+                </div>
+                <div className="recognition-article-card__media">
+                  <RecognitionCardVisual item={item} />
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
