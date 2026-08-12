@@ -9,8 +9,7 @@ import {
   Monitor,
   Search,
   Sparkles,
-  TrendingUp,
-  UsersRound
+  TrendingUp
 } from 'lucide-react'
 
 const iconMap = {
@@ -68,9 +67,9 @@ export default function TeamScroll({ items, copy }) {
           <p>{copy.intro}</p>
 
           <div className="team-studio__stats">
-            <div><strong>{totalMembers}+</strong><span>agency talents</span></div>
-            <div><strong>{String(items.length).padStart(2, '0')}</strong><span>specialist teams</span></div>
-            <div><strong>01</strong><span>shared ambition</span></div>
+            <div><strong>{totalMembers}+</strong><span>{copy.talentLabel}</span></div>
+            <div><strong>{String(items.length).padStart(2, '0')}</strong><span>{copy.teamCountLabel}</span></div>
+            <div><strong>{copy.ambitionValue}</strong><span>{copy.ambitionLabel}</span></div>
           </div>
         </motion.div>
 
@@ -100,8 +99,8 @@ export default function TeamScroll({ items, copy }) {
 
           <div className="team-studio__core">
             <span><Sparkles /></span>
-            <strong>DGM</strong>
-            <small>Integrated<br />growth team</small>
+            <strong>{copy.coreName}</strong>
+            <small>{copy.coreLabel}</small>
           </div>
           <div className="team-studio__signal" aria-hidden="true" />
         </motion.div>
@@ -133,7 +132,7 @@ export default function TeamScroll({ items, copy }) {
             <p>{item.detail}</p>
             <div className="team-studio__cardFooter">
               <div>
-                {(expertiseMap[item.role] || ['Strategy', 'Execution']).map((tag) => <span key={tag}>{tag}</span>)}
+                {(item.tags?.length ? item.tags : expertiseMap[item.role] || ['Strategy', 'Execution']).map((tag) => <span key={tag}>{tag}</span>)}
               </div>
               <strong>{item.count}<small>people</small></strong>
               <ArrowUpRight aria-hidden="true" />
@@ -142,10 +141,6 @@ export default function TeamScroll({ items, copy }) {
         ))}
       </div>
 
-      <motion.div className="team-studio__footer" {...reveal()}>
-        <div><UsersRound /><span>{copy.footerNote}</span></div>
-        <a href="#contact">{copy.cta} <ArrowUpRight /></a>
-      </motion.div>
     </div>
   )
 }

@@ -1,10 +1,11 @@
 export const defaultSiteSettings = {
   companyName: 'DGM',
+  companyLogo: '',
   eyebrow: 'Marketing Accelerator Partner',
   heroTitle: 'MMA Smarties Award Winner',
   heroSecondTitle: 'Top 3 Digital Agency in Vietnam',
   heroDescription: 'BY THE ORGANIZATION WARC',
-  heroBackground: '',
+  heroBackground: '/hero.jpg',
   heroBackgroundPosition: 'center center',
   heroPdfUrl: '#',
   heroPrimaryCta: 'Book a Meeting',
@@ -73,6 +74,7 @@ export const defaultPageContent = {
     cta: 'Explore the work'
   },
   team: {
+    chapterLabel: '08 / Collective',
     eyebrow: 'Our team',
     kicker: 'One integrated agency',
     titleBefore: 'Specialists apart.',
@@ -81,6 +83,12 @@ export const defaultPageContent = {
     collectiveEyebrow: 'Our collective',
     collectiveTitle: 'Every expertise your brand needs.',
     collectiveIntro: 'Built to move from insight to execution without the usual agency silos.',
+    talentLabel: 'Agency talents',
+    teamCountLabel: 'Specialist teams',
+    ambitionValue: '01',
+    ambitionLabel: 'Shared ambition',
+    coreName: 'DGM',
+    coreLabel: 'Integrated growth team',
     footerNote: 'One senior, hands-on team from brief to impact.',
     cta: 'Build something together'
   },
@@ -93,8 +101,27 @@ export const defaultPageContent = {
     eyebrow: 'Let’s accelerate together',
     titleBefore: 'Tell us about your',
     titleHighlight: 'next project',
+    formLabel: '01 / Contact form',
     formIntro: 'Điền thông tin, đội ngũ DGM sẽ phản hồi trong thời gian sớm nhất.',
-    submitLabel: 'Send inquiry'
+    nameLabel: 'Họ và tên',
+    namePlaceholder: 'Nguyễn Văn A',
+    emailLabel: 'Email',
+    emailPlaceholder: 'name@company.com',
+    companyLabel: 'Công ty',
+    companyPlaceholder: 'Tên công ty',
+    phoneLabel: 'Số điện thoại',
+    phonePlaceholder: '090 ...',
+    messageLabel: 'Nội dung cần tư vấn',
+    messagePlaceholder: 'Mục tiêu, thời gian và phạm vi dự án...',
+    submitLabel: 'Send inquiry',
+    successMessage: 'Ứng dụng email đã được mở với đầy đủ nội dung liên hệ.',
+    mailSubject: 'Website enquiry',
+    mapLabel: 'DGM Office',
+    emailDetailLabel: 'Email',
+    hotlineDetailLabel: 'Hotline',
+    officeDetailLabel: 'Offices',
+    copyrightText: '© 2026 DGM. All rights reserved.',
+    adminLinkLabel: 'Admin'
   }
 }
 
@@ -163,14 +190,14 @@ export const processSteps = [
 ]
 
 export const teamMembers = [
-  { id: 'team-media', role: 'Media Expert', count: '06', detail: 'Media planning, buying and optimization across the full funnel.' },
-  { id: 'team-creative', role: 'Creative & Art', count: '10', detail: 'Creative direction, visual systems and production-ready execution.' },
-  { id: 'team-strategy', role: 'Strategic Planning', count: '10', detail: 'Consumer insight, category strategy and integrated campaign planning.' },
-  { id: 'team-account', role: 'Client Partner (Account)', count: '20', detail: 'One connected client team from brief to delivery.' },
-  { id: 'team-insight', role: 'BI / CMI / Insight / Research', count: '05', detail: 'Research design, analytics, measurement and intelligence.' },
-  { id: 'team-growth', role: 'Client Growth Team', count: '10', detail: 'Growth experiments, conversion thinking and commercial acceleration.' },
-  { id: 'team-tech', role: 'Tech Dev', count: '05', detail: 'Web, application, data integration and marketing technology.' },
-  { id: 'team-event', role: 'Event', count: '12', detail: 'Experience design, activation and on-ground production.' }
+  { id: 'team-media', role: 'Media Expert', count: '06', detail: 'Media planning, buying and optimization across the full funnel.', tags: ['Media planning', 'Performance'] },
+  { id: 'team-creative', role: 'Creative & Art', count: '10', detail: 'Creative direction, visual systems and production-ready execution.', tags: ['Creative direction', 'Content'] },
+  { id: 'team-strategy', role: 'Strategic Planning', count: '10', detail: 'Consumer insight, category strategy and integrated campaign planning.', tags: ['Consumer insight', 'IMC planning'] },
+  { id: 'team-account', role: 'Client Partner (Account)', count: '20', detail: 'One connected client team from brief to delivery.', tags: ['Partnership', 'Delivery'] },
+  { id: 'team-insight', role: 'BI / CMI / Insight / Research', count: '05', detail: 'Research design, analytics, measurement and intelligence.', tags: ['Research', 'Measurement'] },
+  { id: 'team-growth', role: 'Client Growth Team', count: '10', detail: 'Growth experiments, conversion thinking and commercial acceleration.', tags: ['Conversion', 'Growth'] },
+  { id: 'team-tech', role: 'Tech Dev', count: '05', detail: 'Web, application, data integration and marketing technology.', tags: ['MarTech', 'Development'] },
+  { id: 'team-event', role: 'Event', count: '12', detail: 'Experience design, activation and on-ground production.', tags: ['Experience', 'Activation'] }
 ]
 
 export const defaultRecognitions = [

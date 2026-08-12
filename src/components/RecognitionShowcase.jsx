@@ -1,106 +1,100 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowUpRight, Award } from 'lucide-react'
+import { Award } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react'
 
 function RecognitionCardVisual({ item }) {
   if (item.image) {
-    return <img src={item.image} alt={item.title} className="recognition-article-card__image" />
+    return <img src={item.image} alt={item.title || 'DGM press coverage'} className="recognition-paper__image" />
   }
+
   return (
-    <div className="recognition-article-card__placeholder" aria-label={`${item.title} placeholder`}>
-      <div className="recognition-article-card__placeholderTop"><span>DGM</span><span>{item.year}</span></div>
-      <div className="recognition-article-card__placeholderCore">
+    <div className="recognition-paper__placeholder" aria-label={item.title}>
+      <div className="recognition-paper__placeholderTop">
+        <span>DGM</span><span>{item.year || 'PRESS'}</span>
+      </div>
+      <div className="recognition-paper__placeholderCore">
         <Award />
         <strong>{item.title}</strong>
-        <p>{item.subtitle}</p>
+        <p>{item.subtitle || 'DGM recognition'}</p>
       </div>
-      <div className="recognition-article-card__placeholderLines"><i /><i /><i /></div>
+      <div className="recognition-paper__placeholderLines"><i /><i /><i /></div>
     </div>
   )
 }
 
-export default function RecognitionShowcase({ items }) {
-  const cardRefs = useRef([])
-  const [activeIndex, setActiveIndex] = useState(0)
-  const active = useMemo(() => items[activeIndex] ?? items[0], [activeIndex, items])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        if (!visible.length) return
-        const index = Number(visible[0].target.getAttribute('data-index') || 0)
-        setActiveIndex(index)
-      },
-      {
-        root: null,
-        threshold: [0.25, 0.45, 0.65],
-        rootMargin: '-18% 0px -18% 0px'
-      }
-    )
-    cardRefs.current.forEach((card) => card && observer.observe(card))
-    return () => observer.disconnect()
-  }, [items])
-
-  function scrollToCard(index) {
-    const target = cardRefs.current[index]
-    target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
-
-  if (!active) return null
+function MobileRecognitionCard({ item, index, count, progress }) {
+  const cardAngles = [-3.2, 2.4, -1.8, 3]
+  const entryStart = index === 0 ? 0 : Math.max(0, index / count - .08)
+  const entryEnd = index === 0 ? .01 : Math.min(1, index / count + .06)
+  const nextStart = index === count - 1 ? .99 : Math.max(entryEnd, (index + 1) / count - .08)
+  const nextEnd = index === count - 1 ? 1 : Math.min(1, (index + 1) / count + .06)
+  const y = useTransform(progress, [entryStart, entryEnd], index === 0 ? ['0%', '0%'] : ['175%', '0%'])
+  const scale = useTransform(progress, [nextStart, nextEnd], index === count - 1 ? [1, 1] : [1, .965])
 
   return (
-    <div className="recognition-flow">
-      <aside className="recognition-flow__aside">
-        <div className="recognition-flow__asideInner">
-          <p className="eyebrow text-cyan-300">Featured recognitions</p>
-          <h3>Our latest recognition &amp; industry mentions</h3>
-          <p>
-            Selected awards, agency rankings and press mentions. Each card is highlighted
-            as it comes into view while you scroll.
-          </p>
-          <div className="recognition-flow__meta">
-            <span>{String(activeIndex + 1).padStart(2, '0')}</span>
-            <i />
-            <small>{active.year}</small>
-          </div>
-          <a href="#contact" className="recognition-flow__cta">
-            Talk with DGM <ArrowUpRight size={16} />
-          </a>
-        </div>
-      </aside>
-      <div className="recognition-flow__content">
-        <div className="recognition-flow__stack">
-          {items.map((item, index) => {
-            const isActive = index === activeIndex
-            return (
-              <article
-                className={`recognition-article-card ${isActive ? 'is-active' : ''}`}
-                key={item.id}
-                data-index={index}
-                ref={(node) => { cardRefs.current[index] = node }}
-                onClick={() => scrollToCard(index)}
-              >
-                <div className="recognition-article-card__copy">
-                  <div className="recognition-article-card__eyebrow">
-                    <span>{item.year}</span>
-                    <i />
-                    <small>{item.subtitle}</small>
-                  </div>
-                  <h4>{item.title}</h4>
-                  <p>{item.description}</p>
-                  <div className="recognition-article-card__footer">
-                    <strong>{String(index + 1).padStart(2, '0')}</strong>
-                    <span>Recognition</span>
-                  </div>
-                </div>
-                <div className="recognition-article-card__media">
-                  <RecognitionCardVisual item={item} />
-                </div>
-              </article>
-            )
-          })}
+    <motion.figure
+      className="recognition-paper recognition-paper--mobile"
+      style={{ y, scale, rotate: cardAngles[index % cardAngles.length], zIndex: 10 + index }}
+    >
+      <div className="recognition-paper__media">
+        <RecognitionCardVisual item={item} />
+      </div>
+      <figcaption>
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <strong>{item.title}</strong>
+      </figcaption>
+    </motion.figure>
+  )
+}
+
+export default function RecognitionShowcase({ items }) {
+  const mobileStackRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: mobileStackRef,
+    offset: ['start start', 'end end']
+  })
+
+  if (!items?.length) return null
+
+  return (
+    <div className="recognition-paper-wall">
+      <div className="recognition-paper-wall__grid recognition-paper-wall__grid--desktop">
+        {items.map((item, index) => (
+          <figure
+            className="recognition-paper"
+            key={item.id}
+            style={{
+              '--paper-index': index,
+              '--paper-offset': `${index * 7}px`,
+              '--paper-z': 10 + index
+            }}
+          >
+            <div className="recognition-paper__media">
+              <RecognitionCardVisual item={item} />
+            </div>
+            <figcaption>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <strong>{item.title}</strong>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div
+        className="recognition-mobile-stack"
+        ref={mobileStackRef}
+        style={{ '--recognition-count': items.length }}
+      >
+        <div className="recognition-mobile-stack__stage">
+          {items.map((item, index) => (
+            <MobileRecognitionCard
+              item={item}
+              index={index}
+              count={items.length}
+              progress={scrollYProgress}
+              key={`mobile-${item.id}`}
+            />
+          ))}
         </div>
       </div>
     </div>

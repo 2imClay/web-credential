@@ -1,14 +1,10 @@
 import {
-  ArrowRight,
   ArrowUpRight,
   BadgeCheck,
   BarChart3,
-  BrainCircuit,
-  Eye,
   Megaphone,
   Monitor,
   Palette,
-  PhoneCall,
   Search,
   Smartphone,
   Sparkles,
@@ -26,7 +22,6 @@ import RecognitionShowcase from '../components/RecognitionShowcase'
 import PartnerLogoMarquee from '../components/PartnerLogoMarquee'
 import CaseStudyGallery from '../components/CaseStudyGallery'
 import TeamScroll from '../components/TeamScroll'
-import AmbientBackground from '../components/AmbientBackground'
 import TechGlobe from '../components/TechGlobe'
 import SectionMotionBackground from '../components/SectionMotionBackground'
 import SiteExperience from '../components/SiteExperience'
@@ -55,7 +50,6 @@ export default function HomePage() {
 
   return (
     <main className="public-site">
-      <AmbientBackground />
       <SiteExperience />
       <Header settings={settings} />
       <Hero settings={settings} />
@@ -134,28 +128,19 @@ export default function HomePage() {
               ))}
             </Reveal>
 
-            <Reveal className="about-actions" delay={0.16}>
-              <a className="about-more-button" href="#services">
-                {pageContent.about.primaryCta} <span><ArrowUpRight /></span>
-              </a>
-              <a className="about-phone" href={`tel:${settings.hotline.replace(/\s/g, '')}`}>
-                <span><PhoneCall /></span>
-                <div><small>{pageContent.about.helpLabel}</small><strong>{settings.hotline}</strong></div>
-              </a>
-            </Reveal>
           </div>
         </div>
       </section>
 
-      <section id="recognition" className="section dark-section milestone-section credential-section" data-chapter="02 / Journey">
+      <section id="milestones" className="section dark-section milestone-section credential-section" data-chapter="02 / Journey">
         <SectionMotionBackground variant="timeline" />
         <div className="page-shell">
-          <Reveal><SectionHeading light eyebrow={pageContent.milestones.eyebrow} title={pageContent.milestones.title} intro={pageContent.milestones.intro} /></Reveal>
+          <Reveal><SectionHeading light eyebrow={pageContent.milestones.eyebrow} title={pageContent.milestones.title} /></Reveal>
           <Reveal delay={0.08}><MilestoneRail items={milestones} /></Reveal>
         </div>
       </section>
 
-      <section className="section recognition-section credential-section" data-chapter="03 / Recognition">
+      <section id="recognition" className="section recognition-section credential-section" data-chapter="03 / Recognition">
         <SectionMotionBackground variant="recognition" />
         <div className="page-shell">
           <Reveal><SectionHeading light eyebrow={pageContent.recognition.eyebrow} title={pageContent.recognition.title} intro={pageContent.recognition.intro} /></Reveal>
@@ -172,9 +157,6 @@ export default function HomePage() {
               className="services-showcase-title"
               segments={[{ text: pageContent.services.titleBefore }, { text: pageContent.services.titleHighlight, highlight: true }]}
             />
-            <Reveal delay={0.08}>
-              <p>{pageContent.services.intro}</p>
-            </Reveal>
           </div>
         </div>
 
@@ -237,36 +219,22 @@ export default function HomePage() {
       <section className="section partners-section credential-section" data-chapter="06 / Network">
         <SectionMotionBackground variant="partners" />
         <div className="page-shell partners-heading">
-          <Reveal><SectionHeading eyebrow={pageContent.partners.eyebrow} title={pageContent.partners.title} intro={pageContent.partners.intro} /></Reveal>
+          <Reveal><SectionHeading eyebrow={pageContent.partners.eyebrow} title={pageContent.partners.title} /></Reveal>
         </div>
         <PartnerLogoMarquee items={partners} />
       </section>
 
-      <section id="case-studies" className="section cases-section credential-section" data-chapter="07 / Selected work">
+      <section id="case-studies" className="section cases-section credential-section">
         <SectionMotionBackground variant="cases" />
-        <div className="page-shell cases-heading-row">
-          <div>
-            <Reveal><p className="eyebrow text-cyan-300">{pageContent.cases.eyebrow}</p></Reveal>
-            <TextReveal
-              className="cases-showcase-title"
-              segments={[
-                { text: pageContent.cases.titleBefore },
-                { text: pageContent.cases.titleHighlight, highlight: true }
-              ]}
-            />
-          </div>
-          <Reveal delay={0.1}>
-            <a className="cases-heading-action" href="#case-studies">
-              {pageContent.cases.cta} <span><ArrowRight /></span>
-            </a>
-          </Reveal>
+        <div className="page-shell cases-compact-heading">
+          <Reveal><p>Case Studies</p></Reveal>
         </div>
         <div className="page-shell">
           <Reveal delay={0.08}><CaseStudyGallery items={caseStudies} /></Reveal>
         </div>
       </section>
 
-      <section id="team" className="section team-section credential-section" data-chapter="08 / Collective">
+      <section id="team" className="section team-section credential-section" data-chapter={pageContent.team.chapterLabel}>
         <SectionMotionBackground variant="team" />
         <div className="page-shell team-fullwidth">
           <TeamScroll items={teamMembers} copy={pageContent.team} />
@@ -282,7 +250,6 @@ export default function HomePage() {
               <Reveal className="process-step" key={step.id || step.no} delay={index * 0.06}><span>{step.no}</span><h3>{step.title}</h3><p>{step.text}</p></Reveal>
             ))}
           </div>
-          <div className="process-note"><BrainCircuit /><p>{pageContent.process.note}</p><Eye /></div>
         </div>
       </section>
 

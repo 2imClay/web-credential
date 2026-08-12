@@ -3,7 +3,7 @@ import { Menu, X } from 'lucide-react'
 
 const links = [
   ['About Us', '#about'],
-  ['Awards', '#recognition'],
+  ['Recognition', '#recognition'],
   ['Services', '#services'],
   ['Case Studies', '#case-studies'],
   ['Specialized Solutions', '#data-hub'],
@@ -25,7 +25,9 @@ export default function Header({ settings }) {
   return (
     <header className={`site-header site-header--reference ${scrolled ? 'site-header--scrolled' : ''}`}>
       <a href="#top" className="brand-mark brand-mark--reference" aria-label="DGM Home">
-        <span>{settings?.companyName || 'DGM'}</span><i />
+        {settings?.companyLogo
+          ? <img src={settings.companyLogo} alt={settings.companyName || 'DGM'} />
+          : <span>{settings?.companyName || 'DGM'}</span>}
       </a>
 
       <nav className={`desktop-nav reference-nav ${open ? 'desktop-nav--open' : ''}`} aria-label="Main navigation">

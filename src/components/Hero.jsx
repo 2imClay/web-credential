@@ -1,11 +1,10 @@
-import { ArrowUpRight, Download } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function Hero({ settings }) {
   const customBackground = Boolean(settings.heroBackground)
   const heroStyle = customBackground
     ? {
-        backgroundImage: `linear-gradient(90deg, rgba(4, 7, 10, .48), rgba(4, 7, 10, .12) 48%, rgba(4, 7, 10, .46)), url("${settings.heroBackground}")`,
+        backgroundImage: `url("${settings.heroBackground}")`,
         backgroundPosition: settings.heroBackgroundPosition || 'center center'
       }
     : undefined
@@ -16,12 +15,14 @@ export default function Hero({ settings }) {
       className={`hero-section hero-section--reference ${customBackground ? 'has-custom-background' : ''}`}
       style={heroStyle}
     >
-      <div className="hero-reference-ambient" aria-hidden="true">
-        <span /><span /><span />
-      </div>
+      {!customBackground && (
+        <div className="hero-reference-ambient" aria-hidden="true">
+          <span /><span /><span />
+        </div>
+      )}
 
       <div className="page-shell hero-reference-frame">
-        <div className="hero-reference-content">
+        {!customBackground && <div className="hero-reference-content">
           <motion.div
             className="hero-reference-copy hero-reference-copy--left"
             initial={{ opacity: 0, y: 34 }}
@@ -55,24 +56,7 @@ export default function Hero({ settings }) {
             <h2>{settings.heroSecondTitle}</h2>
             <p>{settings.heroDescription}</p>
           </motion.div>
-        </div>
-
-        <motion.div
-          className="hero-reference-actions"
-          initial={{ opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: .7, delay: .3 }}
-        >
-          <a className="hero-reference-button" href="#contact">{settings.heroPrimaryCta} <ArrowUpRight /></a>
-          <a
-            className="hero-reference-button"
-            href={settings.heroPdfUrl || '#case-studies'}
-            target={settings.heroPdfUrl && settings.heroPdfUrl !== '#' ? '_blank' : undefined}
-            rel="noreferrer"
-          >
-            {settings.heroSecondaryCta} <Download />
-          </a>
-        </motion.div>
+        </div>}
       </div>
     </section>
   )

@@ -21,7 +21,9 @@ export default function CaseStudyCard({ item }) {
         <h3>{item.title}</h3>
         <p>{item.summary}</p>
       </div>
-      <span className="case-card-link">Read case study <ArrowUpRight /></span>
+      <div className="case-card-footerbar">
+        <span className="case-card-link">View case <ArrowUpRight /></span>
+      </div>
     </Link>
   )
 }

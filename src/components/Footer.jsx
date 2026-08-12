@@ -9,6 +9,17 @@ export default function Footer({ settings, copy }) {
 
   function submitContact(event) {
     event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const subject = `${copy.mailSubject}: ${data.get('name') || ''}`
+    const body = [
+      `${copy.nameLabel}: ${data.get('name') || ''}`,
+      `${copy.emailLabel}: ${data.get('email') || ''}`,
+      `${copy.companyLabel}: ${data.get('company') || ''}`,
+      `${copy.phoneLabel}: ${data.get('phone') || ''}`,
+      '',
+      String(data.get('message') || '')
+    ].join('\n')
+    window.location.href = `mailto:${settings.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     setSent(true)
     event.currentTarget.reset()
   }
@@ -30,18 +41,18 @@ export default function Footer({ settings, copy }) {
       <div className="page-shell footer-contact-grid">
         <Reveal className="footer-contact-card">
           <div className="footer-contact-card-head">
-            <span>01 / CONTACT FORM</span>
+            <span>{copy.formLabel}</span>
             <p>{copy.formIntro}</p>
           </div>
 
           <form className="contact-form" onSubmit={submitContact}>
-            <label>Họ và tên<input name="name" required placeholder="Nguyễn Văn A" /></label>
-            <label>Email<input name="email" required type="email" placeholder="name@company.com" /></label>
-            <label>Công ty<input name="company" placeholder="Tên công ty" /></label>
-            <label>Số điện thoại<input name="phone" placeholder="090 ..." /></label>
-            <label className="full">Nội dung cần tư vấn<textarea name="message" required rows="5" placeholder="Mục tiêu, thời gian và phạm vi dự án..." /></label>
+            <label>{copy.nameLabel}<input name="name" required placeholder={copy.namePlaceholder} /></label>
+            <label>{copy.emailLabel}<input name="email" required type="email" placeholder={copy.emailPlaceholder} /></label>
+            <label>{copy.companyLabel}<input name="company" placeholder={copy.companyPlaceholder} /></label>
+            <label>{copy.phoneLabel}<input name="phone" placeholder={copy.phonePlaceholder} /></label>
+            <label className="full">{copy.messageLabel}<textarea name="message" required rows="5" placeholder={copy.messagePlaceholder} /></label>
             <button className="contact-submit" type="submit">{copy.submitLabel} <Send /></button>
-            {sent && <p className="contact-success">Đã ghi nhận nội dung demo. Khi nối backend, form sẽ gửi email hoặc lưu vào CRM.</p>}
+            {sent && <p className="contact-success">{copy.successMessage}</p>}
           </form>
         </Reveal>
 
@@ -53,13 +64,13 @@ export default function Footer({ settings, copy }) {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-            <div className="map-overlay-label"><MapPin /><span>DGM Office</span></div>
+            <div className="map-overlay-label"><MapPin /><span>{copy.mapLabel}</span></div>
           </div>
 
           <div className="footer-contact-details">
-            <a href={`mailto:${settings.contactEmail}`}><Mail /><span>Email<strong>{settings.contactEmail}</strong></span></a>
-            <a href={`tel:${settings.hotline.replace(/\s/g, '')}`}><Phone /><span>Hotline<strong>{settings.hotline}</strong></span></a>
-            <div><MapPin /><span>Offices<strong>{settings.address}</strong></span></div>
+            <a href={`mailto:${settings.contactEmail}`}><Mail /><span>{copy.emailDetailLabel}<strong>{settings.contactEmail}</strong></span></a>
+            <a href={`tel:${settings.hotline.replace(/\s/g, '')}`}><Phone /><span>{copy.hotlineDetailLabel}<strong>{settings.hotline}</strong></span></a>
+            <div><MapPin /><span>{copy.officeDetailLabel}<strong>{settings.address}</strong></span></div>
           </div>
         </Reveal>
       </div>
@@ -70,7 +81,7 @@ export default function Footer({ settings, copy }) {
         <div className="social-links"><a href={settings.linkedinUrl}><Linkedin /></a><a href={settings.facebookUrl}><Facebook /></a><a href={settings.youtubeUrl}><Youtube /></a></div>
       </div>
 
-      <div className="page-shell footer-legal"><span>© 2026 {settings.companyName}. All rights reserved.</span><a href="/admin">Admin</a></div>
+      <div className="page-shell footer-legal"><span>{copy.copyrightText}</span><a href="/admin">{copy.adminLinkLabel}</a></div>
     </footer>
   )
 }

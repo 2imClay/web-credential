@@ -9,14 +9,8 @@ export default function SiteExperience() {
   })
 
   return (
-    <>
-      <div className="site-progress" aria-hidden="true">
-        <motion.i style={{ scaleX: progress }} />
-      </div>
-      <div className="site-tech-status" aria-hidden="true">
-        <span><i /> DGM / ONLINE</span>
-        <b>STRATEGY × CREATIVE × DATA</b>
-      </div>
-    </>
+    <div className="site-progress" aria-hidden="true">
+      <motion.i style={{ scaleX: progress }} />
+    </div>
   )
 }

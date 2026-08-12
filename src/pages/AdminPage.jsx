@@ -30,20 +30,20 @@ const copyGroups = [
       ['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'],
       ['titleAfter', 'Title — ending'], ['intro', 'Introduction', 'textarea'],
       ['featureOne', 'Feature 01'], ['featureTwo', 'Feature 02'], ['featureThree', 'Feature 03'],
-      ['featureFour', 'Feature 04'], ['primaryCta', 'Primary CTA'], ['helpLabel', 'Hotline label']
+      ['featureFour', 'Feature 04']
     ]
   },
   {
     key: 'milestones', title: 'Milestones', description: 'Heading phía trên timeline.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title'], ['intro', 'Introduction', 'textarea']]
+    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title']]
   },
   {
-    key: 'recognition', title: 'Recognition', description: 'Heading phía trên danh sách giải thưởng.',
+    key: 'recognition', title: 'Recognition', description: 'Heading phía trên gallery ảnh bài báo.',
     fields: [['eyebrow', 'Eyebrow'], ['title', 'Title'], ['intro', 'Introduction', 'textarea']]
   },
   {
     key: 'services', title: 'Services', description: 'Thông điệp mở đầu phần năng lực.',
-    fields: [['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'], ['intro', 'Introduction', 'textarea']]
+    fields: [['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight']]
   },
   {
     key: 'data', title: 'Data Hub', description: 'Nội dung giới thiệu nền tảng dữ liệu.',
@@ -51,30 +51,46 @@ const copyGroups = [
   },
   {
     key: 'partners', title: 'Partners & clients', description: 'Heading phía trên logo đối tác.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title'], ['intro', 'Introduction', 'textarea']]
-  },
-  {
-    key: 'cases', title: 'Case studies', description: 'Heading và CTA của selected work.',
-    fields: [['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'], ['cta', 'CTA label']]
+    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title']]
   },
   {
     key: 'team', title: 'Our team', description: 'Toàn bộ thông điệp của phần đội ngũ.',
     fields: [
-      ['eyebrow', 'Eyebrow'], ['kicker', 'Kicker'], ['titleBefore', 'Title — opening'],
+      ['chapterLabel', 'Chapter label'], ['eyebrow', 'Eyebrow'], ['kicker', 'Kicker'], ['titleBefore', 'Title — opening'],
       ['titleHighlight', 'Title — highlight'], ['intro', 'Introduction', 'textarea'],
       ['collectiveEyebrow', 'Collective eyebrow'], ['collectiveTitle', 'Collective title'],
-      ['collectiveIntro', 'Collective introduction', 'textarea'], ['footerNote', 'Footer note'], ['cta', 'CTA label']
+      ['collectiveIntro', 'Collective introduction', 'textarea'],
+      ['talentLabel', 'Talent statistic label'], ['teamCountLabel', 'Team count label'],
+      ['ambitionValue', 'Ambition statistic value'], ['ambitionLabel', 'Ambition statistic label'],
+      ['coreName', 'Network center name'], ['coreLabel', 'Network center label']
     ]
   },
   {
-    key: 'process', title: 'Process', description: 'Heading và ghi chú quy trình.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title'], ['note', 'Process note', 'textarea']]
+    key: 'process', title: 'Process', description: 'Heading của phần quy trình.',
+    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title']]
   },
   {
     key: 'contact', title: 'Contact & footer', description: 'Heading và nội dung biểu mẫu liên hệ.',
-    fields: [['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'], ['formIntro', 'Form introduction', 'textarea'], ['submitLabel', 'Submit button']]
+    fields: [
+      ['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'],
+      ['formLabel', 'Form section label'], ['formIntro', 'Form introduction', 'textarea'],
+      ['nameLabel', 'Name field label'], ['namePlaceholder', 'Name placeholder'],
+      ['emailLabel', 'Email field label'], ['emailPlaceholder', 'Email placeholder'],
+      ['companyLabel', 'Company field label'], ['companyPlaceholder', 'Company placeholder'],
+      ['phoneLabel', 'Phone field label'], ['phonePlaceholder', 'Phone placeholder'],
+      ['messageLabel', 'Message field label'], ['messagePlaceholder', 'Message placeholder'],
+      ['submitLabel', 'Submit button'], ['successMessage', 'Success message', 'textarea'],
+      ['mailSubject', 'Email subject'], ['mapLabel', 'Map label'],
+      ['emailDetailLabel', 'Email detail label'], ['hotlineDetailLabel', 'Hotline detail label'],
+      ['officeDetailLabel', 'Office detail label'], ['copyrightText', 'Copyright text'],
+      ['adminLinkLabel', 'Admin link label']
+    ]
   }
 ]
+
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@dgm.vn'
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'dgm2026'
+const ADMIN_SESSION_KEY = 'dgm_admin_session'
 
 const collectionDefinitions = [
   {
@@ -86,10 +102,10 @@ const collectionDefinitions = [
   },
   {
     key: 'recognitions', anchor: 'recognitions', no: '04', title: 'Recognition', singular: 'recognition', icon: Trophy,
-    description: 'Giải thưởng, ranking và industry mentions.', save: contentRepository.saveRecognitions,
-    empty: { id: '', year: '2026', title: '', subtitle: '', description: '', image: '' },
-    fields: [['year', 'Year'], ['subtitle', 'Subtitle'], ['title', 'Title'], ['description', 'Description', 'textarea'], ['image', 'Recognition image', 'image']],
-    meta: (item) => `${item.year} / ${item.subtitle}`, summary: (item) => item.description
+    description: 'Upload ảnh chụp các bài báo hoặc press coverage. Website sẽ tự xếp ảnh thành gallery.', save: contentRepository.saveRecognitions,
+    empty: { id: '', title: 'Press coverage', image: '' },
+    fields: [['title', 'Image title / alt text'], ['image', 'Press article image', 'image']],
+    meta: () => 'Press image', summary: (item) => item.image ? 'Published image' : 'Image required'
   },
   {
     key: 'services', anchor: 'services-admin', no: '05', title: 'Services', singular: 'service', icon: Layers3,
@@ -103,7 +119,7 @@ const collectionDefinitions = [
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
     empty: { id: '', name: '', group: 'Partner', logo: '' },
     fields: [['name', 'Name'], ['group', 'Group'], ['logo', 'Partner logo', 'image']],
-    meta: (item) => item.group, summary: (item) => item.logo ? 'Custom logo uploaded' : 'Text wordmark fallback'
+    meta: (item) => item.group, summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   },
   {
     key: 'cases', anchor: 'cases', no: '07', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
@@ -119,8 +135,8 @@ const collectionDefinitions = [
   {
     key: 'teamMembers', anchor: 'team-admin', no: '08', title: 'Team departments', singular: 'team department', icon: UsersRound,
     description: 'Các nhóm chuyên môn và quy mô nhân sự.', save: contentRepository.saveTeamMembers,
-    empty: { id: '', role: '', count: '01', detail: '' },
-    fields: [['role', 'Department / role'], ['count', 'People count'], ['detail', 'Description', 'textarea']],
+    empty: { id: '', role: '', count: '01', detail: '', tags: [] },
+    fields: [['role', 'Department / role'], ['count', 'People count'], ['detail', 'Description', 'textarea'], ['tags', 'Expertise tags — separated by commas']],
     meta: (item) => `${item.count} people`, summary: (item) => item.detail
   },
   {
@@ -149,9 +165,9 @@ function loadCollections() {
 }
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(sessionStorage.getItem('dgm_admin_demo') === '1')
-  const [email, setEmail] = useState('admin@dgm.vn')
-  const [password, setPassword] = useState('demo123')
+  const [authenticated, setAuthenticated] = useState(sessionStorage.getItem(ADMIN_SESSION_KEY) === '1')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [pageContent, setPageContent] = useState(contentRepository.getPageContent())
   const [collections, setCollections] = useState(loadCollections)
@@ -165,20 +181,33 @@ export default function AdminPage() {
 
   function login(event) {
     event.preventDefault()
-    if (email === 'admin@dgm.vn' && password === 'demo123') {
-      sessionStorage.setItem('dgm_admin_demo', '1')
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      sessionStorage.setItem(ADMIN_SESSION_KEY, '1')
       setAuthenticated(true)
       setStatus('')
-    } else setStatus('Sai tài khoản demo.')
+    } else setStatus('Email hoặc mật khẩu không đúng.')
   }
 
   function readImage(event, onReady) {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith('image/')) return setStatus('Vui lòng chọn đúng file hình ảnh.')
-    if (file.size > 1.5 * 1024 * 1024) return setStatus('Ảnh demo nên nhỏ hơn 1.5 MB vì hiện đang lưu bằng localStorage.')
+    if (file.size > 8 * 1024 * 1024) return setStatus('Ảnh tải lên cần nhỏ hơn 8 MB.')
     const reader = new FileReader()
-    reader.onload = () => onReady(String(reader.result))
+    reader.onload = () => {
+      const image = new Image()
+      image.onload = () => {
+        const maxSide = 1800
+        const scale = Math.min(1, maxSide / Math.max(image.width, image.height))
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.max(1, Math.round(image.width * scale))
+        canvas.height = Math.max(1, Math.round(image.height * scale))
+        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height)
+        onReady(canvas.toDataURL('image/webp', .84))
+      }
+      image.onerror = () => setStatus('Không đọc được file ảnh.')
+      image.src = String(reader.result)
+    }
     reader.onerror = () => setStatus('Không đọc được file ảnh.')
     reader.readAsDataURL(file)
   }
@@ -220,7 +249,7 @@ export default function AdminPage() {
     const definition = activeDefinition
     if (!definition) return
     let item = { ...editing.item, id: editing.item.id || crypto.randomUUID() }
-    if (definition.key === 'services') {
+    if (definition.key === 'services' || definition.key === 'teamMembers') {
       item.tags = Array.isArray(item.tags)
         ? item.tags
         : String(item.tags).split(',').map((tag) => tag.trim()).filter(Boolean)
@@ -245,13 +274,13 @@ export default function AdminPage() {
     setStatus(`Đã xóa ${definition.singular}.`)
   }
 
-  function resetDemo() {
-    if (!window.confirm('Khôi phục toàn bộ nội dung demo ban đầu? Các thay đổi trong Admin sẽ bị xóa.')) return
+  function restoreDefaultContent() {
+    if (!window.confirm('Khôi phục nội dung mặc định? Các thay đổi hiện tại sẽ bị xóa.')) return
     contentRepository.reset()
     setSettings(contentRepository.getSiteSettings())
     setPageContent(contentRepository.getPageContent())
     setCollections(loadCollections())
-    setStatus('Đã khôi phục toàn bộ dữ liệu demo ban đầu.')
+    setStatus('Đã khôi phục nội dung mặc định.')
   }
 
   if (!authenticated) {
@@ -269,7 +298,6 @@ export default function AdminPage() {
             <button className="button button-primary" type="submit">Enter content studio</button>
             {status && <span className="form-status">{status}</span>}
           </form>
-          <div className="demo-account">Demo: admin@dgm.vn / demo123</div>
         </div>
       </main>
     )
@@ -290,7 +318,7 @@ export default function AdminPage() {
           })}
           <Link to="/"><Eye /> Preview website</Link>
         </nav>
-        <button onClick={() => { sessionStorage.removeItem('dgm_admin_demo'); setAuthenticated(false) }}><LogOut /> Logout</button>
+        <button onClick={() => { sessionStorage.removeItem(ADMIN_SESSION_KEY); setAuthenticated(false) }}><LogOut /> Logout</button>
       </aside>
 
       <div className="admin-main">
@@ -303,23 +331,16 @@ export default function AdminPage() {
         <div className="admin-overview-grid">
           <div><span>Content modules</span><strong>{collectionDefinitions.length + copyGroups.length}</strong><small>Editable sections</small></div>
           <div><span>Published items</span><strong>{Object.values(collections).reduce((total, items) => total + items.length, 0)}</strong><small>Across all collections</small></div>
-          <div><span>Storage mode</span><strong>Local</strong><small>Prototype environment</small></div>
+          <div><span>Content status</span><strong>Ready</strong><small>Website content is available</small></div>
         </div>
 
         <section id="general" className="admin-panel">
           <PanelTitle no="01" title="Brand, Hero & Contact" description="Nhận diện, hero, chỉ số Data Hub, liên hệ và social links." />
           <form className="admin-form" onSubmit={saveSettings}>
             <label>Company name<input value={settings.companyName} onChange={(event) => setSettings({ ...settings, companyName: event.target.value })} /></label>
-            <label>Hero eyebrow<input value={settings.eyebrow} onChange={(event) => setSettings({ ...settings, eyebrow: event.target.value })} /></label>
-            <label>Hero award title<input value={settings.heroTitle} onChange={(event) => setSettings({ ...settings, heroTitle: event.target.value })} /></label>
-            <label>Hero ranking title<input value={settings.heroSecondTitle} onChange={(event) => setSettings({ ...settings, heroSecondTitle: event.target.value })} /></label>
-            <label className="full">Hero description<textarea rows="2" value={settings.heroDescription} onChange={(event) => setSettings({ ...settings, heroDescription: event.target.value })} /></label>
+            <ImageEditor label="Header logo" value={settings.companyLogo || ''} onChange={(value) => setSettings({ ...settings, companyLogo: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, companyLogo: value }))} />
             <ImageEditor label="Hero background" value={settings.heroBackground} onChange={(value) => setSettings({ ...settings, heroBackground: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, heroBackground: value }))} />
             <label>Background position<input value={settings.heroBackgroundPosition} onChange={(event) => setSettings({ ...settings, heroBackgroundPosition: event.target.value })} /></label>
-            <label>Credential PDF URL<input value={settings.heroPdfUrl} onChange={(event) => setSettings({ ...settings, heroPdfUrl: event.target.value })} /></label>
-            <label>Primary CTA<input value={settings.heroPrimaryCta} onChange={(event) => setSettings({ ...settings, heroPrimaryCta: event.target.value })} /></label>
-            <label>Secondary CTA<input value={settings.heroSecondaryCta} onChange={(event) => setSettings({ ...settings, heroSecondaryCta: event.target.value })} /></label>
-
             <div className="admin-form-divider full"><span>Data Hub statistics</span></div>
             {settings.stats.map((stat, index) => (
               <div className="admin-stat-row full" key={index}>
@@ -374,7 +395,7 @@ export default function AdminPage() {
           />
         ))}
 
-        <button className="reset-button" onClick={resetDemo}><RotateCcw /> Reset all demo content</button>
+        <button className="reset-button" onClick={restoreDefaultContent}><RotateCcw /> Restore default content</button>
       </div>
 
       {editing && activeDefinition && (
@@ -447,7 +468,7 @@ function ModalTitle({ eyebrow, title, onClose }) {
 function ImageEditor({ label, value, onChange, onUpload }) {
   return (
     <div className="image-editor full">
-      <label>{label} URL / path<input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Để trống để dùng HTML fallback" /></label>
+      <label>{label} URL / path<input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Dán URL hoặc tải ảnh từ máy" /></label>
       <label className="upload-button"><ImagePlus /> Upload image<input type="file" accept="image/*" onChange={onUpload} /></label>
       {value && <div className="image-editor-preview"><img src={value} alt="Preview" /><button type="button" onClick={() => onChange('')}>Remove image</button></div>}
     </div>

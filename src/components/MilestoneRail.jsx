@@ -1,5 +1,4 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowDown, Flag } from 'lucide-react'
 
 export default function MilestoneRail({ items }) {
   const reduceMotion = useReducedMotion()
@@ -17,15 +16,6 @@ export default function MilestoneRail({ items }) {
 
   return (
     <div className="agency-timeline">
-      <div className="agency-timeline__summary">
-        <div>
-          <Flag aria-hidden="true" />
-          <span>Built since {items[0]?.year}</span>
-        </div>
-        <p>Scroll down to follow the milestones that shaped DGM.</p>
-        <ArrowDown aria-hidden="true" />
-      </div>
-
       <div className="agency-timeline__list">
         <div className="agency-timeline__rail" aria-hidden="true">
           <motion.i
