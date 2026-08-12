@@ -8,14 +8,14 @@ import { useContent } from '../hooks/useContent'
 
 export default function CaseStudyDetailPage() {
   const { slug } = useParams()
-  const { caseStudies, settings } = useContent()
+  const { caseStudies, settings, pageContent } = useContent()
   const item = caseStudies.find((entry) => entry.slug === slug)
 
   if (!item) return <div className="not-found"><h1>Case study not found.</h1><Link to="/">Back home</Link></div>
 
   return (
     <main className="detail-page">
-      <Header />
+      <Header settings={settings} />
       <section className="detail-hero page-shell">
         <Link className="back-link" to="/"><ArrowLeft size={17} /> Back to selected work</Link>
         <p className="eyebrow">{item.category} / {item.year}</p>
@@ -34,7 +34,7 @@ export default function CaseStudyDetailPage() {
         ))}
         <a className="button button-dark" href={`mailto:${settings.contactEmail}`}>Discuss a similar project <ArrowUpRight size={18} /></a>
       </section>
-      <Footer settings={settings} />
+      <Footer settings={settings} copy={pageContent.contact} />
     </main>
   )
 }

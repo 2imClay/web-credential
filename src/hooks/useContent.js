@@ -6,6 +6,11 @@ export function useContent() {
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [recognitions, setRecognitions] = useState(contentRepository.getRecognitions())
   const [partners, setPartners] = useState(contentRepository.getPartners())
+  const [pageContent, setPageContent] = useState(contentRepository.getPageContent())
+  const [milestones, setMilestones] = useState(contentRepository.getMilestones())
+  const [services, setServices] = useState(contentRepository.getServices())
+  const [teamMembers, setTeamMembers] = useState(contentRepository.getTeamMembers())
+  const [processSteps, setProcessSteps] = useState(contentRepository.getProcessSteps())
 
   useEffect(() => {
     const refresh = () => {
@@ -13,6 +18,11 @@ export function useContent() {
       setSettings(contentRepository.getSiteSettings())
       setRecognitions(contentRepository.getRecognitions())
       setPartners(contentRepository.getPartners())
+      setPageContent(contentRepository.getPageContent())
+      setMilestones(contentRepository.getMilestones())
+      setServices(contentRepository.getServices())
+      setTeamMembers(contentRepository.getTeamMembers())
+      setProcessSteps(contentRepository.getProcessSteps())
     }
     window.addEventListener('storage', refresh)
     window.addEventListener('dgm-content-updated', refresh)
@@ -22,5 +32,15 @@ export function useContent() {
     }
   }, [])
 
-  return { caseStudies, settings, recognitions, partners }
+  return {
+    caseStudies,
+    settings,
+    recognitions,
+    partners,
+    pageContent,
+    milestones,
+    services,
+    teamMembers,
+    processSteps
+  }
 }

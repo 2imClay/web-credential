@@ -29,28 +29,46 @@ import TeamScroll from '../components/TeamScroll'
 import AmbientBackground from '../components/AmbientBackground'
 import TechGlobe from '../components/TechGlobe'
 import SectionMotionBackground from '../components/SectionMotionBackground'
-import { milestones, processSteps, services, teamMembers } from '../data/siteData'
+import SiteExperience from '../components/SiteExperience'
 import { useContent } from '../hooks/useContent'
-
-const aboutFeatures = [
-  [Sparkles, 'Creative Excellence'],
-  [Target, 'Tailored Solutions'],
-  [Users, 'Client Approach'],
-  [BadgeCheck, 'Proven Track Record']
-]
 
 const serviceIcons = [Monitor, Search, Megaphone, Palette, Smartphone, BarChart3]
 
 export default function HomePage() {
-  const { caseStudies, settings, recognitions, partners } = useContent()
+  const {
+    caseStudies,
+    settings,
+    recognitions,
+    partners,
+    pageContent,
+    milestones,
+    services,
+    teamMembers,
+    processSteps
+  } = useContent()
+  const aboutFeatures = [
+    [Sparkles, pageContent.about.featureOne],
+    [Target, pageContent.about.featureTwo],
+    [Users, pageContent.about.featureThree],
+    [BadgeCheck, pageContent.about.featureFour]
+  ]
 
   return (
     <main className="public-site">
       <AmbientBackground />
-      <Header />
+      <SiteExperience />
+      <Header settings={settings} />
       <Hero settings={settings} />
 
-      <section id="about" className="section about-showcase">
+      <div className="agency-signal" aria-label="DGM capabilities">
+        <div>
+          {[...services, ...services].map((service, index) => (
+            <span key={`${service.id}-${index}`}>{service.title}<i>✦</i></span>
+          ))}
+        </div>
+      </div>
+
+      <section id="about" className="section about-showcase credential-section" data-chapter="01 / About">
         <SectionMotionBackground variant="about" />
         <div className="page-shell about-showcase-layout">
           <Reveal className="about-visual-composition">
@@ -91,19 +109,19 @@ export default function HomePage() {
 
           <div className="about-showcase-copy">
             <Reveal>
-              <p className="eyebrow about-eyebrow">About us</p>
+              <p className="eyebrow about-eyebrow">{pageContent.about.eyebrow}</p>
             </Reveal>
             <TextReveal
               className="about-showcase-title"
               segments={[
-                { text: 'Empowering brands with' },
-                { text: 'innovative', highlight: true },
-                { text: 'digital solutions' }
+                { text: pageContent.about.titleBefore },
+                { text: pageContent.about.titleHighlight, highlight: true },
+                { text: pageContent.about.titleAfter }
               ]}
             />
             <Reveal delay={0.08}>
               <p className="about-showcase-intro">
-                DGM kết nối chiến lược, sáng tạo, dữ liệu và công nghệ để tạo ra những giải pháp digital có khả năng nâng tầm thương hiệu, thu hút đúng khách hàng và tạo kết quả đo lường được.
+                {pageContent.about.intro}
               </p>
             </Reveal>
 
@@ -118,44 +136,44 @@ export default function HomePage() {
 
             <Reveal className="about-actions" delay={0.16}>
               <a className="about-more-button" href="#services">
-                More about DGM <span><ArrowUpRight /></span>
+                {pageContent.about.primaryCta} <span><ArrowUpRight /></span>
               </a>
               <a className="about-phone" href={`tel:${settings.hotline.replace(/\s/g, '')}`}>
                 <span><PhoneCall /></span>
-                <div><small>Need help?</small><strong>{settings.hotline}</strong></div>
+                <div><small>{pageContent.about.helpLabel}</small><strong>{settings.hotline}</strong></div>
               </a>
             </Reveal>
           </div>
         </div>
       </section>
 
-      <section id="recognition" className="section dark-section milestone-section">
+      <section id="recognition" className="section dark-section milestone-section credential-section" data-chapter="02 / Journey">
         <SectionMotionBackground variant="timeline" />
         <div className="page-shell">
-          <Reveal><SectionHeading light eyebrow="Our milestones" title="A journey built through trusted partnerships." intro="Toàn bộ nội dung được dựng bằng HTML và có thể kéo ngang để xem theo từng giai đoạn." /></Reveal>
+          <Reveal><SectionHeading light eyebrow={pageContent.milestones.eyebrow} title={pageContent.milestones.title} intro={pageContent.milestones.intro} /></Reveal>
           <Reveal delay={0.08}><MilestoneRail items={milestones} /></Reveal>
         </div>
       </section>
 
-      <section className="section recognition-section">
+      <section className="section recognition-section credential-section" data-chapter="03 / Recognition">
         <SectionMotionBackground variant="recognition" />
         <div className="page-shell">
-          <Reveal><SectionHeading eyebrow="Our recognition" title="Select a milestone. See the full story." intro="Cuộn trang để xem từng mục; mục đang hiện sẽ tự nổi bật." /></Reveal>
+          <Reveal><SectionHeading light eyebrow={pageContent.recognition.eyebrow} title={pageContent.recognition.title} intro={pageContent.recognition.intro} /></Reveal>
           <RecognitionShowcase items={recognitions} />
         </div>
       </section>
 
-      <section id="services" className="section services-showcase">
+      <section id="services" className="section services-showcase credential-section" data-chapter="04 / Capabilities">
         <SectionMotionBackground variant="services" />
         <div className="services-title-band">
           <div className="page-shell services-title-inner">
-            <Reveal><p className="eyebrow text-cyan-300">What we do</p></Reveal>
+            <Reveal><p className="eyebrow text-cyan-300">{pageContent.services.eyebrow}</p></Reveal>
             <TextReveal
               className="services-showcase-title"
-              segments={[{ text: 'Our' }, { text: 'Services', highlight: true }]}
+              segments={[{ text: pageContent.services.titleBefore }, { text: pageContent.services.titleHighlight, highlight: true }]}
             />
             <Reveal delay={0.08}>
-              <p>Strategy, creative, technology and performance—connected in one practical delivery system.</p>
+              <p>{pageContent.services.intro}</p>
             </Reveal>
           </div>
         </div>
@@ -164,7 +182,7 @@ export default function HomePage() {
           {services.map((service, index) => {
             const Icon = serviceIcons[index % serviceIcons.length]
             return (
-              <Reveal className="service-card" key={service.no} delay={index * 0.055}>
+              <Reveal className="service-card" key={service.id || service.no} delay={index * 0.055}>
                 <div className="service-card-top">
                   <span className="service-icon"><Icon /></span>
                   <small>[{service.no}]</small>
@@ -181,28 +199,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="data-hub" className="section data-section data-section--tech">
+      <section id="data-hub" className="section data-section data-section--tech credential-section" data-chapter="05 / Intelligence">
         <SectionMotionBackground variant="data" />
         <TechGlobe />
         <div className="page-shell data-layout data-layout--tech">
           <div className="data-copy">
-            <Reveal><p className="eyebrow text-cyan-300">D-AI Sense / Data Hub</p></Reveal>
+            <Reveal><p className="eyebrow text-cyan-300">{pageContent.data.eyebrow}</p></Reveal>
             <TextReveal
               className="data-tech-title"
               segments={[
-                { text: 'Intelligence that turns' },
-                { text: 'audiences into action', highlight: true }
+                { text: pageContent.data.titleBefore },
+                { text: pageContent.data.titleHighlight, highlight: true }
               ]}
             />
             <Reveal delay={0.08}>
-              <p>Hệ sinh thái dữ liệu người dùng và phương tiện hỗ trợ market research, audience profiling, media planning và campaign measurement.</p>
+              <p>{pageContent.data.intro}</p>
             </Reveal>
             <Reveal delay={0.12}>
               <div className="data-stats">{settings.stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div>
             </Reveal>
           </div>
           <Reveal className="data-console data-console--glass" delay={0.16}>
-            <div className="console-header"><span>LIVE AUDIENCE SIGNALS</span><i /></div>
+            <div className="console-header"><span>{pageContent.data.consoleLabel}</span><i /></div>
             <div className="console-chart">
               {[48, 74, 42, 88, 62, 94, 56, 78, 68, 100, 71, 86].map((height, index) => <i key={index} style={{ height: `${height}%` }} />)}
             </div>
@@ -216,30 +234,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section partners-section">
+      <section className="section partners-section credential-section" data-chapter="06 / Network">
         <SectionMotionBackground variant="partners" />
         <div className="page-shell partners-heading">
-          <Reveal><SectionHeading eyebrow="Partners & clients" title="Connected to the platforms. Trusted by ambitious brands." intro="Logo tự chạy ngang và có thể thêm, sửa hoặc thay logo trong trang Admin." /></Reveal>
+          <Reveal><SectionHeading eyebrow={pageContent.partners.eyebrow} title={pageContent.partners.title} intro={pageContent.partners.intro} /></Reveal>
         </div>
         <PartnerLogoMarquee items={partners} />
       </section>
 
-      <section id="case-studies" className="section cases-section">
+      <section id="case-studies" className="section cases-section credential-section" data-chapter="07 / Selected work">
         <SectionMotionBackground variant="cases" />
         <div className="page-shell cases-heading-row">
           <div>
-            <Reveal><p className="eyebrow text-cyan-300">Selected work</p></Reveal>
+            <Reveal><p className="eyebrow text-cyan-300">{pageContent.cases.eyebrow}</p></Reveal>
             <TextReveal
               className="cases-showcase-title"
               segments={[
-                { text: 'Our latest' },
-                { text: 'case studies', highlight: true }
+                { text: pageContent.cases.titleBefore },
+                { text: pageContent.cases.titleHighlight, highlight: true }
               ]}
             />
           </div>
           <Reveal delay={0.1}>
             <a className="cases-heading-action" href="#case-studies">
-              Explore the work <span><ArrowRight /></span>
+              {pageContent.cases.cta} <span><ArrowRight /></span>
             </a>
           </Reveal>
         </div>
@@ -248,27 +266,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="team" className="section team-section">
+      <section id="team" className="section team-section credential-section" data-chapter="08 / Collective">
         <SectionMotionBackground variant="team" />
         <div className="page-shell team-fullwidth">
-          <TeamScroll items={teamMembers} />
+          <TeamScroll items={teamMembers} copy={pageContent.team} />
         </div>
       </section>
 
-      <section id="process" className="section process-section">
+      <section id="process" className="section process-section credential-section" data-chapter="09 / How we work">
         <SectionMotionBackground variant="process" />
         <div className="page-shell">
-          <Reveal><SectionHeading light eyebrow="Our process" title="Clear thinking. Fast collaboration. Measurable delivery." /></Reveal>
+          <Reveal><SectionHeading light eyebrow={pageContent.process.eyebrow} title={pageContent.process.title} /></Reveal>
           <div className="process-grid">
-            {processSteps.map(([no, title, text], index) => (
-              <Reveal className="process-step" key={no} delay={index * 0.06}><span>{no}</span><h3>{title}</h3><p>{text}</p></Reveal>
+            {processSteps.map((step, index) => (
+              <Reveal className="process-step" key={step.id || step.no} delay={index * 0.06}><span>{step.no}</span><h3>{step.title}</h3><p>{step.text}</p></Reveal>
             ))}
           </div>
-          <div className="process-note"><BrainCircuit /><p>Quy trình có thể thay đổi theo quy mô brief, nhưng luôn giữ một đầu mối, mục tiêu rõ và dữ liệu xuyên suốt.</p><Eye /></div>
+          <div className="process-note"><BrainCircuit /><p>{pageContent.process.note}</p><Eye /></div>
         </div>
       </section>
 
-      <Footer settings={settings} />
+      <Footer settings={settings} copy={pageContent.contact} />
     </main>
   )
 }

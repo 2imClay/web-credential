@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowDown, ArrowUp, ArrowUpRight, Award } from 'lucide-react'
+import { ArrowUpRight, Award } from 'lucide-react'
 
 function RecognitionCardVisual({ item }) {
   if (item.image) {
     return <img src={item.image} alt={item.title} className="recognition-article-card__image" />
   }
-
   return (
     <div className="recognition-article-card__placeholder" aria-label={`${item.title} placeholder`}>
       <div className="recognition-article-card__placeholderTop"><span>DGM</span><span>{item.year}</span></div>
@@ -40,7 +39,6 @@ export default function RecognitionShowcase({ items }) {
         rootMargin: '-18% 0px -18% 0px'
       }
     )
-
     cardRefs.current.forEach((card) => card && observer.observe(card))
     return () => observer.disconnect()
   }, [items])
@@ -48,11 +46,6 @@ export default function RecognitionShowcase({ items }) {
   function scrollToCard(index) {
     const target = cardRefs.current[index]
     target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
-
-  function step(direction) {
-    const next = Math.max(0, Math.min(items.length - 1, activeIndex + direction))
-    scrollToCard(next)
   }
 
   if (!active) return null
@@ -77,13 +70,7 @@ export default function RecognitionShowcase({ items }) {
           </a>
         </div>
       </aside>
-
       <div className="recognition-flow__content">
-        <div className="recognition-flow__nav">
-          <button type="button" onClick={() => step(-1)} aria-label="Recognition previous"><ArrowUp size={18} /></button>
-          <button type="button" onClick={() => step(1)} aria-label="Recognition next"><ArrowDown size={18} /></button>
-        </div>
-
         <div className="recognition-flow__stack">
           {items.map((item, index) => {
             const isActive = index === activeIndex

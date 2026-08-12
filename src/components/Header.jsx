@@ -11,7 +11,7 @@ const links = [
   ['Contact', '#contact']
 ]
 
-export default function Header() {
+export default function Header({ settings }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -25,7 +25,7 @@ export default function Header() {
   return (
     <header className={`site-header site-header--reference ${scrolled ? 'site-header--scrolled' : ''}`}>
       <a href="#top" className="brand-mark brand-mark--reference" aria-label="DGM Home">
-        <span>DGM</span><i />
+        <span>{settings?.companyName || 'DGM'}</span><i />
       </a>
 
       <nav className={`desktop-nav reference-nav ${open ? 'desktop-nav--open' : ''}`} aria-label="Main navigation">

@@ -63,14 +63,14 @@ export default function Hero({ settings }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: .7, delay: .3 }}
         >
-          <a className="hero-reference-button" href="#contact">Book a Meeting <ArrowUpRight /></a>
+          <a className="hero-reference-button" href="#contact">{settings.heroPrimaryCta} <ArrowUpRight /></a>
           <a
             className="hero-reference-button"
             href={settings.heroPdfUrl || '#case-studies'}
             target={settings.heroPdfUrl && settings.heroPdfUrl !== '#' ? '_blank' : undefined}
             rel="noreferrer"
           >
-            Download PDF <Download />
+            {settings.heroSecondaryCta} <Download />
           </a>
         </motion.div>
       </div>

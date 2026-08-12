@@ -7,10 +7,16 @@ export const defaultSiteSettings = {
   heroBackground: '',
   heroBackgroundPosition: 'center center',
   heroPdfUrl: '#',
+  heroPrimaryCta: 'Book a Meeting',
+  heroSecondaryCta: 'Download PDF',
   contactEmail: 'contact@dgm.vn',
   hotline: '090 xxx xxxx',
   address: 'Hà Nội / TP. Hồ Chí Minh',
   mapEmbedUrl: 'https://www.google.com/maps?q=Ho+Chi+Minh+City&output=embed',
+  footerTagline: 'Marketing Accelerator Partner',
+  linkedinUrl: '#',
+  facebookUrl: '#',
+  youtubeUrl: '#',
   stats: [
     { value: '3.2M', label: 'Users in data ecosystem' },
     { value: '520K', label: 'Prospects' },
@@ -18,49 +24,129 @@ export const defaultSiteSettings = {
   ]
 }
 
+export const defaultPageContent = {
+  about: {
+    eyebrow: 'About us',
+    titleBefore: 'Empowering brands with',
+    titleHighlight: 'innovative',
+    titleAfter: 'digital solutions',
+    intro: 'DGM kết nối chiến lược, sáng tạo, dữ liệu và công nghệ để tạo ra những giải pháp digital có khả năng nâng tầm thương hiệu, thu hút đúng khách hàng và tạo kết quả đo lường được.',
+    featureOne: 'Creative Excellence',
+    featureTwo: 'Tailored Solutions',
+    featureThree: 'Client Approach',
+    featureFour: 'Proven Track Record',
+    primaryCta: 'Explore our capabilities',
+    helpLabel: 'Start a conversation'
+  },
+  milestones: {
+    eyebrow: 'Our milestones',
+    title: 'A journey built through trusted partnerships.',
+    intro: 'From our first office to award-winning integrated growth — explore every chapter from top to bottom.'
+  },
+  recognition: {
+    eyebrow: 'Our recognition',
+    title: 'Work that earns attention — and delivers impact.',
+    intro: 'Selected awards, rankings and industry mentions that mark the progress of our people and partners.'
+  },
+  services: {
+    eyebrow: 'What we do',
+    titleBefore: 'Built for',
+    titleHighlight: 'connected growth',
+    intro: 'Strategy, creative, technology and performance — connected in one practical delivery system.'
+  },
+  data: {
+    eyebrow: 'D-AI Sense / Data Hub',
+    titleBefore: 'Intelligence that turns',
+    titleHighlight: 'audiences into action',
+    intro: 'Hệ sinh thái dữ liệu người dùng và phương tiện hỗ trợ market research, audience profiling, media planning và campaign measurement.',
+    consoleLabel: 'Live audience signals'
+  },
+  partners: {
+    eyebrow: 'Partners & clients',
+    title: 'Connected to the platforms. Trusted by ambitious brands.',
+    intro: 'Technology partners, research platforms and brands we are proud to grow with.'
+  },
+  cases: {
+    eyebrow: 'Selected work',
+    titleBefore: 'Ideas made',
+    titleHighlight: 'measurable',
+    cta: 'Explore the work'
+  },
+  team: {
+    eyebrow: 'Our team',
+    kicker: 'One integrated agency',
+    titleBefore: 'Specialists apart.',
+    titleHighlight: 'Stronger together.',
+    intro: 'Strategy, creative, media, data and technology work as one connected team — turning ambitious briefs into measurable brand growth.',
+    collectiveEyebrow: 'Our collective',
+    collectiveTitle: 'Every expertise your brand needs.',
+    collectiveIntro: 'Built to move from insight to execution without the usual agency silos.',
+    footerNote: 'One senior, hands-on team from brief to impact.',
+    cta: 'Build something together'
+  },
+  process: {
+    eyebrow: 'Our process',
+    title: 'Clear thinking. Fast collaboration. Measurable delivery.',
+    note: 'Quy trình có thể thay đổi theo quy mô brief, nhưng luôn giữ một đầu mối, mục tiêu rõ và dữ liệu xuyên suốt.'
+  },
+  contact: {
+    eyebrow: 'Let’s accelerate together',
+    titleBefore: 'Tell us about your',
+    titleHighlight: 'next project',
+    formIntro: 'Điền thông tin, đội ngũ DGM sẽ phản hồi trong thời gian sớm nhất.',
+    submitLabel: 'Send inquiry'
+  }
+}
+
 export const milestones = [
-  { year: '2017', title: 'Hello Vietnam!', text: 'HCM Base opened' },
-  { year: '2018', title: 'Platform partnerships', text: 'Google Premier Partner\nFacebook Media Partner' },
-  { year: '2019', title: 'Strategic partnerships', text: "Admicro’s Strategic Partner\nOmnicom’s Performance Partner" },
-  { year: '2020', title: 'Automotive partnerships', text: "KIA Vietnam’s Partner\nBMW Vietnam’s Partner" },
-  { year: '2021', title: 'D-AI Sense rollout', text: 'A Data Hub for high-value product industry' },
-  { year: '2022', title: 'Frame partnership', text: 'THACO AUTO' },
-  { year: '2024', title: 'Strategic automotive growth', text: 'Volvo Car Vietnam Media Partner\nSkoda Vietnam Strategic Partner\nToyota Vietnam Strategic Partner' },
-  { year: '2025–2026', title: 'Award-winning growth', text: '02 MMA Smarties Awards 2025\nTop 5 Vietnam Digital Agencies' }
+  { id: 'milestone-2017', year: '2017', title: 'Hello Vietnam!', text: 'HCM Base opened' },
+  { id: 'milestone-2018', year: '2018', title: 'Platform partnerships', text: 'Google Premier Partner\nFacebook Media Partner' },
+  { id: 'milestone-2019', year: '2019', title: 'Strategic partnerships', text: "Admicro’s Strategic Partner\nOmnicom’s Performance Partner" },
+  { id: 'milestone-2020', year: '2020', title: 'Automotive partnerships', text: "KIA Vietnam’s Partner\nBMW Vietnam’s Partner" },
+  { id: 'milestone-2021', year: '2021', title: 'D-AI Sense rollout', text: 'A Data Hub for high-value product industry' },
+  { id: 'milestone-2022', year: '2022', title: 'Frame partnership', text: 'THACO AUTO' },
+  { id: 'milestone-2024', year: '2024', title: 'Strategic automotive growth', text: 'Volvo Car Vietnam Media Partner\nSkoda Vietnam Strategic Partner\nToyota Vietnam Strategic Partner' },
+  { id: 'milestone-2026', year: '2025–2026', title: 'Award-winning growth', text: '02 MMA Smarties Awards 2025\nTop 5 Vietnam Digital Agencies' }
 ]
 
 export const services = [
   {
+    id: 'service-strategy',
     no: '01',
     title: 'Digital Strategy',
     text: 'Market intelligence, brand positioning và go-to-market planning theo mục tiêu kinh doanh.',
     tags: ['Brand Strategy', 'Growth Planning']
   },
   {
+    id: 'service-transformation',
     no: '02',
     title: 'Digital Transformation',
     text: 'Thiết kế hành trình số, hệ thống nội dung và quy trình vận hành tăng trưởng.',
     tags: ['Digital Journey', 'Operations']
   },
   {
+    id: 'service-creative',
     no: '03',
     title: 'Creative & Communication',
     text: 'Big idea, creative platform, social content và integrated campaign đa kênh.',
     tags: ['Creative Platform', 'IMC']
   },
   {
+    id: 'service-branding',
     no: '04',
     title: 'Branding & Identity',
     text: 'Xây dựng hệ thống nhận diện rõ ràng, nhất quán và phù hợp với môi trường số.',
     tags: ['Branding', 'Visual System']
   },
   {
+    id: 'service-development',
     no: '05',
     title: 'Web / App Development',
     text: 'Trải nghiệm số gọn, rõ, tối ưu chuyển đổi và thuận tiện cho đội ngũ quản trị.',
     tags: ['Web Design', 'App Development']
   },
   {
+    id: 'service-insights',
     no: '06',
     title: 'Media & Consumer Insights',
     text: 'Research, social listening, audience profiling, media performance và campaign measurement.',
@@ -69,22 +155,22 @@ export const services = [
 ]
 
 export const processSteps = [
-  ['01', 'Discovery', 'Tiếp nhận brief, xác định bài toán và tiêu chí thành công.'],
-  ['02', 'Research', 'Phân tích thị trường, khách hàng và tín hiệu dữ liệu.'],
-  ['03', 'Master Planning', 'Xây chiến lược, creative platform, media & quotation.'],
-  ['04', 'Production', 'Sản xuất nội dung và chuẩn bị hệ thống triển khai.'],
-  ['05', 'Deployment', 'Vận hành, tối ưu và báo cáo theo mục tiêu.']
+  { id: 'process-discovery', no: '01', title: 'Discovery', text: 'Tiếp nhận brief, xác định bài toán và tiêu chí thành công.' },
+  { id: 'process-research', no: '02', title: 'Research', text: 'Phân tích thị trường, khách hàng và tín hiệu dữ liệu.' },
+  { id: 'process-planning', no: '03', title: 'Master Planning', text: 'Xây chiến lược, creative platform, media & quotation.' },
+  { id: 'process-production', no: '04', title: 'Production', text: 'Sản xuất nội dung và chuẩn bị hệ thống triển khai.' },
+  { id: 'process-deployment', no: '05', title: 'Deployment', text: 'Vận hành, tối ưu và báo cáo theo mục tiêu.' }
 ]
 
 export const teamMembers = [
-  { role: 'Media Expert', count: '06', detail: 'Media planning, buying and optimization across the full funnel.' },
-  { role: 'Creative & Art', count: '10', detail: 'Creative direction, visual systems and production-ready execution.' },
-  { role: 'Strategic Planning', count: '10', detail: 'Consumer insight, category strategy and integrated campaign planning.' },
-  { role: 'Client Partner (Account)', count: '20', detail: 'One connected client team from brief to delivery.' },
-  { role: 'BI / CMI / Insight / Research', count: '05', detail: 'Research design, analytics, measurement and intelligence.' },
-  { role: 'Client Growth Team', count: '10', detail: 'Growth experiments, conversion thinking and commercial acceleration.' },
-  { role: 'Tech Dev', count: '05', detail: 'Web, application, data integration and marketing technology.' },
-  { role: 'Event', count: '12', detail: 'Experience design, activation and on-ground production.' }
+  { id: 'team-media', role: 'Media Expert', count: '06', detail: 'Media planning, buying and optimization across the full funnel.' },
+  { id: 'team-creative', role: 'Creative & Art', count: '10', detail: 'Creative direction, visual systems and production-ready execution.' },
+  { id: 'team-strategy', role: 'Strategic Planning', count: '10', detail: 'Consumer insight, category strategy and integrated campaign planning.' },
+  { id: 'team-account', role: 'Client Partner (Account)', count: '20', detail: 'One connected client team from brief to delivery.' },
+  { id: 'team-insight', role: 'BI / CMI / Insight / Research', count: '05', detail: 'Research design, analytics, measurement and intelligence.' },
+  { id: 'team-growth', role: 'Client Growth Team', count: '10', detail: 'Growth experiments, conversion thinking and commercial acceleration.' },
+  { id: 'team-tech', role: 'Tech Dev', count: '05', detail: 'Web, application, data integration and marketing technology.' },
+  { id: 'team-event', role: 'Event', count: '12', detail: 'Experience design, activation and on-ground production.' }
 ]
 
 export const defaultRecognitions = [

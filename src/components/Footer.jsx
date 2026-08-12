@@ -4,7 +4,7 @@ import TextReveal from './TextReveal'
 import Reveal from './Reveal'
 import SectionMotionBackground from './SectionMotionBackground'
 
-export default function Footer({ settings }) {
+export default function Footer({ settings, copy }) {
   const [sent, setSent] = useState(false)
 
   function submitContact(event) {
@@ -17,12 +17,12 @@ export default function Footer({ settings }) {
     <footer id="contact" className="site-footer site-footer--contact">
       <SectionMotionBackground variant="footer" />
       <div className="page-shell footer-contact-heading">
-        <Reveal><p className="eyebrow text-cyan-300">Let’s accelerate together</p></Reveal>
+        <Reveal><p className="eyebrow text-cyan-300">{copy.eyebrow}</p></Reveal>
         <TextReveal
           className="footer-contact-title"
           segments={[
-            { text: 'Tell us about your' },
-            { text: 'next project', highlight: true }
+            { text: copy.titleBefore },
+            { text: copy.titleHighlight, highlight: true }
           ]}
         />
       </div>
@@ -31,7 +31,7 @@ export default function Footer({ settings }) {
         <Reveal className="footer-contact-card">
           <div className="footer-contact-card-head">
             <span>01 / CONTACT FORM</span>
-            <p>Điền thông tin, đội ngũ DGM sẽ phản hồi trong thời gian sớm nhất.</p>
+            <p>{copy.formIntro}</p>
           </div>
 
           <form className="contact-form" onSubmit={submitContact}>
@@ -40,7 +40,7 @@ export default function Footer({ settings }) {
             <label>Công ty<input name="company" placeholder="Tên công ty" /></label>
             <label>Số điện thoại<input name="phone" placeholder="090 ..." /></label>
             <label className="full">Nội dung cần tư vấn<textarea name="message" required rows="5" placeholder="Mục tiêu, thời gian và phạm vi dự án..." /></label>
-            <button className="contact-submit" type="submit">Send inquiry <Send /></button>
+            <button className="contact-submit" type="submit">{copy.submitLabel} <Send /></button>
             {sent && <p className="contact-success">Đã ghi nhận nội dung demo. Khi nối backend, form sẽ gửi email hoặc lưu vào CRM.</p>}
           </form>
         </Reveal>
@@ -65,12 +65,12 @@ export default function Footer({ settings }) {
       </div>
 
       <div className="page-shell footer-lower footer-lower--soft">
-        <div className="footer-brand"><strong>DGM</strong><span>Marketing Accelerator Partner</span></div>
+        <div className="footer-brand"><strong>{settings.companyName}</strong><span>{settings.footerTagline}</span></div>
         <a className="footer-email" href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}<ArrowUpRight /></a>
-        <div className="social-links"><a href="#"><Linkedin /></a><a href="#"><Facebook /></a><a href="#"><Youtube /></a></div>
+        <div className="social-links"><a href={settings.linkedinUrl}><Linkedin /></a><a href={settings.facebookUrl}><Facebook /></a><a href={settings.youtubeUrl}><Youtube /></a></div>
       </div>
 
-      <div className="page-shell footer-legal"><span>© 2026 DGM. Demo credential website.</span><a href="/admin">Admin demo</a></div>
+      <div className="page-shell footer-legal"><span>© 2026 {settings.companyName}. All rights reserved.</span><a href="/admin">Admin</a></div>
     </footer>
   )
 }

@@ -1,0 +1,13 @@
+FULL PROJECT PACKAGE - V8 STICKY FIX
+
+Use this folder as the project root. You can copy all files over the old project.
+Recommended:
+1. Backup/commit old project.
+2. Copy all files from this folder over it.
+3. Run: npm install
+4. Run: npm run dev
+
+Key V8 fixes:
+- Our Recognition: left content stays sticky while right cards move with normal page scroll.
+- Our Team: orbit stays sticky while right team cards move with normal page scroll.
+- Team orbit is redesigned closer to the green reference template, using DGM cyan/navy colors.

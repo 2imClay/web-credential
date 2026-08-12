@@ -522,3 +522,102 @@ Yêu cầu:
 - `src/pages/HomePage.jsx`
 - `src/styles/v6.css`
 - `PLAN.md`
+
+## UI revision 08 — Restore sticky page-scroll + Team template orbit
+
+### User feedback
+- Sau khi Antigravity thêm `v7.css`, Recognition và Team đã chuyển sang normal page flow nhưng cột bên trái không còn giữ cố định khi người dùng cuộn qua các card bên phải.
+- Cần khôi phục đúng interaction: **trang vẫn cuộn bình thường**, card bên phải đi qua từng mục, còn phần bên trái giữ sticky cho tới khi hết section.
+- Phần vòng tròn Our Team cần giống template tham khảo hơn: vòng lớn, active index nằm trên viền, center content rõ và card bên phải rộng/sáng hơn.
+
+### Root cause
+- `v7.css` đặt `.recognition-flow__viewport` và `.team-orbit-viewport` thành `overflow: visible` để bỏ internal scroll. Đây là hướng đúng cho page-flow scrolling.
+- Tuy nhiên grid đang dùng `align-items: start`, khiến cột trái (`.recognition-flow__aside` / `.team-orbit-stage`) chỉ cao bằng nội dung của chính nó thay vì cao theo toàn bộ card stack bên phải.
+- `position: sticky` luôn bị giới hạn bởi chiều cao containing block; vì containing block bên trái quá ngắn nên cột sticky hết phạm vi và bị cuộn lên theo trang.
+- `main { overflow: clip; }` cũng có thể gây hành vi sticky khác nhau giữa browser; revision 08 cho `.public-site` trở lại `overflow: visible` và để từng animated background tự clip nội dung trang trí.
+
+### Implemented
+#### 1) Recognition page-scroll sticky restored
+- Giữ card Recognition trong normal document flow, không đưa lại internal scrollbar.
+- `.recognition-flow` chuyển sang `align-items: stretch`.
+- `.recognition-flow__aside` stretch theo chiều cao của right card stack.
+- `.recognition-flow__asideInner` sticky ở khoảng `top: 112px` để nằm dưới floating header.
+- Nút lên/xuống của Recognition cũng sticky để luôn truy cập được khi đang xem section.
+- IntersectionObserver hiện tại (`root: null`) tiếp tục dùng viewport của trang để active card theo vị trí scroll.
+
+#### 2) Team page-scroll sticky restored
+- `.team-orbit-stage` stretch theo toàn bộ chiều cao danh sách Team bên phải.
+- `.team-orbit-core` sticky ở `top: 108px`.
+- Danh sách Team vẫn ở normal page flow, không có nested scroll container.
+- Khi người dùng cuộn trang, bên phải đi qua từng card còn orbit bên trái giữ nguyên trong viewport cho tới khi hết Team section.
+
+#### 3) Team orbit redesigned closer to reference template
+- `TeamScroll.jsx` đổi logic rotation:
+  - Node đầu tiên bắt đầu ở cạnh phải vòng tròn.
+  - Khi card active thay đổi, rotor quay ngược theo index để **node active luôn về vị trí 3 o'clock**.
+- Tách rotor khỏi center content để phần chữ/icon giữa vòng không bị xoay.
+- Thêm icon Network ở trung tâm, role hiện tại và member count.
+- Vòng ngoài lớn, đường accent rõ hơn và active node lớn hơn.
+- Card Team bên phải chuyển sang surface sáng/off-white trên nền navy, giống cấu trúc template hơn nhưng vẫn giữ accent cyan của DGM.
+- Card active có contrast và shadow mạnh hơn; card inactive giảm opacity nhẹ.
+
+#### 4) Responsive behavior
+- Sticky Recognition tắt dưới `1100px` và trở về natural flow.
+- Sticky Team tắt dưới `980px`; orbit chuyển lên trên danh sách card.
+- Mobile card Team chuyển thành 1 cột và giảm kích thước orbit/node.
+
+### Files added
+- `src/styles/v8.css`
+
+### Files updated
+- `src/components/TeamScroll.jsx`
+- `src/main.jsx`
+- `PLAN.md`
+
+### Important continuation rule
+- **Không** đưa lại `overflow-y: auto` cho Recognition/Team trên desktop nếu mục tiêu là kiểu template sticky-left + page-scroll-right.
+- Nếu cần chỉnh chiều cao/spacing, chỉnh `align-self: stretch`, sticky `top`, gap và card min-height; không biến cột phải thành một scrollbox riêng.
+- `v8.css` phải được import sau `v7.css`.
+
+### Next recommended prompt
+```text
+Đọc PLAN.md, tập trung phần “UI revision 08”.
+
+Giữ nguyên interaction bắt buộc:
+- Recognition: scroll toàn trang, left editorial sticky, right cards đi qua từng mục.
+- Team: scroll toàn trang, left orbit sticky, right cards đi qua từng mục.
+- Team active card phải cập nhật orbit và node active luôn nằm ở cạnh phải vòng tròn.
+- Không thêm overflow-y:auto cho 2 section trên desktop.
+- v8.css phải load sau v7.css.
+
+Nhiệm vụ tiếp theo:
+[Mô tả chỉnh sửa]
+
+Sau khi sửa:
+- npm run build
+- Test desktop 1440/1920, laptop 1280, tablet, mobile
+- Cập nhật PLAN.md
+```
+
+
+## V8 hotfix — horizontal overflow / right white gap
+- Giữ nguyên interaction V8, không thêm smooth-scroll/quán tính.
+- Sửa lỗi document bị rộng hơn viewport làm xuất hiện scrollbar ngang và khoảng trắng bên phải.
+- Dùng `overflow-x: clip` trên `html`, `body`, `#root` và `.public-site` để cắt phần animation/absolute element vượt viewport mà không biến ancestor thành scroll container, nhờ đó sticky của Recognition/Team vẫn giữ nguyên.
+- Bổ sung max-width guard cho section/footer và media/iframe.
+- File thay đổi chính: `src/styles/v8.css`.
+
+
+## Team section revision — match template layout more closely
+- Rebuilt `TeamScroll.jsx` so the left orbit matches the reference structure more closely:
+  - single large orbit ring
+  - active node anchored on the right
+  - centered icon + role + member count
+  - removed extra status / inner layout elements that made the design diverge
+- Reworked team cards on the right to match the reference composition more closely:
+  - white card surface
+  - icon column on the left
+  - role + description at top right
+  - large pale index at bottom left
+  - skill tags on the bottom row
+- Kept the site color adaptation in cyan / navy instead of the original green template.

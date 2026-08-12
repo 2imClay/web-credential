@@ -4,17 +4,18 @@ const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.06
+      staggerChildren: 0.045
     }
   }
 }
 
 const wordVariants = {
-  hidden: { opacity: 0, y: '100%' },
+  hidden: { opacity: 0, y: '115%', rotateX: -12 },
   visible: {
     opacity: 1,
     y: '0%',
-    transition: { duration: 0.8, ease: [0.16, 0.85, 0.3, 1] }
+    rotateX: 0,
+    transition: { duration: 0.7, ease: [0.2, 0.75, 0.25, 1] }
   }
 }
 
@@ -50,4 +51,3 @@ export default function TextReveal({
     </MotionTag>
   )
 }
-

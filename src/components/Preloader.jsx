@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export default function Preloader() {
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(() => (
+    window.location.pathname === '/' && sessionStorage.getItem('dgm_preloader_seen') !== '1'
+  ))
 
   useEffect(() => {
+    if (!visible) return undefined
+    sessionStorage.setItem('dgm_preloader_seen', '1')
     const timer = window.setTimeout(() => setVisible(false), 1700)
     return () => window.clearTimeout(timer)
-  }, [])
+  }, [visible])
 
   return (
     <AnimatePresence>
