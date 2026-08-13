@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { motion, useInView, useMotionValue, useReducedMotion, useScroll } from 'framer-motion'
 
 function MilestoneItem({ item, index, activeIndex, setActiveIndex }) {
   const ref = useRef(null)
@@ -19,7 +19,7 @@ function MilestoneItem({ item, index, activeIndex, setActiveIndex }) {
       transition={{ duration: .42, ease: [0.2, .75, .25, 1] }}
       onMouseEnter={() => setActiveIndex(index)}
     >
-      <div className="journey-stop__year"><span>{String(index + 1).padStart(2, '0')}</span><strong>{item.year}</strong></div>
+      <div className="journey-stop__year"><strong>{item.year}</strong></div>
       <div className="journey-stop__card">
         <h3>{item.title}</h3>
         <div>{item.text.split('\n').map((line) => <p key={line}>{line}</p>)}</div>
@@ -30,11 +30,31 @@ function MilestoneItem({ item, index, activeIndex, setActiveIndex }) {
 
 export default function MilestoneRail({ items = [], copy = {} }) {
   const timelineRef = useRef(null)
+  const pathRef = useRef(null)
   const reduceMotion = useReducedMotion()
   const [activeIndex, setActiveIndex] = useState(0)
   const { scrollYProgress } = useScroll({ target: timelineRef, offset: ['start 70%', 'end 35%'] })
-  const badgeTop = useTransform(scrollYProgress, [0, 1], ['2%', '94%'])
-  const badgeX = useTransform(scrollYProgress, (value) => Math.sin(value * Math.PI * 7) * 50)
+  const badgeLeft = useMotionValue('50%')
+  const badgeTop = useMotionValue('0%')
+
+  useEffect(() => {
+    const updateBadgePosition = (scrollProgress) => {
+      const path = pathRef.current
+      if (!path) return
+
+      const progress = reduceMotion ? .5 : Math.min(1, Math.max(0, scrollProgress))
+      const point = path.getPointAtLength(path.getTotalLength() * progress)
+
+      // The badge and SVG share the same 180 x 1000 coordinate system.
+      // Percentages keep that exact point aligned when the path is stretched responsively.
+      badgeLeft.set(`${(point.x / 180) * 100}%`)
+      badgeTop.set(`${(point.y / 1000) * 100}%`)
+    }
+
+    updateBadgePosition(scrollYProgress.get())
+    if (reduceMotion) return undefined
+    return scrollYProgress.on('change', updateBadgePosition)
+  }, [badgeLeft, badgeTop, reduceMotion, scrollYProgress])
 
   if (!items.length) return null
 
@@ -42,9 +62,9 @@ export default function MilestoneRail({ items = [], copy = {} }) {
     <div className="journey" ref={timelineRef} style={{ '--journey-count': items.length }}>
       <div className="journey-path" aria-hidden="true">
         <svg viewBox="0 0 180 1000" preserveAspectRatio="none">
-          <path d="M90 0 C18 65 18 155 90 210 S162 360 90 430 S18 575 90 640 S162 790 90 855 S18 950 90 1000" />
+          <path ref={pathRef} d="M90 0 C18 65 18 155 90 210 S162 360 90 430 S18 575 90 640 S162 790 90 855 S18 950 90 1000" />
         </svg>
-        <motion.div className="journey-badge" style={reduceMotion ? { top: '50%' } : { top: badgeTop, x: badgeX }}>
+        <motion.div className="journey-badge" style={{ left: badgeLeft, top: badgeTop }}>
           <span>DGM</span><i />
         </motion.div>
       </div>

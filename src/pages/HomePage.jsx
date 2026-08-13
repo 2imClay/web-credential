@@ -1,4 +1,3 @@
-import { BarChart3, Megaphone, Monitor, Palette, Search, Smartphone } from 'lucide-react'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
 import Reveal from '../components/Reveal'
@@ -10,9 +9,8 @@ import CaseStudyGallery from '../components/CaseStudyGallery'
 import TeamScroll from '../components/TeamScroll'
 import PartnerLogoMarquee from '../components/PartnerLogoMarquee'
 import SiteExperience from '../components/SiteExperience'
+import ServicesShowcase from '../components/ServicesShowcase'
 import { useContent } from '../hooks/useContent'
-
-const serviceIcons = [Monitor, Search, Megaphone, Palette, Smartphone, BarChart3]
 
 export default function HomePage() {
   const {
@@ -31,17 +29,19 @@ export default function HomePage() {
     <main className="public-site public-site--editorial">
       <SiteExperience />
       <Header settings={settings} copy={pageContent.ui} />
-      <Hero settings={settings} />
+      <Hero settings={settings} services={services} />
 
       <div className="editorial-home-flow">
         <section id="about" className="section newsroom-section">
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.about}</span></div>
-          <div className="page-shell newsroom-heading">
-            <Reveal>
-              <h2>{pageContent.about.title}</h2>
-              <p>{pageContent.about.intro}</p>
-            </Reveal>
-          </div>
+          {(pageContent.about.title?.trim() || pageContent.about.intro?.trim()) && (
+            <div className="page-shell newsroom-heading">
+              <Reveal>
+                {pageContent.about.title?.trim() && <h2>{pageContent.about.title}</h2>}
+                {pageContent.about.intro?.trim() && <p>{pageContent.about.intro}</p>}
+              </Reveal>
+            </div>
+          )}
           <div className="page-shell"><PressRoom items={pressArticles} copy={pageContent.ui} /></div>
         </section>
 
@@ -57,19 +57,7 @@ export default function HomePage() {
 
         <section id="services" className="section services-showcase services-showcase--content-only content-only-section">
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.services}</span></div>
-          <div className="page-shell service-constellation-grid">
-            {services.map((service, index) => {
-              const Icon = serviceIcons[index % serviceIcons.length]
-              return (
-                <article className="service-module-card" key={service.id || service.no}>
-                  <div className="service-module-card__top"><span><Icon /></span><small>{service.no}</small></div>
-                  <h3>{service.title}</h3>
-                  {service.text && <p>{service.text}</p>}
-                  <div className="service-module-card__list">{(service.tags || []).map((tag) => <span key={tag}><i />{tag}</span>)}</div>
-                </article>
-              )
-            })}
-          </div>
+          <div className="page-shell"><ServicesShowcase items={services} /></div>
         </section>
 
         <section id="case-studies" className="section cases-section cases-section--content-only content-only-section">

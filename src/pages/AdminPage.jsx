@@ -70,11 +70,11 @@ const collectionDefinitions = [
   {
     key: 'pressArticles', anchor: 'press-articles', no: '04', title: 'About Us — Press articles', singular: 'press article', icon: Trophy,
     description: 'Upload ảnh bài báo và logo tòa soạn. Các bài được tự động xếp nghiêng, chồng lớp ở About Us.', save: contentRepository.savePressArticles,
-    empty: { id: '', year: '2026', title: 'Press coverage', source: '', subtitle: '', description: '', image: '', logo: '', url: '#' },
+    empty: { id: '', year: '', title: '', source: '', subtitle: '', description: '', image: '', logo: '', url: '' },
     fields: [
-      ['title', 'Article title'], ['source', 'Publication / source'], ['year', 'Year'],
-      ['description', 'Short description', 'textarea'], ['image', 'Article image', 'image'],
-      ['logo', 'Publication logo', 'image'], ['url', 'Full article URL']
+      ['title', 'Article title (optional)', 'optional'], ['source', 'Publication / source (optional)', 'optional'], ['year', 'Year (optional)', 'optional'],
+      ['description', 'Short description (optional)', 'textarea-optional'], ['image', 'Article image', 'image'],
+      ['logo', 'Publication logo', 'image'], ['url', 'Full article URL (optional)', 'optional']
     ],
     meta: (item) => `${item.source || 'Press'} / ${item.year || ''}`, summary: (item) => item.description || item.subtitle
   },
@@ -202,13 +202,14 @@ export default function AdminPage() {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith('image/')) return setStatus('Vui lòng chọn đúng file hình ảnh.')
-    if (file.size > 8 * 1024 * 1024) return setStatus('Ảnh tải lên cần nhỏ hơn 8 MB.')
+    const maxSize = file.type === 'image/gif' ? 20 : 8
+    if (file.size > maxSize * 1024 * 1024) return setStatus(`Ảnh tải lên cần nhỏ hơn ${maxSize} MB.`)
 
     setSaving(true)
     setStatus('Đang tối ưu và tải ảnh lên Supabase Storage...')
     const objectUrl = URL.createObjectURL(file)
     try {
-      const optimizedFile = await new Promise((resolve, reject) => {
+      const optimizedFile = file.type === 'image/gif' ? file : await new Promise((resolve, reject) => {
         const image = new Image()
         image.onload = () => {
           const maxSide = 1800
@@ -472,12 +473,13 @@ export default function AdminPage() {
                   return <ImageEditor key={field} label={label} value={value} onChange={(next) => updateEditing(field, next)} onUpload={(event) => readImage(event, (next) => updateEditing(field, next))} />
                 }
                 const isTextarea = type === 'textarea' || type === 'textarea-optional'
+                const isOptional = type === 'optional' || type === 'textarea-optional'
                 return (
                   <label className={isTextarea ? 'full' : ''} key={field}>
                     {label}
                     {isTextarea
-                      ? <textarea required={type === 'textarea'} rows="3" value={value} onChange={(event) => updateEditing(field, event.target.value)} />
-                      : <input required value={value} onChange={(event) => updateEditing(field, event.target.value)} />}
+                      ? <textarea required={!isOptional} rows="3" value={value} onChange={(event) => updateEditing(field, event.target.value)} />
+                      : <input required={!isOptional} value={value} onChange={(event) => updateEditing(field, event.target.value)} />}
                   </label>
                 )
               })}
@@ -534,7 +536,7 @@ function ImageEditor({ label, value, onChange, onUpload }) {
   return (
     <div className="image-editor full">
       <label>{label} URL / path<input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Dán URL hoặc tải ảnh từ máy" /></label>
-      <label className="upload-button"><ImagePlus /> Upload image<input type="file" accept="image/*" onChange={onUpload} /></label>
+      <label className="upload-button"><ImagePlus /> Upload image / GIF<input type="file" accept="image/*,.gif" onChange={onUpload} /></label>
       {value && <div className="image-editor-preview"><img src={value} alt="Preview" /><button type="button" onClick={() => onChange('')}>Remove image</button></div>}
     </div>
   )

@@ -334,22 +334,22 @@ Kiểm tra `vercel.json` nằm đúng project root:
 
 ### Bạn cần làm trên Supabase
 
-- [ ] Chạy migration đầu.
-- [ ] Chạy migration thứ hai.
-- [ ] Tắt public signup.
-- [ ] Tắt hook cũ nếu có.
-- [ ] Tạo user email/password.
-- [ ] Confirm user.
-- [ ] Test login local.
+- [x] Chạy migration đầu.
+- [x] Chạy migration thứ hai.
+- [x] Tắt public signup.
+- [x] Tắt hook cũ nếu có.
+- [x] Tạo user email/password.
+- [x] Confirm user.
+- [x] Test login local.
 
 ### Bạn cần làm trên Vercel
 
-- [ ] Push code GitHub.
-- [ ] Import project.
-- [ ] Thêm hai biến môi trường.
-- [ ] Deploy.
-- [ ] Test `/admin`.
-- [ ] Test Save và Upload.
+- [x] Push code GitHub.
+- [x] Import project.
+- [x] Thêm hai biến môi trường.
+- [x] Deploy.
+- [x] Test `/admin`.
+- [x] Test Save và Upload.
 
 ## 16. Tài liệu chính thức
 
