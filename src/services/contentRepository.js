@@ -2,6 +2,7 @@ import {
   defaultCaseStudies,
   defaultPageContent,
   defaultPartners,
+  defaultPressArticles,
   defaultRecognitions,
   defaultSiteSettings,
   milestones,
@@ -13,6 +14,7 @@ import {
 const CASES_KEY = 'dgm_case_studies_v2'
 const SETTINGS_KEY = 'dgm_site_settings_v2'
 const RECOGNITIONS_KEY = 'dgm_recognitions_v2'
+const PRESS_ARTICLES_KEY = 'dgm_press_articles_v1'
 const PARTNERS_KEY = 'dgm_partners_v2'
 const PAGE_CONTENT_KEY = 'dgm_page_content_v1'
 const MILESTONES_KEY = 'dgm_milestones_v1'
@@ -51,6 +53,8 @@ export const contentRepository = {
   saveSiteSettings: (settings) => write(SETTINGS_KEY, settings),
   getRecognitions: () => read(RECOGNITIONS_KEY, defaultRecognitions),
   saveRecognitions: (items) => write(RECOGNITIONS_KEY, items),
+  getPressArticles: () => read(PRESS_ARTICLES_KEY, defaultPressArticles),
+  savePressArticles: (items) => write(PRESS_ARTICLES_KEY, items),
   getPartners: () => read(PARTNERS_KEY, defaultPartners),
   savePartners: (items) => write(PARTNERS_KEY, items),
   getPageContent: () => mergePageContent(read(PAGE_CONTENT_KEY, defaultPageContent)),
@@ -67,6 +71,7 @@ export const contentRepository = {
     localStorage.removeItem(CASES_KEY)
     localStorage.removeItem(SETTINGS_KEY)
     localStorage.removeItem(RECOGNITIONS_KEY)
+    localStorage.removeItem(PRESS_ARTICLES_KEY)
     localStorage.removeItem(PARTNERS_KEY)
     localStorage.removeItem(PAGE_CONTENT_KEY)
     localStorage.removeItem(MILESTONES_KEY)

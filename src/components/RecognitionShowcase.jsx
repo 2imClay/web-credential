@@ -15,7 +15,7 @@ function RecognitionCardVisual({ item }) {
       <div className="recognition-paper__placeholderCore">
         <Award />
         <strong>{item.title}</strong>
-        <p>{item.subtitle || 'DGM recognition'}</p>
+        {item.subtitle && <p>{item.subtitle}</p>}
       </div>
       <div className="recognition-paper__placeholderLines"><i /><i /><i /></div>
     </div>
@@ -36,12 +36,12 @@ function MobileRecognitionCard({ item, index, count, progress }) {
       className="recognition-paper recognition-paper--mobile"
       style={{ y, scale, rotate: cardAngles[index % cardAngles.length], zIndex: 10 + index }}
     >
+      <span className="recognition-paper__index">{String(index + 1).padStart(2, '0')}</span>
       <div className="recognition-paper__media">
         <RecognitionCardVisual item={item} />
       </div>
       <figcaption>
-        <span>{String(index + 1).padStart(2, '0')}</span>
-        <strong>{item.title}</strong>
+        <p>{item.description || item.subtitle || item.title}</p>
       </figcaption>
     </motion.figure>
   )
@@ -69,12 +69,12 @@ export default function RecognitionShowcase({ items }) {
               '--paper-z': 10 + index
             }}
           >
+            <span className="recognition-paper__index">{String(index + 1).padStart(2, '0')}</span>
             <div className="recognition-paper__media">
               <RecognitionCardVisual item={item} />
             </div>
             <figcaption>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <strong>{item.title}</strong>
+              <p>{item.description || item.subtitle || item.title}</p>
             </figcaption>
           </figure>
         ))}

@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 
-const links = [
-  ['About Us', '#about'],
-  ['Recognition', '#recognition'],
-  ['Services', '#services'],
-  ['Case Studies', '#case-studies'],
-  ['Specialized Solutions', '#data-hub'],
-  ['Our Team', '#team'],
-  ['Contact', '#contact']
-]
-
-export default function Header({ settings }) {
+export default function Header({ settings, copy = {} }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const links = [
+    [copy.navAbout || 'About Us', '#about'],
+    [copy.navJourney || 'Our Journey', '#milestones'],
+    [copy.navRecognition || 'Recognition', '#recognition'],
+    [copy.navServices || 'Services', '#services'],
+    [copy.navCases || 'Case Studies', '#case-studies'],
+    [copy.navTeam || 'Our Team', '#team'],
+    [copy.navPartners || 'Partners', '#partners'],
+    [copy.navContact || 'Contact', '#contact']
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 70)

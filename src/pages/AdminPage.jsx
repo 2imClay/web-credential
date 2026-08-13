@@ -25,66 +25,36 @@ import { contentRepository } from '../services/contentRepository'
 
 const copyGroups = [
   {
-    key: 'about', title: 'About us', description: 'Thông điệp giới thiệu và bốn giá trị nổi bật.',
+    key: 'sectionLabels', title: 'Section headlines', description: 'Tên nhỏ ở góc trên trái giúp nhận biết từng session trên trang chủ.',
     fields: [
-      ['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'],
-      ['titleAfter', 'Title — ending'], ['intro', 'Introduction', 'textarea'],
-      ['featureOne', 'Feature 01'], ['featureTwo', 'Feature 02'], ['featureThree', 'Feature 03'],
-      ['featureFour', 'Feature 04']
+      ['about', 'About Us'], ['milestones', 'Timeline / Journey'], ['recognition', 'Recognition'],
+      ['services', 'Services'], ['cases', 'Case Studies'], ['team', 'Our Team'],
+      ['partners', 'Partners'], ['footer', 'Contact / Footer']
     ]
   },
   {
-    key: 'milestones', title: 'Milestones', description: 'Heading phía trên timeline.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title']]
-  },
-  {
-    key: 'recognition', title: 'Recognition', description: 'Heading phía trên gallery ảnh bài báo.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title'], ['intro', 'Introduction', 'textarea']]
-  },
-  {
-    key: 'services', title: 'Services', description: 'Thông điệp mở đầu phần năng lực.',
-    fields: [['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight']]
-  },
-  {
-    key: 'data', title: 'Data Hub', description: 'Nội dung giới thiệu nền tảng dữ liệu.',
-    fields: [['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'], ['intro', 'Introduction', 'textarea'], ['consoleLabel', 'Console label']]
-  },
-  {
-    key: 'partners', title: 'Partners & clients', description: 'Heading phía trên logo đối tác.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title']]
-  },
-  {
-    key: 'team', title: 'Our team', description: 'Toàn bộ thông điệp của phần đội ngũ.',
+    key: 'ui', title: 'Navigation & interface labels', description: 'Tên menu và các nhãn hướng dẫn đang hiển thị trên trang chủ.',
     fields: [
-      ['chapterLabel', 'Chapter label'], ['eyebrow', 'Eyebrow'], ['kicker', 'Kicker'], ['titleBefore', 'Title — opening'],
-      ['titleHighlight', 'Title — highlight'], ['intro', 'Introduction', 'textarea'],
-      ['collectiveEyebrow', 'Collective eyebrow'], ['collectiveTitle', 'Collective title'],
-      ['collectiveIntro', 'Collective introduction', 'textarea'],
-      ['talentLabel', 'Talent statistic label'], ['teamCountLabel', 'Team count label'],
-      ['ambitionValue', 'Ambition statistic value'], ['ambitionLabel', 'Ambition statistic label'],
-      ['coreName', 'Network center name'], ['coreLabel', 'Network center label']
+      ['navAbout', 'Menu — About'], ['navJourney', 'Menu — Journey'], ['navRecognition', 'Menu — Recognition'],
+      ['navServices', 'Menu — Services'], ['navCases', 'Menu — Case Studies'], ['navTeam', 'Menu — Team'],
+      ['navPartners', 'Menu — Partners'], ['navContact', 'Menu — Contact'],
+      ['pressSourcesLabel', 'Press sources label'], ['pressReadMore', 'Press read-more label'],
+      ['allCasesLabel', 'All cases filter']
     ]
   },
   {
-    key: 'process', title: 'Process', description: 'Heading của phần quy trình.',
-    fields: [['eyebrow', 'Eyebrow'], ['title', 'Title']]
+    key: 'about', title: 'About us / Newsroom', description: 'Tiêu đề và mô tả ngắn phía trên khu vực bài báo.',
+    fields: [
+      ['title', 'Title'], ['intro', 'Short description', 'textarea']
+    ]
   },
   {
-    key: 'contact', title: 'Contact & footer', description: 'Heading và nội dung biểu mẫu liên hệ.',
-    fields: [
-      ['eyebrow', 'Eyebrow'], ['titleBefore', 'Title — opening'], ['titleHighlight', 'Title — highlight'],
-      ['formLabel', 'Form section label'], ['formIntro', 'Form introduction', 'textarea'],
-      ['nameLabel', 'Name field label'], ['namePlaceholder', 'Name placeholder'],
-      ['emailLabel', 'Email field label'], ['emailPlaceholder', 'Email placeholder'],
-      ['companyLabel', 'Company field label'], ['companyPlaceholder', 'Company placeholder'],
-      ['phoneLabel', 'Phone field label'], ['phonePlaceholder', 'Phone placeholder'],
-      ['messageLabel', 'Message field label'], ['messagePlaceholder', 'Message placeholder'],
-      ['submitLabel', 'Submit button'], ['successMessage', 'Success message', 'textarea'],
-      ['mailSubject', 'Email subject'], ['mapLabel', 'Map label'],
-      ['emailDetailLabel', 'Email detail label'], ['hotlineDetailLabel', 'Hotline detail label'],
-      ['officeDetailLabel', 'Office detail label'], ['copyrightText', 'Copyright text'],
-      ['adminLinkLabel', 'Admin link label']
-    ]
+    key: 'team', title: 'Team visual', description: 'Tên và nhãn ở tâm sơ đồ đội ngũ.',
+    fields: [['coreName', 'Center name'], ['coreLabel', 'Center label'], ['peopleLabel', 'People count label']]
+  },
+  {
+    key: 'contact', title: 'Footer', description: 'Dòng bản quyền và tên liên kết quản trị.',
+    fields: [['copyrightText', 'Copyright text'], ['adminLinkLabel', 'Admin link label']]
   }
 ]
 
@@ -101,25 +71,29 @@ const collectionDefinitions = [
     meta: (item) => item.year, summary: (item) => item.text
   },
   {
-    key: 'recognitions', anchor: 'recognitions', no: '04', title: 'Recognition', singular: 'recognition', icon: Trophy,
-    description: 'Upload ảnh chụp các bài báo hoặc press coverage. Website sẽ tự xếp ảnh thành gallery.', save: contentRepository.saveRecognitions,
-    empty: { id: '', title: 'Press coverage', image: '' },
-    fields: [['title', 'Image title / alt text'], ['image', 'Press article image', 'image']],
-    meta: () => 'Press image', summary: (item) => item.image ? 'Published image' : 'Image required'
+    key: 'pressArticles', anchor: 'press-articles', no: '04', title: 'About Us — Press articles', singular: 'press article', icon: Trophy,
+    description: 'Upload ảnh bài báo và logo tòa soạn. Các bài được tự động xếp nghiêng, chồng lớp ở About Us.', save: contentRepository.savePressArticles,
+    empty: { id: '', year: '2026', title: 'Press coverage', source: '', subtitle: '', description: '', image: '', logo: '', url: '#' },
+    fields: [
+      ['title', 'Article title'], ['source', 'Publication / source'], ['year', 'Year'],
+      ['description', 'Short description', 'textarea'], ['image', 'Article image', 'image'],
+      ['logo', 'Publication logo', 'image'], ['url', 'Full article URL']
+    ],
+    meta: (item) => `${item.source || 'Press'} / ${item.year || ''}`, summary: (item) => item.description || item.subtitle
   },
   {
-    key: 'services', anchor: 'services-admin', no: '05', title: 'Services', singular: 'service', icon: Layers3,
+    key: 'recognitions', anchor: 'recognitions', no: '05', title: 'Recognition', singular: 'recognition', icon: Trophy,
+    description: 'Giải thưởng, xếp hạng và ghi nhận chuyên môn.', save: contentRepository.saveRecognitions,
+    empty: { id: '', year: '2026', title: '', subtitle: '', description: '', image: '' },
+    fields: [['year', 'Year'], ['title', 'Recognition title'], ['subtitle', 'Subtitle'], ['description', 'Description', 'textarea'], ['image', 'Recognition image', 'image']],
+    meta: (item) => item.year || 'Recognition', summary: (item) => item.subtitle || item.description
+  },
+  {
+    key: 'services', anchor: 'services-admin', no: '06', title: 'Services', singular: 'service', icon: Layers3,
     description: 'Các năng lực và dịch vụ agency cung cấp.', save: contentRepository.saveServices,
     empty: { id: '', no: '01', title: '', text: '', tags: [] },
-    fields: [['no', 'Number'], ['title', 'Service title'], ['text', 'Description', 'textarea'], ['tags', 'Tags — separated by commas']],
+    fields: [['no', 'Number'], ['title', 'Service title'], ['text', 'Optional description', 'textarea-optional'], ['tags', 'Service items — separated by commas']],
     meta: (item) => `Service ${item.no}`, summary: (item) => item.text
-  },
-  {
-    key: 'partners', anchor: 'partners', no: '06', title: 'Partner logos', singular: 'partner', icon: Handshake,
-    description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
-    empty: { id: '', name: '', group: 'Partner', logo: '' },
-    fields: [['name', 'Name'], ['group', 'Group'], ['logo', 'Partner logo', 'image']],
-    meta: (item) => item.group, summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   },
   {
     key: 'cases', anchor: 'cases', no: '07', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
@@ -140,11 +114,11 @@ const collectionDefinitions = [
     meta: (item) => `${item.count} people`, summary: (item) => item.detail
   },
   {
-    key: 'processSteps', anchor: 'process-admin', no: '09', title: 'Process steps', singular: 'process step', icon: Workflow,
-    description: 'Các bước trong quy trình làm việc.', save: contentRepository.saveProcessSteps,
-    empty: { id: '', no: '01', title: '', text: '' },
-    fields: [['no', 'Number'], ['title', 'Step title'], ['text', 'Description', 'textarea']],
-    meta: (item) => `Step ${item.no}`, summary: (item) => item.text
+    key: 'partners', anchor: 'partners', no: '09', title: 'Partner logos', singular: 'partner', icon: Handshake,
+    description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
+    empty: { id: '', name: '', group: 'Partner', logo: '' },
+    fields: [['name', 'Name'], ['group', 'Group'], ['logo', 'Partner logo', 'image']],
+    meta: (item) => item.group, summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   }
 ]
 
@@ -155,12 +129,12 @@ function slugify(value) {
 function loadCollections() {
   return {
     milestones: contentRepository.getMilestones(),
+    pressArticles: contentRepository.getPressArticles(),
     recognitions: contentRepository.getRecognitions(),
     services: contentRepository.getServices(),
-    partners: contentRepository.getPartners(),
     cases: contentRepository.getCaseStudies(),
     teamMembers: contentRepository.getTeamMembers(),
-    processSteps: contentRepository.getProcessSteps()
+    partners: contentRepository.getPartners()
   }
 }
 
@@ -215,7 +189,7 @@ export default function AdminPage() {
   function saveSettings(event) {
     event.preventDefault()
     contentRepository.saveSiteSettings(settings)
-    setStatus('Đã lưu Hero, Data Hub và thông tin liên hệ.')
+    setStatus('Đã lưu nhận diện, Hero và thông tin footer.')
   }
 
   function savePageCopy(event) {
@@ -335,25 +309,22 @@ export default function AdminPage() {
         </div>
 
         <section id="general" className="admin-panel">
-          <PanelTitle no="01" title="Brand, Hero & Contact" description="Nhận diện, hero, chỉ số Data Hub, liên hệ và social links." />
+          <PanelTitle no="01" title="Brand, Hero & Footer" description="Toàn bộ text, hình ảnh nhận diện, Hero và thông tin liên hệ trên trang chủ." />
           <form className="admin-form" onSubmit={saveSettings}>
             <label>Company name<input value={settings.companyName} onChange={(event) => setSettings({ ...settings, companyName: event.target.value })} /></label>
             <ImageEditor label="Header logo" value={settings.companyLogo || ''} onChange={(value) => setSettings({ ...settings, companyLogo: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, companyLogo: value }))} />
             <ImageEditor label="Hero background" value={settings.heroBackground} onChange={(value) => setSettings({ ...settings, heroBackground: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, heroBackground: value }))} />
             <label>Background position<input value={settings.heroBackgroundPosition} onChange={(event) => setSettings({ ...settings, heroBackgroundPosition: event.target.value })} /></label>
-            <div className="admin-form-divider full"><span>Data Hub statistics</span></div>
-            {settings.stats.map((stat, index) => (
-              <div className="admin-stat-row full" key={index}>
-                <label>Value {index + 1}<input value={stat.value} onChange={(event) => updateStat(index, 'value', event.target.value)} /></label>
-                <label>Label {index + 1}<input value={stat.label} onChange={(event) => updateStat(index, 'label', event.target.value)} /></label>
-              </div>
-            ))}
+            <div className="admin-form-divider full"><span>Hero copy</span></div>
+            <label>Eyebrow<input value={settings.eyebrow || ''} onChange={(event) => setSettings({ ...settings, eyebrow: event.target.value })} /></label>
+            <label>Primary title<input value={settings.heroTitle || ''} onChange={(event) => setSettings({ ...settings, heroTitle: event.target.value })} /></label>
+            <label>Secondary title<input value={settings.heroSecondTitle || ''} onChange={(event) => setSettings({ ...settings, heroSecondTitle: event.target.value })} /></label>
+            <label>Description<input value={settings.heroDescription || ''} onChange={(event) => setSettings({ ...settings, heroDescription: event.target.value })} /></label>
 
             <div className="admin-form-divider full"><span>Contact & social</span></div>
             <label>Email<input value={settings.contactEmail} onChange={(event) => setSettings({ ...settings, contactEmail: event.target.value })} /></label>
             <label>Hotline<input value={settings.hotline} onChange={(event) => setSettings({ ...settings, hotline: event.target.value })} /></label>
             <label className="full">Address<input value={settings.address} onChange={(event) => setSettings({ ...settings, address: event.target.value })} /></label>
-            <label className="full">Google Maps embed URL<input value={settings.mapEmbedUrl} onChange={(event) => setSettings({ ...settings, mapEmbedUrl: event.target.value })} /></label>
             <label>Footer tagline<input value={settings.footerTagline} onChange={(event) => setSettings({ ...settings, footerTagline: event.target.value })} /></label>
             <label>LinkedIn URL<input value={settings.linkedinUrl} onChange={(event) => setSettings({ ...settings, linkedinUrl: event.target.value })} /></label>
             <label>Facebook URL<input value={settings.facebookUrl} onChange={(event) => setSettings({ ...settings, facebookUrl: event.target.value })} /></label>
@@ -363,7 +334,7 @@ export default function AdminPage() {
         </section>
 
         <section id="page-copy" className="admin-panel">
-          <PanelTitle no="02" title="Homepage copy" description="Sửa tiêu đề, mô tả và CTA của tất cả các section." />
+          <PanelTitle no="02" title="Homepage copy" description="Sửa toàn bộ tiêu đề và mô tả đang hiển thị trên trang chủ." />
           <form className="admin-copy-editor" onSubmit={savePageCopy}>
             {copyGroups.map((group, index) => (
               <details className="admin-copy-group" key={group.key} open={index === 0}>
@@ -408,11 +379,12 @@ export default function AdminPage() {
                 if (type === 'image') {
                   return <ImageEditor key={field} label={label} value={value} onChange={(next) => updateEditing(field, next)} onUpload={(event) => readImage(event, (next) => updateEditing(field, next))} />
                 }
+                const isTextarea = type === 'textarea' || type === 'textarea-optional'
                 return (
-                  <label className={type === 'textarea' ? 'full' : ''} key={field}>
+                  <label className={isTextarea ? 'full' : ''} key={field}>
                     {label}
-                    {type === 'textarea'
-                      ? <textarea required rows="3" value={value} onChange={(event) => updateEditing(field, event.target.value)} />
+                    {isTextarea
+                      ? <textarea required={type === 'textarea'} rows="3" value={value} onChange={(event) => updateEditing(field, event.target.value)} />
                       : <input required value={value} onChange={(event) => updateEditing(field, event.target.value)} />}
                   </label>
                 )
@@ -456,6 +428,7 @@ function CollectionSection({ definition, items, onAdd, onEdit, onRemove }) {
 
 function CollectionPreview({ type, item, icon: Icon }) {
   if (type === 'cases') return <div className="admin-preview"><CaseVisual item={item} compact /></div>
+  if (type === 'pressArticles') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : item.logo ? <img src={item.logo} alt="" /> : <strong>{item.year}</strong>}</div>
   if (type === 'recognitions') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : <strong>{item.year}</strong>}</div>
   if (type === 'partners') return <div className="admin-preview admin-preview--logo">{item.logo ? <img src={item.logo} alt="" /> : <strong>{item.name}</strong>}</div>
   return <div className="admin-preview admin-preview--module"><Icon /><strong>{item.no || item.year || item.count}</strong></div>

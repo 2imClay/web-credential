@@ -11,7 +11,7 @@ export const defaultSiteSettings = {
   heroPrimaryCta: 'Book a Meeting',
   heroSecondaryCta: 'Download PDF',
   contactEmail: 'contact@dgm.vn',
-  hotline: '090 xxx xxxx',
+  hotline: '',
   address: 'Hà Nội / TP. Hồ Chí Minh',
   mapEmbedUrl: 'https://www.google.com/maps?q=Ho+Chi+Minh+City&output=embed',
   footerTagline: 'Marketing Accelerator Partner',
@@ -26,12 +26,36 @@ export const defaultSiteSettings = {
 }
 
 export const defaultPageContent = {
+  sectionLabels: {
+    about: 'About Us',
+    milestones: 'Our Journey',
+    recognition: 'Our Recognition',
+    services: 'Our Services',
+    cases: 'Case Studies',
+    team: 'Our Team',
+    partners: 'Partners',
+    footer: 'Contact DGM'
+  },
+  ui: {
+    navAbout: 'About Us',
+    navJourney: 'Our Journey',
+    navRecognition: 'Recognition',
+    navServices: 'Services',
+    navCases: 'Case Studies',
+    navTeam: 'Our Team',
+    navPartners: 'Partners',
+    navContact: 'Contact',
+    pressSourcesLabel: 'Featured by',
+    pressReadMore: 'Read full article',
+    allCasesLabel: 'All'
+  },
   about: {
     eyebrow: 'About us',
+    title: 'DGM in the news.',
     titleBefore: 'Empowering brands with',
     titleHighlight: 'innovative',
     titleAfter: 'digital solutions',
-    intro: 'DGM kết nối chiến lược, sáng tạo, dữ liệu và công nghệ để tạo ra những giải pháp digital có khả năng nâng tầm thương hiệu, thu hút đúng khách hàng và tạo kết quả đo lường được.',
+    intro: 'Những câu chuyện, góc nhìn và dấu ấn của DGM được ghi nhận bởi các tòa soạn và cộng đồng chuyên môn.',
     featureOne: 'Creative Excellence',
     featureTwo: 'Tailored Solutions',
     featureThree: 'Client Approach',
@@ -90,6 +114,7 @@ export const defaultPageContent = {
     coreName: 'DGM',
     coreLabel: 'Integrated growth team',
     footerNote: 'One senior, hands-on team from brief to impact.',
+    peopleLabel: 'people',
     cta: 'Build something together'
   },
   process: {
@@ -141,43 +166,36 @@ export const services = [
     id: 'service-strategy',
     no: '01',
     title: 'Digital Strategy',
-    text: 'Market intelligence, brand positioning và go-to-market planning theo mục tiêu kinh doanh.',
-    tags: ['Brand Strategy', 'Growth Planning']
+    text: '',
+    tags: ['Media Strategy Planning', 'Media Buying', 'Performance Media', 'E-commerce Marketing', 'SEO Strategy']
   },
   {
     id: 'service-transformation',
     no: '02',
     title: 'Digital Transformation',
-    text: 'Thiết kế hành trình số, hệ thống nội dung và quy trình vận hành tăng trưởng.',
-    tags: ['Digital Journey', 'Operations']
+    text: '',
+    tags: ['CRM', 'API Conversion', 'AdTech', 'MarTech']
   },
   {
     id: 'service-creative',
     no: '03',
     title: 'Creative & Communication',
-    text: 'Big idea, creative platform, social content và integrated campaign đa kênh.',
-    tags: ['Creative Platform', 'IMC']
-  },
-  {
-    id: 'service-branding',
-    no: '04',
-    title: 'Branding & Identity',
-    text: 'Xây dựng hệ thống nhận diện rõ ràng, nhất quán và phù hợp với môi trường số.',
-    tags: ['Branding', 'Visual System']
+    text: '',
+    tags: ['Creative Planning', 'Communication Planning', 'Social Seeding & Influencers', 'Metaverse, AR & VR', 'Content at Scale']
   },
   {
     id: 'service-development',
-    no: '05',
+    no: '04',
     title: 'Web / App Development',
-    text: 'Trải nghiệm số gọn, rõ, tối ưu chuyển đổi và thuận tiện cho đội ngũ quản trị.',
-    tags: ['Web Design', 'App Development']
+    text: '',
+    tags: ['Customer Data Platform', 'Web / App Personalization', 'API / CRM / Data Center']
   },
   {
     id: 'service-insights',
-    no: '06',
-    title: 'Media & Consumer Insights',
-    text: 'Research, social listening, audience profiling, media performance và campaign measurement.',
-    tags: ['Media', 'Analytics']
+    no: '05',
+    title: 'Consumer Insights',
+    text: '',
+    tags: ['Consumer Group Index', 'Customer Survey', 'Social & Web Performance Report', 'Social Listening & Brand Health Check']
   }
 ]
 
@@ -200,6 +218,8 @@ export const teamMembers = [
   { id: 'team-event', role: 'Event', count: '12', detail: 'Experience design, activation and on-ground production.', tags: ['Experience', 'Activation'] }
 ]
 
+export const defaultPressArticles = []
+
 export const defaultRecognitions = [
   {
     id: 'mma-smarties-2025',
@@ -207,7 +227,10 @@ export const defaultRecognitions = [
     title: 'MMA Smarties Vietnam',
     subtitle: 'Silver Winner',
     description: 'Recognition for a data-led, integrated campaign that connected strategy, media and measurable business impact.',
-    image: ''
+    source: 'MMA Global',
+    image: '',
+    logo: '',
+    url: '#'
   },
   {
     id: 'top-five-agency',
@@ -215,7 +238,10 @@ export const defaultRecognitions = [
     title: 'Top 5 Vietnam Digital Agencies',
     subtitle: 'Agency recognition',
     description: 'Named among Vietnam’s notable digital agencies for integrated capabilities and consistent delivery.',
-    image: ''
+    source: 'Agency Report',
+    image: '',
+    logo: '',
+    url: '#'
   },
   {
     id: 'warc-top-three',
@@ -223,7 +249,10 @@ export const defaultRecognitions = [
     title: 'Top 3 Digital Agency in Vietnam',
     subtitle: 'By WARC',
     description: 'A milestone reflecting strategic creativity, disciplined execution and performance across key accounts.',
-    image: ''
+    source: 'WARC',
+    image: '',
+    logo: '',
+    url: '#'
   },
   {
     id: 'industry-coverage',
@@ -231,7 +260,10 @@ export const defaultRecognitions = [
     title: 'Industry & press recognition',
     subtitle: 'Selected mentions',
     description: 'Campaign work and agency achievements featured by respected marketing and business publications.',
-    image: ''
+    source: 'Industry Press',
+    image: '',
+    logo: '',
+    url: '#'
   }
 ]
 

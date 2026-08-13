@@ -3,7 +3,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 export default function Preloader() {
   const [visible, setVisible] = useState(() => (
-    window.location.pathname === '/' && sessionStorage.getItem('dgm_preloader_seen') !== '1'
+    window.location.pathname === '/'
+    && !new URLSearchParams(window.location.search).has('skipPreloader')
+    && sessionStorage.getItem('dgm_preloader_seen') !== '1'
   ))
 
   useEffect(() => {
@@ -39,7 +41,6 @@ export default function Preloader() {
               <b />
               <b />
             </div>
-            <p>Loading credential experience</p>
           </motion.div>
         </motion.div>
       )}

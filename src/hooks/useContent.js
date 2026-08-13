@@ -5,6 +5,7 @@ export function useContent() {
   const [caseStudies, setCaseStudies] = useState(contentRepository.getCaseStudies())
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [recognitions, setRecognitions] = useState(contentRepository.getRecognitions())
+  const [pressArticles, setPressArticles] = useState(contentRepository.getPressArticles())
   const [partners, setPartners] = useState(contentRepository.getPartners())
   const [pageContent, setPageContent] = useState(contentRepository.getPageContent())
   const [milestones, setMilestones] = useState(contentRepository.getMilestones())
@@ -17,6 +18,7 @@ export function useContent() {
       setCaseStudies(contentRepository.getCaseStudies())
       setSettings(contentRepository.getSiteSettings())
       setRecognitions(contentRepository.getRecognitions())
+      setPressArticles(contentRepository.getPressArticles())
       setPartners(contentRepository.getPartners())
       setPageContent(contentRepository.getPageContent())
       setMilestones(contentRepository.getMilestones())
@@ -36,6 +38,7 @@ export function useContent() {
     caseStudies,
     settings,
     recognitions,
+    pressArticles,
     partners,
     pageContent,
     milestones,

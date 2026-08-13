@@ -1,15 +1,20 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import CaseStudyCard from './CaseStudyCard'
 
-export default function CaseStudyGallery({ items }) {
-  const categories = useMemo(() => ['All', ...new Set(items.map((item) => item.category))], [items])
-  const [active, setActive] = useState('All')
+export default function CaseStudyGallery({ items, copy = {} }) {
+  const allLabel = copy.allCasesLabel || 'All'
+  const categories = useMemo(() => [allLabel, ...new Set(items.map((item) => item.category))], [allLabel, items])
+  const [active, setActive] = useState(allLabel)
   const [isDragging, setIsDragging] = useState(false)
   const railRef = useRef(null)
   const dragState = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false })
   const suppressClick = useRef(false)
-  const visible = active === 'All' ? items : items.filter((item) => item.category === active)
+  const visible = active === allLabel ? items : items.filter((item) => item.category === active)
+
+  useEffect(() => {
+    if (!categories.includes(active)) setActive(allLabel)
+  }, [active, allLabel, categories])
 
   const scrollRail = (direction) => {
     railRef.current?.scrollBy({
@@ -74,7 +79,6 @@ export default function CaseStudyGallery({ items }) {
         </div>
 
         <div className="case-gallery-nav" aria-label="Điều hướng case studies">
-          <span>Drag to explore</span>
           <button type="button" onClick={() => scrollRail(-1)} aria-label="Xem case study trước">
             <ArrowLeft />
           </button>
