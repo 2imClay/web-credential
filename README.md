@@ -16,69 +16,64 @@ npm run build
 npm run preview
 ```
 
-## Supabase backend
+## Backend
 
-Ứng dụng dùng:
+- Supabase Postgres lưu nội dung landing page.
+- Supabase Storage bucket `site-assets` lưu hình ảnh Admin upload.
+- Supabase Auth email/password cho tài khoản được tạo thủ công.
+- Row Level Security cho public chỉ đọc và mọi user đã đăng nhập được ghi.
 
-- Supabase Postgres để lưu toàn bộ nội dung landing page.
-- Supabase Storage bucket `site-assets` để lưu hình ảnh do admin tải lên.
-- Supabase Auth magic link để đăng nhập bằng email thật thuộc `@digimind.asia`.
-- Row Level Security để trang public chỉ đọc và chỉ người dùng công ty được ghi dữ liệu.
+Hệ thống không cần domain email công ty, magic link hoặc SMTP.
 
-### 1. Tạo database và policy
+## Thiết lập Supabase
 
-Mở Supabase Dashboard > SQL Editor và chạy file:
+Chạy lần lượt hai migration:
 
-`supabase/migrations/202608130001_landing_page_backend.sql`
+```text
+supabase/migrations/202608130001_landing_page_backend.sql
+supabase/migrations/202608140001_manual_admin_accounts.sql
+```
 
-Sau đó vào Authentication > Hooks > Before User Created, chọn Postgres function:
+Sau đó:
 
-`public.hook_restrict_digimind_signup`
+1. Authentication > Providers > Email: tắt Allow new users to sign up.
+2. Authentication > Hooks: tắt Before User Created Hook cũ nếu đã bật.
+3. Authentication > Users > Add user > Create new user.
+4. Nhập email, mật khẩu mạnh và chọn xác nhận email tự động nếu Dashboard có tùy chọn.
+5. User vừa tạo có thể đăng nhập Content Studio ngay, không cần thêm bảng quyền hoặc chạy SQL cấp quyền riêng.
 
-Hook này chặn tài khoản ngoài domain công ty ngay trước khi user được tạo. RLS trong migration tiếp tục kiểm tra lại domain cho mọi thao tác thêm, sửa, xóa.
+## Biến môi trường
 
-### 2. Cấu hình URL đăng nhập
-
-Trong Authentication > URL Configuration:
-
-- Site URL: URL production của website.
-- Redirect URLs: thêm `http://localhost:5173/admin` và URL `/admin` của production.
-
-### 3. Cấu hình gửi email thật
-
-Trong Authentication > Emails > SMTP Settings, cấu hình SMTP của công ty hoặc một nhà cung cấp email giao dịch. SMTP mặc định của Supabase chỉ phù hợp để thử nghiệm và thường chỉ gửi tới thành viên của Supabase project.
-
-### 4. Cấu hình frontend
-
-Tạo `.env.local` từ `.env.example`:
+Tạo `.env.local`:
 
 ```env
 VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_YOUR_KEY
-VITE_COMPANY_EMAIL_DOMAIN=digimind.asia
-VITE_SUPABASE_ALLOW_SIGNUP=true
 ```
 
-Publishable key có thể dùng ở frontend khi RLS đã bật. Không đưa `service_role` hoặc secret key vào Vite hay repository.
+Publishable key có thể dùng trong frontend khi RLS đã bật. Không đưa `service_role`, secret key hoặc database password vào Vite/repository.
 
 ## Content Studio
 
-Truy cập `/admin`, nhập email `@digimind.asia`, rồi mở magic link trong hộp thư. Admin có thể quản lý:
+Truy cập `/admin`, nhập email và mật khẩu của user đã được tạo/cấp quyền. Admin có thể quản lý:
 
-- Nhận diện thương hiệu, logo, hero và footer.
+- Brand, logo, Hero và Footer.
 - Text của tất cả section.
 - Timeline, bài báo, recognition và services.
 - Partners, case studies và team.
-- Hình ảnh lưu trực tiếp trên Supabase Storage.
+- Hình ảnh trên Supabase Storage.
 
-Nội dung public được tải từ Supabase và tự cập nhật khi database thay đổi.
+## Tài liệu
+
+- `HUONG_DAN_DU_AN.md`: kiến trúc và bảo trì toàn bộ website.
+- `HUONG_DAN_DEPLOY_VERCEL_SUPABASE.md`: thiết lập Supabase và deploy Vercel từng bước.
 
 ## Cấu trúc chính
 
 - `src/pages/HomePage.jsx`: bố cục trang chủ.
-- `src/pages/AdminPage.jsx`: Content Studio và đăng nhập Supabase.
-- `src/services/authService.js`: magic-link Auth và kiểm tra domain.
-- `src/services/contentRepository.js`: Database, realtime và Storage.
+- `src/pages/AdminPage.jsx`: Content Studio và form đăng nhập.
+- `src/services/authService.js`: email/password Auth.
+- `src/services/contentRepository.js`: Database, Realtime và Storage.
 - `src/lib/supabase.js`: Supabase browser client.
-- `src/data/siteData.js`: nội dung mặc định khi database chưa có dữ liệu.
-- `supabase/migrations`: schema, RLS, Storage policy và Auth hook.
+- `src/data/siteData.js`: nội dung fallback.
+- `supabase/migrations`: schema và policy.

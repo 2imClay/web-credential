@@ -1,16 +1,5 @@
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
-export const companyEmailDomain = (import.meta.env.VITE_COMPANY_EMAIL_DOMAIN || 'digimind.asia')
-  .trim()
-  .toLowerCase()
-  .replace(/^@/, '')
-
-export function isCompanyEmail(email = '') {
-  const normalizedEmail = email.trim().toLowerCase()
-  return normalizedEmail.endsWith(`@${companyEmailDomain}`)
-    && normalizedEmail.split('@').length === 2
-}
-
 function requireSupabase() {
   if (!isSupabaseConfigured || !supabase) {
     throw new Error('Supabase chưa được cấu hình. Hãy thêm Project URL và Publishable Key vào file .env.local.')
@@ -21,38 +10,35 @@ function requireSupabase() {
 export const authService = {
   isConfigured: isSupabaseConfigured,
 
-  async getCompanySession() {
+  async getSession() {
     if (!supabase) return null
     const { data, error } = await supabase.auth.getSession()
     if (error) throw error
-    if (!data.session || !isCompanyEmail(data.session.user.email)) return null
     return data.session
   },
 
   onAuthStateChange(callback) {
     if (!supabase) return () => {}
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      callback(session && isCompanyEmail(session.user.email) ? session : null)
-    })
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => callback(session))
     return () => data.subscription.unsubscribe()
   },
 
-  async sendMagicLink(email) {
-    const normalizedEmail = email.trim().toLowerCase()
-    if (!isCompanyEmail(normalizedEmail)) {
-      throw new Error(`Chỉ email @${companyEmailDomain} được phép đăng nhập.`)
-    }
-
+  async signIn(email, password) {
     const client = requireSupabase()
-    const allowSignup = import.meta.env.VITE_SUPABASE_ALLOW_SIGNUP !== 'false'
-    const { error } = await client.auth.signInWithOtp({
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail || !password) throw new Error('Vui lòng nhập đầy đủ email và mật khẩu.')
+
+    const { data, error } = await client.auth.signInWithPassword({
       email: normalizedEmail,
-      options: {
-        emailRedirectTo: `${window.location.origin}/admin`,
-        shouldCreateUser: allowSignup
-      }
+      password
     })
-    if (error) throw error
+    if (error) {
+      const message = error.message === 'Invalid login credentials'
+        ? 'Email hoặc mật khẩu không đúng.'
+        : error.message
+      throw new Error(message)
+    }
+    return data.session
   },
 
   async signOut() {

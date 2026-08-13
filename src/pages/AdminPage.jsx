@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { CaseVisual } from '../components/CaseStudyCard'
-import { authService, companyEmailDomain } from '../services/authService'
+import { authService } from '../services/authService'
 import { contentRepository } from '../services/contentRepository'
 
 const copyGroups = [
@@ -139,6 +139,7 @@ export default function AdminPage() {
   const [session, setSession] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [pageContent, setPageContent] = useState(contentRepository.getPageContent())
   const [collections, setCollections] = useState(loadCollections)
@@ -155,7 +156,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     let active = true
-    authService.getCompanySession()
+    authService.getSession()
       .then((currentSession) => { if (active) setSession(currentSession) })
       .catch((error) => { if (active) setStatus(error.message) })
       .finally(() => { if (active) setAuthLoading(false) })
@@ -186,8 +187,10 @@ export default function AdminPage() {
     event.preventDefault()
     setSaving(true)
     try {
-      await authService.sendMagicLink(email)
-      setStatus(`Đã gửi link đăng nhập tới ${email.trim().toLowerCase()}. Vui lòng kiểm tra hộp thư công ty.`)
+      const adminSession = await authService.signIn(email, password)
+      setSession(adminSession)
+      setPassword('')
+      setStatus('')
     } catch (error) {
       setStatus(error.message)
     } finally {
@@ -352,10 +355,11 @@ export default function AdminPage() {
           <div className="admin-login-mark"><span>DGM</span><i /></div>
           <p className="eyebrow">DGM Content Studio</p>
           <h1>Welcome back.</h1>
-          <p>Đăng nhập an toàn bằng link được gửi tới email công ty.</p>
+          <p>Đăng nhập bằng tài khoản đã được tạo trong Supabase Authentication.</p>
           <form onSubmit={login}>
-            <label>Email công ty<input type="email" required autoComplete="email" placeholder={`ten@${companyEmailDomain}`} value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-            <button className="button button-primary" type="submit" disabled={saving || !authService.isConfigured}>{saving ? 'Đang gửi...' : 'Gửi link đăng nhập'}</button>
+            <label>Email<input type="email" required autoComplete="username" placeholder="admin@example.com" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
+            <label>Mật khẩu<input type="password" required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+            <button className="button button-primary" type="submit" disabled={saving || !authService.isConfigured}>{saving ? 'Đang đăng nhập...' : 'Đăng nhập'}</button>
             {!authService.isConfigured && <span className="form-status">Chưa có cấu hình Supabase trong .env.local.</span>}
             {status && <span className="form-status">{status}</span>}
           </form>

@@ -11,7 +11,7 @@ Dự án là website credential/landing page của DGM, gồm:
 - Trang chi tiết riêng cho từng case study.
 - Content Studio tại `/admin` để chỉnh sửa nội dung và hình ảnh.
 - Supabase làm backend: Auth, PostgreSQL Database, Storage và Realtime.
-- Chỉ email thật thuộc domain `@digimind.asia` được đăng nhập và chỉnh sửa.
+- Admin đăng nhập bằng user email/password được tạo thủ công trong Supabase Authentication.
 
 Luồng trang chủ hiện tại:
 
@@ -86,7 +86,7 @@ Không sửa trực tiếp thư mục `dist`. Đây là kết quả được Vit
 | Lucide React | Icon dạng SVG |
 | Supabase JS 2 | Kết nối Auth, Database, Storage và Realtime |
 | PostgreSQL | Lưu nội dung landing page dưới dạng JSONB |
-| Supabase Auth | Đăng nhập bằng magic link gửi tới email công ty |
+| Supabase Auth | Đăng nhập email/password bằng user được tạo thủ công |
 | Supabase Storage | Lưu logo, ảnh bài báo, recognition và case study |
 | Supabase Realtime | Thông báo frontend khi nội dung database thay đổi |
 | CSS thuần | Hệ thống giao diện chính trong `src/styles/site.css` |
@@ -150,7 +150,7 @@ flowchart LR
     E[AdminPage] -->|upsert JSONB| B
     E -->|upload WebP| F[Supabase Storage]
     F -->|public image URL| A
-    G[Supabase Auth] -->|JWT email @digimind.asia| E
+    G[Supabase Auth] -->|authenticated session| E
     H[RLS policies] --> A
     H --> F
 ```
@@ -169,11 +169,11 @@ Nếu Supabase chưa được cấu hình hoặc database chưa có row, landing
 
 ### Khi admin lưu nội dung
 
-1. Admin đăng nhập bằng magic link.
-2. Supabase cấp session/JWT sau khi người dùng mở link trong email.
+1. Admin đăng nhập bằng email/password của user được tạo thủ công.
+2. Supabase trả session nếu email/password đúng.
 3. Admin sửa nội dung và bấm Save.
 4. Repository dùng `upsert` để ghi cả object/array vào row tương ứng.
-5. RLS kiểm tra JWT có email kết thúc chính xác bằng `@digimind.asia`.
+5. RLS chỉ cho role `authenticated` ghi dữ liệu.
 6. Database phát Realtime event để trang public cập nhật.
 
 ## 6. Route và anchor
@@ -400,79 +400,40 @@ Nếu không có `logo`, component dùng `name` làm wordmark. Danh sách đư�
 
 ## 9. Hướng dẫn tạo và kết nối Supabase
 
+Quy trình chi tiết nằm trong `HUONG_DAN_DEPLOY_VERCEL_SUPABASE.md`. Tóm tắt:
+
 ### Bước 1: Tạo project
 
 1. Đăng nhập [Supabase Dashboard](https://supabase.com/dashboard).
-2. Chọn New project.
-3. Chọn region gần người dùng chính.
-4. Đặt database password mạnh và lưu ở password manager.
-5. Chờ project khởi tạo hoàn tất.
+2. Chọn New project, region phù hợp và database password mạnh.
+3. Chờ project khởi tạo hoàn tất.
 
-### Bước 2: Chạy migration
-
-1. Vào SQL Editor.
-2. Mở file local:
+### Bước 2: Chạy hai migration theo thứ tự
 
 ```text
 supabase/migrations/202608130001_landing_page_backend.sql
+supabase/migrations/202608140001_manual_admin_accounts.sql
 ```
 
-3. Copy toàn bộ SQL vào editor.
-4. Bấm Run.
-5. Kiểm tra Table Editor có bảng `site_content`.
-6. Kiểm tra Storage có bucket `site-assets`.
+Migration cuối thay RLS domain cũ bằng policy cho role `authenticated`.
 
-Migration tạo:
+### Bước 3: Tắt public signup và hook cũ
 
-- Bảng và constraint.
-- Trigger audit `updated_at`, `updated_by`.
-- RLS policy cho Database.
-- Bucket và policy cho Storage.
-- Realtime publication.
-- Function chặn signup ngoài domain công ty.
+1. Authentication settings: tắt `Allow new users to sign up`.
+2. Giữ Email/password provider hoạt động.
+3. Authentication > Hooks: tắt Before User Created Hook cũ nếu từng bật.
+4. Không cần custom SMTP hoặc Auth Redirect URLs cho `signInWithPassword`.
 
-### Bước 3: Bật Auth Hook chặn domain
+### Bước 4: Tạo user thủ công
 
-1. Vào Authentication > Hooks.
-2. Chọn Before User Created.
-3. Chọn Postgres function.
-4. Chọn `public.hook_restrict_digimind_signup`.
-5. Bật hook và lưu.
+1. Authentication > Users > Add user > Create new user.
+2. Nhập email và mật khẩu mạnh.
+3. Confirm user trực tiếp trong Dashboard.
+4. Không dùng Send invitation vì không có SMTP.
 
-Nếu không bật bước này, giao diện và RLS vẫn chặn quyền chỉnh sửa của email ngoài công ty, nhưng người gọi trực tiếp Auth API có thể tạo một user không có quyền. Bật hook để chặn ngay trước khi user được tạo.
+User vừa được tạo có thể đăng nhập Content Studio ngay. Không cần bảng allowlist hay SQL cấp quyền riêng.
 
-Tài liệu chính thức: [Before User Created Hook](https://supabase.com/docs/guides/auth/auth-hooks/before-user-created-hook).
-
-### Bước 4: Cấu hình URL Auth
-
-Vào Authentication > URL Configuration:
-
-```text
-Site URL:
-https://ten-mien-production-cua-ban.com
-
-Redirect URLs:
-http://localhost:5173/admin
-https://ten-mien-production-cua-ban.com/admin
-```
-
-Phải thêm cả local và production. Nếu thiếu, magic link có thể quay về sai trang hoặc bị từ chối.
-
-### Bước 5: Cấu hình gửi email thật
-
-Magic link chỉ hữu dụng khi email được gửi tới inbox thật.
-
-1. Vào Authentication > Emails > SMTP Settings.
-2. Cấu hình SMTP của công ty hoặc nhà cung cấp transactional email.
-3. Thiết lập From address, ví dụ `no-reply@auth.digimind.asia`.
-4. Cấu hình SPF, DKIM và DMARC theo hướng dẫn nhà cung cấp.
-5. Test bằng một địa chỉ thật `@digimind.asia`.
-
-SMTP mặc định của Supabase chỉ phù hợp để thử nghiệm, có giới hạn thấp và có thể chỉ gửi tới email thuộc team của Supabase project. Production nên dùng custom SMTP.
-
-Tài liệu chính thức: [Supabase Custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp).
-
-### Bước 6: Lấy Project URL và Publishable Key
+### Bước 5: Lấy Project URL và Publishable Key
 
 Vào Project Settings > API, lấy:
 
@@ -481,15 +442,13 @@ Vào Project Settings > API, lấy:
 
 Không dùng hoặc đưa `service_role`, secret key, database password vào frontend.
 
-### Bước 7: Tạo `.env.local`
+### Bước 6: Tạo `.env.local`
 
 Copy `.env.example` thành `.env.local`:
 
 ```env
 VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_YOUR_KEY
-VITE_COMPANY_EMAIL_DOMAIN=digimind.asia
-VITE_SUPABASE_ALLOW_SIGNUP=true
 ```
 
 Ý nghĩa:
@@ -498,63 +457,39 @@ VITE_SUPABASE_ALLOW_SIGNUP=true
 |---|---|
 | `VITE_SUPABASE_URL` | URL API của project |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Key frontend được bảo vệ bởi RLS |
-| `VITE_COMPANY_EMAIL_DOMAIN` | Domain được client chấp nhận |
-| `VITE_SUPABASE_ALLOW_SIGNUP` | Cho phép email công ty tạo user thật lần đầu |
 
 Sau khi sửa `.env.local`, phải dừng và chạy lại `npm run dev`.
 
 Vite chỉ đưa biến bắt đầu bằng `VITE_` vào browser bundle. Vì vậy tuyệt đối không đặt secret key trong một biến `VITE_*`.
 
-### Bước 8: Đăng nhập lần đầu
+### Bước 7: Đăng nhập lần đầu
 
 1. Mở `/admin`.
-2. Nhập email thật, ví dụ `ten@digimind.asia`.
-3. Bấm Gửi link đăng nhập.
-4. Mở inbox và bấm magic link.
-5. Trình duyệt quay về `/admin` với session đã xác thực.
+2. Nhập email và mật khẩu của user đã tạo.
+3. Bấm Đăng nhập.
+4. Hệ thống xác thực password và tạo session.
 
 Nếu database còn trống, trang public vẫn dùng dữ liệu mặc định. Trong Admin có thể bấm Restore default content để ghi toàn bộ default lên Supabase. Chỉ dùng nút này khi khởi tạo hoặc khi thật sự muốn ghi đè nội dung hiện tại.
 
-Tài liệu chính thức: [Passwordless email login](https://supabase.com/docs/guides/auth/auth-email-passwordless).
+Tài liệu chính thức: [JavaScript signInWithPassword](https://supabase.com/docs/reference/javascript/auth-signinwithpassword).
 
 ## 10. Auth và phân quyền
 
 Hệ thống có ba lớp bảo vệ:
 
-1. `authService.js` kiểm tra email trên giao diện.
-2. Before User Created Hook từ chối signup ngoài `@digimind.asia`.
-3. RLS kiểm tra email trong JWT cho mỗi lần ghi Database/Storage.
+1. Public signup bị tắt; user chỉ được tạo thủ công trong Dashboard.
+2. `authService.js` xác thực email/password.
+3. RLS chỉ cho role `authenticated` ghi Database/Storage.
 
 ### Quyền hiện tại
 
 | Đối tượng | Đọc nội dung | Sửa nội dung | Upload ảnh |
 |---|---:|---:|---:|
 | Khách chưa đăng nhập | Có | Không | Không |
-| User ngoài domain | Có | Không | Không |
-| User `@digimind.asia` | Có | Có | Có |
+| User chưa đăng nhập | Có | Không | Không |
+| User Auth đã đăng nhập | Có | Có | Có |
 
-Hiện chưa có phân quyền admin/editor riêng. Tất cả email hợp lệ của công ty có cùng quyền chỉnh sửa.
-
-### Chỉ cho phép người đã được mời
-
-Đổi trên local và môi trường deploy:
-
-```env
-VITE_SUPABASE_ALLOW_SIGNUP=false
-```
-
-Sau đó vào Authentication > Users để mời/tạo các user công ty được phép. `shouldCreateUser: false` sẽ không tự tạo user mới khi gửi magic link.
-
-### Khi đổi domain công ty
-
-Phải sửa đồng thời:
-
-1. `VITE_COMPANY_EMAIL_DOMAIN` trong local và hosting.
-2. Regex trong function `public.is_digimind_company_user()`.
-3. Regex trong function `public.hook_restrict_digimind_signup()`.
-4. Chạy migration mới hoặc cập nhật hai function trên database production.
-
-Chỉ sửa biến frontend là không đủ vì RLS phía database vẫn dùng domain cũ.
+Email có thể thuộc bất kỳ domain nào. Muốn thu hồi quyền, ban hoặc xóa user trong Authentication > Users.
 
 Tài liệu chính thức: [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
@@ -833,27 +768,17 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-### Không nhận được magic link
+### Email/password không đăng nhập được
 
-- Kiểm tra Spam/Junk.
-- Kiểm tra Authentication Logs.
-- Kiểm tra custom SMTP.
-- Kiểm tra rate limit.
-- Kiểm tra email đúng `@digimind.asia`.
-- Nếu dùng signup invite-only, user phải tồn tại trước.
-
-### Magic link mở nhưng không vào Admin
-
-- Redirect URL chưa được allow.
-- Site URL sai.
-- Link đã hết hạn hoặc đã được dùng.
-- Email security scanner của công ty có thể mở link một lần trước người dùng.
+- Kiểm tra user đã được tạo trong Authentication > Users.
+- Kiểm tra password.
+- Kiểm tra user đã confirmed.
+- Kiểm tra frontend đang trỏ đúng Supabase project.
 
 ### Save báo Row Level Security violation
 
 - Session đã hết hạn.
-- JWT không chứa email hợp lệ.
-- Domain trong SQL khác domain frontend.
+- Migration policy authenticated chưa chạy hoặc session đã hết hạn.
 - Migration/policy chưa chạy đầy đủ.
 - Đăng xuất rồi đăng nhập lại để lấy JWT mới.
 
@@ -894,7 +819,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=
 - Tuyệt đối không đưa service role key vào frontend.
 - Không tắt RLS để sửa lỗi tạm thời trên production.
 - Bật MFA cho tài khoản quản trị Supabase organization.
-- Dùng custom SMTP và domain gửi email riêng.
+- Tắt public signup và chỉ tạo user thủ công.
 - Giữ database password trong password manager.
 - Review user trong Authentication định kỳ.
 - Nếu nhân sự nghỉ việc, xóa hoặc ban user Supabase Auth.
@@ -924,7 +849,6 @@ Không commit:
 - `.env.local`
 - Database password.
 - Service role/secret key.
-- File credential SMTP.
 
 Nên commit:
 
@@ -942,12 +866,11 @@ Nên commit:
 - [Lucide React](https://lucide.dev/guide/packages/lucide-react)
 - [Supabase JavaScript client](https://supabase.com/docs/reference/javascript/initializing)
 - [Supabase React quickstart](https://supabase.com/docs/guides/getting-started/quickstarts/reactjs)
-- [Supabase passwordless Auth](https://supabase.com/docs/guides/auth/auth-email-passwordless)
-- [Supabase Auth Hooks](https://supabase.com/docs/guides/auth/auth-hooks)
+- [Supabase password Auth](https://supabase.com/docs/guides/auth/passwords)
+- [Supabase Auth users](https://supabase.com/docs/guides/auth/users)
 - [Supabase Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Supabase Storage access control](https://supabase.com/docs/guides/storage/security/access-control)
 - [Supabase Realtime](https://supabase.com/docs/guides/realtime)
-- [Supabase custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp)
 
 ## 22. Danh sách file nên đọc đầu tiên khi tiếp quản
 
@@ -957,9 +880,9 @@ Theo thứ tự:
 2. `src/pages/HomePage.jsx` — luồng và thứ tự section.
 3. `src/data/siteData.js` — model và default content.
 4. `src/services/contentRepository.js` — luồng Database/Storage/Realtime.
-5. `src/services/authService.js` — đăng nhập và domain.
+5. `src/services/authService.js` — đăng nhập email/password.
 6. `src/pages/AdminPage.jsx` — form chỉnh sửa.
-7. `supabase/migrations/202608130001_landing_page_backend.sql` — quyền backend.
+7. `supabase/migrations/` — schema backend và policy cho Auth user.
 8. `src/styles/site.css` — visual và responsive.
 
 Khi thay đổi một tính năng, luôn kiểm tra đủ ba lớp:
