@@ -26,11 +26,14 @@ export function useContent() {
       setTeamMembers(contentRepository.getTeamMembers())
       setProcessSteps(contentRepository.getProcessSteps())
     }
-    window.addEventListener('storage', refresh)
     window.addEventListener('dgm-content-updated', refresh)
+    contentRepository.loadAll().catch((error) => {
+      console.error('Không thể tải nội dung từ Supabase:', error)
+    })
+    const unsubscribe = contentRepository.subscribeToChanges()
     return () => {
-      window.removeEventListener('storage', refresh)
       window.removeEventListener('dgm-content-updated', refresh)
+      unsubscribe()
     }
   }, [])
 

@@ -10,74 +10,121 @@ import {
   services,
   teamMembers
 } from '../data/siteData'
+import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
-const CASES_KEY = 'dgm_case_studies_v2'
-const SETTINGS_KEY = 'dgm_site_settings_v2'
-const RECOGNITIONS_KEY = 'dgm_recognitions_v2'
-const PRESS_ARTICLES_KEY = 'dgm_press_articles_v1'
-const PARTNERS_KEY = 'dgm_partners_v2'
-const PAGE_CONTENT_KEY = 'dgm_page_content_v1'
-const MILESTONES_KEY = 'dgm_milestones_v1'
-const SERVICES_KEY = 'dgm_services_v1'
-const TEAM_KEY = 'dgm_team_v1'
-const PROCESS_KEY = 'dgm_process_v1'
+const CONTENT_EVENT = 'dgm-content-updated'
+const CONTENT_TABLE = 'site_content'
+const ASSET_BUCKET = 'site-assets'
 
-function read(key, fallback) {
-  try {
-    const value = localStorage.getItem(key)
-    return value ? JSON.parse(value) : fallback
-  } catch {
-    return fallback
-  }
+const defaults = {
+  case_studies: defaultCaseStudies,
+  site_settings: defaultSiteSettings,
+  recognitions: defaultRecognitions,
+  press_articles: defaultPressArticles,
+  partners: defaultPartners,
+  page_content: defaultPageContent,
+  milestones,
+  services,
+  team_members: teamMembers,
+  process_steps: processSteps
 }
 
-function write(key, value) {
-  localStorage.setItem(key, JSON.stringify(value))
-  window.dispatchEvent(new CustomEvent('dgm-content-updated'))
-  return value
+const cache = structuredClone(defaults)
+
+function notify() {
+  window.dispatchEvent(new CustomEvent(CONTENT_EVENT))
 }
 
 function mergePageContent(saved = {}) {
   return Object.fromEntries(
-    Object.entries(defaultPageContent).map(([section, defaults]) => [
+    Object.entries(defaultPageContent).map(([section, sectionDefaults]) => [
       section,
-      { ...defaults, ...(saved[section] || {}) }
+      { ...sectionDefaults, ...(saved[section] || {}) }
     ])
   )
 }
 
+function setCache(key, value) {
+  cache[key] = value
+  notify()
+  return value
+}
+
+async function save(key, value) {
+  if (!supabase) throw new Error('Supabase chưa được cấu hình.')
+  const { error } = await supabase
+    .from(CONTENT_TABLE)
+    .upsert({ key, value }, { onConflict: 'key' })
+  if (error) throw error
+  return setCache(key, value)
+}
+
+async function uploadImage(file) {
+  if (!supabase) throw new Error('Supabase chưa được cấu hình.')
+  const extension = file.type === 'image/webp' ? 'webp' : (file.name.split('.').pop() || 'bin').toLowerCase()
+  const path = `homepage/${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}.${extension}`
+  const { error } = await supabase.storage
+    .from(ASSET_BUCKET)
+    .upload(path, file, { cacheControl: '31536000', contentType: file.type, upsert: false })
+  if (error) throw error
+  const { data } = supabase.storage.from(ASSET_BUCKET).getPublicUrl(path)
+  return data.publicUrl
+}
+
 export const contentRepository = {
-  getCaseStudies: () => read(CASES_KEY, defaultCaseStudies),
-  saveCaseStudies: (items) => write(CASES_KEY, items),
-  getSiteSettings: () => ({ ...defaultSiteSettings, ...read(SETTINGS_KEY, defaultSiteSettings) }),
-  saveSiteSettings: (settings) => write(SETTINGS_KEY, settings),
-  getRecognitions: () => read(RECOGNITIONS_KEY, defaultRecognitions),
-  saveRecognitions: (items) => write(RECOGNITIONS_KEY, items),
-  getPressArticles: () => read(PRESS_ARTICLES_KEY, defaultPressArticles),
-  savePressArticles: (items) => write(PRESS_ARTICLES_KEY, items),
-  getPartners: () => read(PARTNERS_KEY, defaultPartners),
-  savePartners: (items) => write(PARTNERS_KEY, items),
-  getPageContent: () => mergePageContent(read(PAGE_CONTENT_KEY, defaultPageContent)),
-  savePageContent: (content) => write(PAGE_CONTENT_KEY, content),
-  getMilestones: () => read(MILESTONES_KEY, milestones),
-  saveMilestones: (items) => write(MILESTONES_KEY, items),
-  getServices: () => read(SERVICES_KEY, services),
-  saveServices: (items) => write(SERVICES_KEY, items),
-  getTeamMembers: () => read(TEAM_KEY, teamMembers),
-  saveTeamMembers: (items) => write(TEAM_KEY, items),
-  getProcessSteps: () => read(PROCESS_KEY, processSteps),
-  saveProcessSteps: (items) => write(PROCESS_KEY, items),
-  reset: () => {
-    localStorage.removeItem(CASES_KEY)
-    localStorage.removeItem(SETTINGS_KEY)
-    localStorage.removeItem(RECOGNITIONS_KEY)
-    localStorage.removeItem(PRESS_ARTICLES_KEY)
-    localStorage.removeItem(PARTNERS_KEY)
-    localStorage.removeItem(PAGE_CONTENT_KEY)
-    localStorage.removeItem(MILESTONES_KEY)
-    localStorage.removeItem(SERVICES_KEY)
-    localStorage.removeItem(TEAM_KEY)
-    localStorage.removeItem(PROCESS_KEY)
-    window.dispatchEvent(new CustomEvent('dgm-content-updated'))
+  isConfigured: isSupabaseConfigured,
+
+  async loadAll() {
+    if (!supabase) return cache
+    const { data, error } = await supabase.from(CONTENT_TABLE).select('key,value')
+    if (error) throw error
+    Object.assign(cache, structuredClone(defaults))
+    data.forEach((row) => {
+      if (Object.hasOwn(defaults, row.key)) cache[row.key] = row.value
+    })
+    notify()
+    return cache
+  },
+
+  subscribeToChanges() {
+    if (!supabase) return () => {}
+    const channel = supabase
+      .channel('site-content-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: CONTENT_TABLE }, () => {
+        contentRepository.loadAll().catch(() => {})
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  },
+
+  getCaseStudies: () => cache.case_studies,
+  saveCaseStudies: (items) => save('case_studies', items),
+  getSiteSettings: () => ({ ...defaultSiteSettings, ...cache.site_settings }),
+  saveSiteSettings: (settings) => save('site_settings', settings),
+  getRecognitions: () => cache.recognitions,
+  saveRecognitions: (items) => save('recognitions', items),
+  getPressArticles: () => cache.press_articles,
+  savePressArticles: (items) => save('press_articles', items),
+  getPartners: () => cache.partners,
+  savePartners: (items) => save('partners', items),
+  getPageContent: () => mergePageContent(cache.page_content),
+  savePageContent: (content) => save('page_content', content),
+  getMilestones: () => cache.milestones,
+  saveMilestones: (items) => save('milestones', items),
+  getServices: () => cache.services,
+  saveServices: (items) => save('services', items),
+  getTeamMembers: () => cache.team_members,
+  saveTeamMembers: (items) => save('team_members', items),
+  getProcessSteps: () => cache.process_steps,
+  saveProcessSteps: (items) => save('process_steps', items),
+  uploadImage,
+
+  async reset() {
+    if (!supabase) throw new Error('Supabase chưa được cấu hình.')
+    const rows = Object.entries(defaults).map(([key, value]) => ({ key, value }))
+    const { error } = await supabase.from(CONTENT_TABLE).upsert(rows, { onConflict: 'key' })
+    if (error) throw error
+    Object.assign(cache, structuredClone(defaults))
+    notify()
   }
 }

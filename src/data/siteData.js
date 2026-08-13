@@ -10,7 +10,7 @@ export const defaultSiteSettings = {
   heroPdfUrl: '#',
   heroPrimaryCta: 'Book a Meeting',
   heroSecondaryCta: 'Download PDF',
-  contactEmail: 'contact@dgm.vn',
+  contactEmail: 'contact@digimind.asia',
   hotline: '',
   address: 'Hà Nội / TP. Hồ Chí Minh',
   mapEmbedUrl: 'https://www.google.com/maps?q=Ho+Chi+Minh+City&output=embed',

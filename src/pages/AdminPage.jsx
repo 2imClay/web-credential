@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowLeft,
   BarChart3,
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { CaseVisual } from '../components/CaseStudyCard'
+import { authService, companyEmailDomain } from '../services/authService'
 import { contentRepository } from '../services/contentRepository'
 
 const copyGroups = [
@@ -57,10 +58,6 @@ const copyGroups = [
     fields: [['copyrightText', 'Copyright text'], ['adminLinkLabel', 'Admin link label']]
   }
 ]
-
-const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@dgm.vn'
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'dgm2026'
-const ADMIN_SESSION_KEY = 'dgm_admin_session'
 
 const collectionDefinitions = [
   {
@@ -139,63 +136,128 @@ function loadCollections() {
 }
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(sessionStorage.getItem(ADMIN_SESSION_KEY) === '1')
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [pageContent, setPageContent] = useState(contentRepository.getPageContent())
   const [collections, setCollections] = useState(loadCollections)
   const [editing, setEditing] = useState(null)
   const [status, setStatus] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const authenticated = Boolean(session)
 
   const activeDefinition = useMemo(
     () => collectionDefinitions.find((definition) => definition.key === editing?.type),
     [editing]
   )
 
-  function login(event) {
+  useEffect(() => {
+    let active = true
+    authService.getCompanySession()
+      .then((currentSession) => { if (active) setSession(currentSession) })
+      .catch((error) => { if (active) setStatus(error.message) })
+      .finally(() => { if (active) setAuthLoading(false) })
+    const unsubscribe = authService.onAuthStateChange((currentSession) => {
+      if (active) {
+        setSession(currentSession)
+        setAuthLoading(false)
+      }
+    })
+    return () => {
+      active = false
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!authenticated) return
+    contentRepository.loadAll()
+      .then(() => {
+        setSettings(contentRepository.getSiteSettings())
+        setPageContent(contentRepository.getPageContent())
+        setCollections(loadCollections())
+      })
+      .catch((error) => setStatus(`Không thể tải dữ liệu: ${error.message}`))
+  }, [authenticated])
+
+  async function login(event) {
     event.preventDefault()
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, '1')
-      setAuthenticated(true)
-      setStatus('')
-    } else setStatus('Email hoặc mật khẩu không đúng.')
+    setSaving(true)
+    try {
+      await authService.sendMagicLink(email)
+      setStatus(`Đã gửi link đăng nhập tới ${email.trim().toLowerCase()}. Vui lòng kiểm tra hộp thư công ty.`)
+    } catch (error) {
+      setStatus(error.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function readImage(event, onReady) {
+  async function readImage(event, onReady) {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith('image/')) return setStatus('Vui lòng chọn đúng file hình ảnh.')
     if (file.size > 8 * 1024 * 1024) return setStatus('Ảnh tải lên cần nhỏ hơn 8 MB.')
-    const reader = new FileReader()
-    reader.onload = () => {
-      const image = new Image()
-      image.onload = () => {
-        const maxSide = 1800
-        const scale = Math.min(1, maxSide / Math.max(image.width, image.height))
-        const canvas = document.createElement('canvas')
-        canvas.width = Math.max(1, Math.round(image.width * scale))
-        canvas.height = Math.max(1, Math.round(image.height * scale))
-        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height)
-        onReady(canvas.toDataURL('image/webp', .84))
-      }
-      image.onerror = () => setStatus('Không đọc được file ảnh.')
-      image.src = String(reader.result)
+
+    setSaving(true)
+    setStatus('Đang tối ưu và tải ảnh lên Supabase Storage...')
+    const objectUrl = URL.createObjectURL(file)
+    try {
+      const optimizedFile = await new Promise((resolve, reject) => {
+        const image = new Image()
+        image.onload = () => {
+          const maxSide = 1800
+          const scale = Math.min(1, maxSide / Math.max(image.width, image.height))
+          const canvas = document.createElement('canvas')
+          canvas.width = Math.max(1, Math.round(image.width * scale))
+          canvas.height = Math.max(1, Math.round(image.height * scale))
+          canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height)
+          canvas.toBlob((blob) => {
+            if (!blob) return reject(new Error('Không thể tối ưu file ảnh.'))
+            resolve(new File([blob], `${file.name.replace(/\.[^.]+$/, '')}.webp`, { type: 'image/webp' }))
+          }, 'image/webp', .84)
+        }
+        image.onerror = () => reject(new Error('Không đọc được file ảnh.'))
+        image.src = objectUrl
+      })
+      const publicUrl = await contentRepository.uploadImage(optimizedFile)
+      onReady(publicUrl)
+      setStatus('Đã tải ảnh lên Supabase Storage.')
+    } catch (error) {
+      setStatus(`Không thể tải ảnh: ${error.message}`)
+    } finally {
+      URL.revokeObjectURL(objectUrl)
+      event.target.value = ''
+      setSaving(false)
     }
-    reader.onerror = () => setStatus('Không đọc được file ảnh.')
-    reader.readAsDataURL(file)
   }
 
-  function saveSettings(event) {
+  async function saveSettings(event) {
     event.preventDefault()
-    contentRepository.saveSiteSettings(settings)
-    setStatus('Đã lưu nhận diện, Hero và thông tin footer.')
+    setSaving(true)
+    try {
+      await contentRepository.saveSiteSettings(settings)
+      setStatus('Đã lưu nhận diện, Hero và thông tin footer lên Supabase.')
+    } catch (error) {
+      setStatus(`Không thể lưu: ${error.message}`)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function savePageCopy(event) {
+  async function savePageCopy(event) {
     event.preventDefault()
-    contentRepository.savePageContent(pageContent)
-    setStatus('Đã lưu nội dung tiêu đề và mô tả của toàn bộ trang chủ.')
+    setSaving(true)
+    try {
+      await contentRepository.savePageContent(pageContent)
+      setStatus('Đã lưu nội dung tiêu đề và mô tả của toàn bộ trang chủ lên Supabase.')
+    } catch (error) {
+      setStatus(`Không thể lưu: ${error.message}`)
+    } finally {
+      setSaving(false)
+    }
   }
 
   function updatePageField(section, field, value) {
@@ -218,7 +280,7 @@ export default function AdminPage() {
     setEditing((current) => ({ ...current, item: { ...current.item, [field]: value } }))
   }
 
-  function saveCollection(event) {
+  async function saveCollection(event) {
     event.preventDefault()
     const definition = activeDefinition
     if (!definition) return
@@ -234,27 +296,52 @@ export default function AdminPage() {
     const next = current.some((entry) => entry.id === item.id)
       ? current.map((entry) => entry.id === item.id ? item : entry)
       : [...current, item]
-    setCollections((value) => ({ ...value, [definition.key]: next }))
-    definition.save(next)
-    setEditing(null)
-    setStatus(`Đã lưu ${definition.singular}.`)
+    setSaving(true)
+    try {
+      await definition.save(next)
+      setCollections((value) => ({ ...value, [definition.key]: next }))
+      setEditing(null)
+      setStatus(`Đã lưu ${definition.singular} lên Supabase.`)
+    } catch (error) {
+      setStatus(`Không thể lưu: ${error.message}`)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function removeCollectionItem(definition, id) {
+  async function removeCollectionItem(definition, id) {
     if (!window.confirm(`Xóa ${definition.singular} này?`)) return
     const next = collections[definition.key].filter((item) => item.id !== id)
-    setCollections((value) => ({ ...value, [definition.key]: next }))
-    definition.save(next)
-    setStatus(`Đã xóa ${definition.singular}.`)
+    setSaving(true)
+    try {
+      await definition.save(next)
+      setCollections((value) => ({ ...value, [definition.key]: next }))
+      setStatus(`Đã xóa ${definition.singular}.`)
+    } catch (error) {
+      setStatus(`Không thể xóa: ${error.message}`)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  function restoreDefaultContent() {
+  async function restoreDefaultContent() {
     if (!window.confirm('Khôi phục nội dung mặc định? Các thay đổi hiện tại sẽ bị xóa.')) return
-    contentRepository.reset()
-    setSettings(contentRepository.getSiteSettings())
-    setPageContent(contentRepository.getPageContent())
-    setCollections(loadCollections())
-    setStatus('Đã khôi phục nội dung mặc định.')
+    setSaving(true)
+    try {
+      await contentRepository.reset()
+      setSettings(contentRepository.getSiteSettings())
+      setPageContent(contentRepository.getPageContent())
+      setCollections(loadCollections())
+      setStatus('Đã khôi phục nội dung mặc định trên Supabase.')
+    } catch (error) {
+      setStatus(`Không thể khôi phục: ${error.message}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (authLoading) {
+    return <main className="admin-login admin-login--refresh"><div className="admin-login-panel"><p className="eyebrow">DGM Content Studio</p><h1>Đang xác thực...</h1></div></main>
   }
 
   if (!authenticated) {
@@ -265,11 +352,11 @@ export default function AdminPage() {
           <div className="admin-login-mark"><span>DGM</span><i /></div>
           <p className="eyebrow">DGM Content Studio</p>
           <h1>Welcome back.</h1>
-          <p>Quản lý toàn bộ nội dung credential website trong một workspace.</p>
+          <p>Đăng nhập an toàn bằng link được gửi tới email công ty.</p>
           <form onSubmit={login}>
-            <label>Email<input value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-            <label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-            <button className="button button-primary" type="submit">Enter content studio</button>
+            <label>Email công ty<input type="email" required autoComplete="email" placeholder={`ten@${companyEmailDomain}`} value={email} onChange={(event) => setEmail(event.target.value)} /></label>
+            <button className="button button-primary" type="submit" disabled={saving || !authService.isConfigured}>{saving ? 'Đang gửi...' : 'Gửi link đăng nhập'}</button>
+            {!authService.isConfigured && <span className="form-status">Chưa có cấu hình Supabase trong .env.local.</span>}
             {status && <span className="form-status">{status}</span>}
           </form>
         </div>
@@ -292,7 +379,8 @@ export default function AdminPage() {
           })}
           <Link to="/"><Eye /> Preview website</Link>
         </nav>
-        <button onClick={() => { sessionStorage.removeItem(ADMIN_SESSION_KEY); setAuthenticated(false) }}><LogOut /> Logout</button>
+        <div className="admin-sidebar-account">{session.user.email}</div>
+        <button onClick={async () => { await authService.signOut(); setSession(null) }}><LogOut /> Logout</button>
       </aside>
 
       <div className="admin-main">

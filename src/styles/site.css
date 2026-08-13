@@ -8585,6 +8585,9 @@ body { background: var(--credential-paper); }
 .admin-shell--refresh .admin-sidebar > button svg { width: 15px; height: 15px; }
 .admin-shell--refresh .admin-sidebar nav a:hover { color: #fff; background: rgba(92,225,244,.08); }
 .admin-shell--refresh .admin-sidebar nav a:last-child { margin-top: 10px; border: 1px solid rgba(92,225,244,.18); color: var(--credential-cyan); }
+.admin-sidebar-account { overflow: hidden; margin: auto 11px 0; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); color: #6f8997; font-size: .66rem; text-overflow: ellipsis; white-space: nowrap; }
+.admin-shell--refresh .admin-sidebar-account + button { margin-top: 7px; }
+.admin-shell--refresh button:disabled { cursor: wait; opacity: .55; }
 .admin-shell--refresh .admin-main { margin-left: var(--admin-sidebar); padding: 46px clamp(28px, 4vw, 66px) 110px; }
 .admin-shell--refresh .admin-main > header { scroll-margin-top: 20px; align-items: center; margin-bottom: 28px; }
 .admin-shell--refresh .admin-main > header h1 { font-size: clamp(2.7rem, 5vw, 5rem); line-height: .9; letter-spacing: -.065em; }
