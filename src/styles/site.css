@@ -1568,16 +1568,15 @@
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: partner-stream-left 34s linear infinite;
+  animation: partner-stream-left var(--partner-duration, 100s) linear infinite;
 }
 
 .partner-stream--2 .partner-stream__track {
   animation-name: partner-stream-right;
-  animation-duration: 39s;
 }
 
 .partner-stream--3 .partner-stream__track {
-  animation-duration: 44s;
+  animation-name: partner-stream-left;
 }
 
 .partner-stream:hover .partner-stream__track {
