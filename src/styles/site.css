@@ -16550,17 +16550,28 @@ body,
 }
 
 .public-site--editorial .cases-section .case-card-footerbar {
-  justify-content: center;
+  justify-content: flex-end;
   margin-top: auto;
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 .public-site--editorial .cases-section .case-card-link {
-  min-height: 36px;
+  min-height: 34px;
   gap: 6px;
-  padding-inline: 13px;
+  padding-inline: 12px;
+  border: 1px solid rgba(8, 118, 201, .42);
   border-radius: 4px !important;
+  background: transparent;
+  color: #0876c9 !important;
   font-size: .68rem;
+  box-shadow: none;
+}
+
+.public-site--editorial .cases-section .case-card-link:hover,
+.public-site--editorial .cases-section .case-card-link:focus-visible {
+  border-color: #0876c9;
+  background: #0876c9;
+  color: #fff !important;
 }
 
 .public-site--editorial .cases-section .case-card-link svg {
