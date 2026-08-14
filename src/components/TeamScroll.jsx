@@ -9,7 +9,6 @@ import {
   Handshake,
   Monitor,
   Search,
-  Sparkles,
   TrendingUp
 } from 'lucide-react'
 
@@ -40,7 +39,7 @@ function TeamIcon({ role }) {
   return <Icon strokeWidth={1.7} />
 }
 
-export default function TeamScroll({ items = [], copy }) {
+export default function TeamScroll({ items = [], copy, logo, companyName = 'DGM' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [interacting, setInteracting] = useState(false)
   const reduceMotion = useReducedMotion()
@@ -80,9 +79,9 @@ export default function TeamScroll({ items = [], copy }) {
           animate={reduceMotion ? undefined : { boxShadow: ['0 0 0 12px rgba(46,198,232,.07)', '0 0 0 30px rgba(46,198,232,0)', '0 0 0 12px rgba(46,198,232,.07)'] }}
           transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <Sparkles />
-          <strong>{copy.coreName}</strong>
-          <span>{copy.coreLabel}</span>
+          {logo
+            ? <img src={logo} alt={`${companyName} logo`} />
+            : <strong className="team-compact__core-fallback">{companyName}</strong>}
         </motion.div>
 
         <div className="team-compact__nodes">

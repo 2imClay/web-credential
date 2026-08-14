@@ -67,7 +67,14 @@ export default function HomePage() {
 
         <section id="team" className="section team-section team-section--content-only content-only-section">
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.team}</span></div>
-          <div className="page-shell team-fullwidth"><TeamScroll items={teamMembers} copy={pageContent.team} /></div>
+          <div className="page-shell team-fullwidth">
+            <TeamScroll
+              items={teamMembers}
+              copy={pageContent.team}
+              logo={settings.teamLogo || settings.companyLogo}
+              companyName={settings.companyName}
+            />
+          </div>
         </section>
 
         <section id="partners" className="section partners-section partners-section--content-only content-only-section">

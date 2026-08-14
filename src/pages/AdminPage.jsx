@@ -51,8 +51,8 @@ const copyGroups = [
     ]
   },
   {
-    key: 'team', title: 'Team visual', description: 'Tên và nhãn ở tâm sơ đồ đội ngũ.',
-    fields: [['coreName', 'Center name'], ['coreLabel', 'Center label'], ['peopleLabel', 'People count label']]
+    key: 'team', title: 'Team visual', description: 'Nhãn số lượng nhân sự. Logo ở tâm được quản lý trong Brand & Hero.',
+    fields: [['peopleLabel', 'People count label']]
   },
   {
     key: 'contact', title: 'Footer', description: 'Dòng bản quyền và tên liên kết quản trị.',
@@ -95,10 +95,10 @@ const collectionDefinitions = [
   },
   {
     key: 'cases', anchor: 'cases', no: '07', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
-    description: 'Dự án, hình ảnh, bài toán, giải pháp và kết quả.', save: contentRepository.saveCaseStudies,
+    description: 'Dự án, hình ảnh, bài toán, giải pháp và kết quả. Ảnh thẻ đẹp nhất ở kích thước 1380 × 1000 px (tỷ lệ 1.38:1).', save: contentRepository.saveCaseStudies,
     empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', summary: '', objective: '', challenge: '', solution: '', result: '' },
     fields: [
-      ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Case image', 'image'],
+      ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Case image', 'image', 'Khuyến nghị: 1380 × 1000 px (tỷ lệ 1.38:1). Đặt chủ thể và chữ quan trọng ở vùng giữa vì ảnh sẽ được crop theo khung thẻ.'],
       ['summary', 'Summary', 'textarea'], ['objective', 'Objective', 'textarea'], ['challenge', 'Challenge', 'textarea'],
       ['solution', 'Solution / Key work', 'textarea'], ['result', 'Results / Impact', 'textarea']
     ],
@@ -115,7 +115,7 @@ const collectionDefinitions = [
     key: 'partners', anchor: 'partners', no: '09', title: 'Partner logos', singular: 'partner', icon: Handshake,
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
     empty: { id: '', name: '', group: '', logo: '', row: 1 },
-    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image']],
+    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'Logo sẽ tự căn giữa và fit trọn vẹn vào cùng một khung, không crop và không kéo méo. Nên dùng PNG/WebP nền trong suốt, ít khoảng trắng quanh logo.']],
     meta: (item) => item.group || (item.logo ? 'Logo only' : 'Partner'), summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   }
 ]
@@ -409,6 +409,7 @@ export default function AdminPage() {
           <form className="admin-form" onSubmit={saveSettings}>
             <label>Company name<input value={settings.companyName} onChange={(event) => setSettings({ ...settings, companyName: event.target.value })} /></label>
             <ImageEditor label="Header logo" value={settings.companyLogo || ''} onChange={(value) => setSettings({ ...settings, companyLogo: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, companyLogo: value }))} />
+            <ImageEditor label="Our Team center logo" note="Khuyến nghị: logo PNG/WebP nền trong suốt, tỷ lệ ngang hoặc vuông, tối thiểu 400 px." value={settings.teamLogo || ''} onChange={(value) => setSettings({ ...settings, teamLogo: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, teamLogo: value }))} />
             <ImageEditor label="Hero background" value={settings.heroBackground} onChange={(value) => setSettings({ ...settings, heroBackground: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, heroBackground: value }))} />
             <label>Background position<input value={settings.heroBackgroundPosition} onChange={(event) => setSettings({ ...settings, heroBackgroundPosition: event.target.value })} /></label>
             <div className="admin-form-divider full"><span>Hero copy</span></div>
@@ -470,10 +471,10 @@ export default function AdminPage() {
           <form className="content-modal" onSubmit={saveCollection} onMouseDown={(event) => event.stopPropagation()}>
             <ModalTitle eyebrow={`${activeDefinition.title} editor`} title={`${editing.item.id ? 'Edit' : 'Add'} ${activeDefinition.singular}`} onClose={() => setEditing(null)} />
             <div className="admin-form">
-              {activeDefinition.fields.map(([field, label, type]) => {
+              {activeDefinition.fields.map(([field, label, type, note]) => {
                 const value = Array.isArray(editing.item[field]) ? editing.item[field].join(', ') : (editing.item[field] ?? '')
                 if (type === 'image') {
-                  return <ImageEditor key={field} label={label} value={value} onChange={(next) => updateEditing(field, next)} onUpload={(event) => readImage(event, (next) => updateEditing(field, next))} />
+                  return <ImageEditor key={field} label={label} note={note} value={value} onChange={(next) => updateEditing(field, next)} onUpload={(event) => readImage(event, (next) => updateEditing(field, next))} />
                 }
                 if (type === 'partner-row') {
                   return (
@@ -583,10 +584,14 @@ function ModalTitle({ eyebrow, title, onClose }) {
   return <div className="modal-title"><div><p className="eyebrow">{eyebrow}</p><h2>{title}</h2></div><button type="button" onClick={onClose}>×</button></div>
 }
 
-function ImageEditor({ label, value, onChange, onUpload }) {
+function ImageEditor({ label, note, value, onChange, onUpload }) {
   return (
     <div className="image-editor full">
-      <label>{label} URL / path<input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Dán URL hoặc tải ảnh từ máy" /></label>
+      <label>
+        {label} URL / path
+        <input value={value} onChange={(event) => onChange(event.target.value)} placeholder="Dán URL hoặc tải ảnh từ máy" />
+        {note && <small className="image-editor-note">{note}</small>}
+      </label>
       <label className="upload-button"><ImagePlus /> Upload image / GIF<input type="file" accept="image/*,.gif" onChange={onUpload} /></label>
       {value && <div className="image-editor-preview"><img src={value} alt="Preview" /><button type="button" onClick={() => onChange('')}>Remove image</button></div>}
     </div>

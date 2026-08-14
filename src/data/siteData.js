@@ -1,6 +1,7 @@
 export const defaultSiteSettings = {
   companyName: 'DGM',
   companyLogo: '',
+  teamLogo: '',
   eyebrow: 'Marketing Accelerator Partner',
   heroTitle: 'MMA Smarties Award Winner',
   heroSecondTitle: 'Top 3 Digital Agency in Vietnam',
