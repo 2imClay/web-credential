@@ -7,16 +7,31 @@ export default function CaseStudyGallery({ items, copy = {} }) {
   const categories = useMemo(() => [allLabel, ...new Set(items.map((item) => item.category))], [allLabel, items])
   const [active, setActive] = useState(allLabel)
   const [isDragging, setIsDragging] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
   const [selectedCase, setSelectedCase] = useState(null)
   const railRef = useRef(null)
   const dragState = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false })
   const suppressClick = useRef(false)
   const visible = active === allLabel ? items : items.filter((item) => item.category === active)
   const closeCase = useCallback(() => setSelectedCase(null), [])
+  const updateScrollCue = useCallback(() => {
+    const rail = railRef.current
+    if (!rail) return
+    setCanScrollRight(rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 2)
+  }, [])
 
   useEffect(() => {
     if (!categories.includes(active)) setActive(allLabel)
   }, [active, allLabel, categories])
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(updateScrollCue)
+    window.addEventListener('resize', updateScrollCue)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('resize', updateScrollCue)
+    }
+  }, [active, visible.length, updateScrollCue])
 
   const handlePointerDown = (event) => {
     const rail = railRef.current
@@ -79,11 +94,12 @@ export default function CaseStudyGallery({ items, copy = {} }) {
 
       <div
         ref={railRef}
-        className={`case-rail ${isDragging ? 'is-dragging' : ''}`}
+        className={`case-rail ${isDragging ? 'is-dragging' : ''} ${canScrollRight ? 'has-more-right' : ''}`}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={finishDrag}
         onPointerCancel={finishDrag}
+        onScroll={updateScrollCue}
         onClickCapture={blockDraggedClick}
       >
         {visible.map((item) => <CaseStudyCard item={item} onView={setSelectedCase} key={item.id} />)}

@@ -16101,19 +16101,19 @@ body,
 
 /* Tighter section rhythm, especially at the About -> Timeline transition. */
 .public-site--editorial .editorial-home-flow>.section {
-  padding-block: clamp(36px, 3.8vw, 54px) !important;
+  padding-block: clamp(28px, 3.1vw, 44px) !important;
 }
 
 .public-site--editorial .editorial-home-flow>.newsroom-section {
-  padding-bottom: 18px !important;
+  padding-bottom: 12px !important;
 }
 
 .public-site--editorial .editorial-home-flow>.milestone-section {
-  padding-top: 18px !important;
+  padding-top: 12px !important;
 }
 
 .public-site--editorial .section-corner-label {
-  margin-bottom: clamp(20px, 2.3vw, 30px);
+  margin-bottom: clamp(16px, 1.8vw, 24px);
 }
 
 .public-site--editorial .press-room .press-room__papers {
@@ -16122,15 +16122,15 @@ body,
 
 @media (max-width: 640px) {
   .public-site--editorial .editorial-home-flow>.section {
-    padding-block: 34px !important;
+    padding-block: 28px !important;
   }
 
   .public-site--editorial .editorial-home-flow>.newsroom-section {
-    padding-bottom: 14px !important;
+    padding-bottom: 10px !important;
   }
 
   .public-site--editorial .editorial-home-flow>.milestone-section {
-    padding-top: 14px !important;
+    padding-top: 10px !important;
   }
 
   .public-site--editorial .press-room .press-room__papers {
@@ -16584,6 +16584,19 @@ body,
 .public-site--editorial .cases-section .case-card-link svg {
   width: 14px;
   height: 14px;
+}
+
+/* Let the next case peek outside the content column and fade toward the edge. */
+@media (min-width: 901px) {
+  .public-site--editorial .cases-section .case-rail {
+    --case-rail-peek: clamp(0px, calc(50vw - 50% - 16px), 170px);
+    width: calc(100% + var(--case-rail-peek));
+  }
+
+  .public-site--editorial .cases-section .case-rail.has-more-right {
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 125px), rgba(0, 0, 0, .72) calc(100% - 82px), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 125px), rgba(0, 0, 0, .72) calc(100% - 82px), transparent 100%);
+  }
 }
 
 @media (max-width: 640px) {
