@@ -11,6 +11,7 @@ import PartnerLogoMarquee from '../components/PartnerLogoMarquee'
 import SiteExperience from '../components/SiteExperience'
 import ServicesShowcase from '../components/ServicesShowcase'
 import CreativePortfolio from '../components/CreativePortfolio'
+import SocialSeedingShowcase from '../components/SocialSeedingShowcase'
 import { useContent } from '../hooks/useContent'
 
 export default function HomePage() {
@@ -21,6 +22,8 @@ export default function HomePage() {
     milestones,
     services,
     creativePortfolio,
+    socialSeedingTheory,
+    socialSeedingCases,
     caseStudies,
     teamMembers,
     partners,
@@ -30,7 +33,12 @@ export default function HomePage() {
   return (
     <main className="public-site public-site--editorial">
       <SiteExperience />
-      <Header settings={settings} copy={pageContent.ui} showPortfolio={creativePortfolio.some((item) => item?.image)} />
+      <Header
+        settings={settings}
+        copy={pageContent.ui}
+        showPortfolio={creativePortfolio.some((item) => item?.image || item?.youtubeUrl)}
+        showSeeding={[...socialSeedingTheory, ...socialSeedingCases].some((item) => item?.image)}
+      />
       <Hero settings={settings} services={services} />
 
       <div className="editorial-home-flow">
@@ -61,7 +69,7 @@ export default function HomePage() {
           <div className="page-shell"><ServicesShowcase items={services} /></div>
         </section>
 
-        {creativePortfolio.some((item) => item?.image) && (
+        {creativePortfolio.some((item) => item?.image || item?.youtubeUrl) && (
           <section id="creative-portfolio" className="section creative-portfolio-section content-only-section">
             <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.portfolio}</span></div>
             <div className="page-shell">
@@ -74,6 +82,19 @@ export default function HomePage() {
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.cases}</span></div>
           <div className="page-shell"><Reveal><CaseStudyGallery items={caseStudies} copy={pageContent.ui} /></Reveal></div>
         </section>
+
+        {[...socialSeedingTheory, ...socialSeedingCases].some((item) => item?.image) && (
+          <section id="social-seeding" className="section social-seeding-section content-only-section">
+            <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.seeding}</span></div>
+            <div className="page-shell">
+              <SocialSeedingShowcase
+                theory={socialSeedingTheory}
+                cases={socialSeedingCases}
+                copy={pageContent.socialSeeding}
+              />
+            </div>
+          </section>
+        )}
 
         <section id="team" className="section team-section team-section--content-only content-only-section">
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.team}</span></div>

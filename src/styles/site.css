@@ -5754,6 +5754,1071 @@ main {
   }
 }
 
+/* Social Seeding — clear methodology viewer and image-only case wall. */
+.social-seeding-section {
+  position: relative;
+}
+
+.social-seeding-showcase {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(56, 196, 232, .26);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 92% 7%, rgba(40, 191, 229, .18), transparent 28%),
+    radial-gradient(circle at 3% 72%, rgba(101, 69, 207, .12), transparent 27%),
+    #061b2c;
+  box-shadow: 0 26px 62px rgba(5, 47, 70, .18);
+  color: #fff;
+}
+
+.social-seeding-showcase::before {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(78, 196, 224, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(78, 196, 224, .045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  content: "";
+  pointer-events: none;
+}
+
+.social-seeding-showcase__intro {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .75fr);
+  gap: clamp(32px, 6vw, 92px);
+  align-items: end;
+  padding: clamp(34px, 4.8vw, 68px);
+  border-bottom: 1px solid rgba(87, 205, 233, .18);
+}
+
+.social-seeding-showcase__intro>div>span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #56d8f2;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.social-seeding-showcase__intro>div>span::before {
+  width: 28px;
+  height: 2px;
+  background: #35c3e8;
+  content: "";
+}
+
+.social-seeding-showcase__intro h2 {
+  max-width: 19ch;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 4.1vw, 4.6rem);
+  line-height: .98;
+  letter-spacing: -.055em;
+}
+
+.social-seeding-showcase__intro>p {
+  max-width: 55ch;
+  margin: 0;
+  color: #b7cad6;
+  font-size: clamp(.86rem, 1vw, 1rem);
+  line-height: 1.7;
+}
+
+.seeding-theory,
+.seeding-cases {
+  position: relative;
+  z-index: 1;
+  padding: clamp(28px, 3.8vw, 52px);
+}
+
+.social-seeding-showcase>.seeding-theory:first-child {
+  padding-top: clamp(18px, 2.2vw, 30px);
+}
+
+.seeding-cases {
+  border-top: 1px solid rgba(87, 205, 233, .18);
+}
+
+.seeding-subhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 24px;
+}
+
+.seeding-subhead>div {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.seeding-subhead>div>span {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(87, 216, 244, .42);
+  color: #52d8f2;
+  font-size: .68rem;
+  font-weight: 900;
+}
+
+.seeding-subhead h3 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.15rem, 1.8vw, 1.7rem);
+  line-height: 1.15;
+}
+
+.seeding-subhead p {
+  max-width: 70ch;
+  margin: 7px 0 0;
+  color: #91aebb;
+  font-size: .78rem;
+  line-height: 1.55;
+}
+
+.seeding-subhead>strong {
+  flex: 0 0 auto;
+  padding-top: 10px;
+  color: #56d8f2;
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.seeding-theory__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 305px);
+  gap: 14px;
+  align-items: start;
+}
+
+.seeding-theory__viewer {
+  align-self: start;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(81, 208, 237, .2);
+  background: #03111e;
+}
+
+.seeding-theory__slide {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: #020d18;
+  cursor: zoom-in;
+}
+
+.seeding-theory__slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.seeding-theory__expand,
+.seeding-cases__wall button>span {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .42);
+  background: rgba(3, 20, 34, .78);
+  color: #fff;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.seeding-theory__expand svg,
+.seeding-cases__wall button>span svg {
+  width: 16px;
+  height: 16px;
+}
+
+.seeding-theory__slide:hover .seeding-theory__expand,
+.seeding-theory__slide:focus-visible .seeding-theory__expand,
+.seeding-cases__wall button:hover>span,
+.seeding-cases__wall button:focus-visible>span {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.seeding-theory__controls {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 13px 16px 13px 19px;
+  border-top: 1px solid rgba(81, 208, 237, .18);
+}
+
+.seeding-theory__controls>div:first-child {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.seeding-theory__controls span {
+  color: #54d6ef;
+  font-size: .58rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.seeding-theory__controls strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: .82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seeding-theory__controls>div:last-child {
+  display: flex;
+  gap: 7px;
+}
+
+.seeding-theory__controls button,
+.seeding-lightbox__close,
+.seeding-lightbox__nav {
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(85, 210, 240, .34);
+  background: rgba(11, 48, 70, .72);
+  color: #fff;
+  cursor: pointer;
+}
+
+.seeding-theory__controls button {
+  width: 38px;
+  height: 38px;
+}
+
+.seeding-theory__controls button:hover,
+.seeding-theory__controls button:focus-visible {
+  border-color: #54d6ef;
+  background: #0a82b2;
+}
+
+.seeding-theory__controls svg {
+  width: 16px;
+  height: 16px;
+}
+
+.seeding-theory__index {
+  display: grid;
+  align-content: start;
+  height: clamp(410px, 38vw, 560px);
+  max-height: clamp(410px, 38vw, 560px);
+  overflow: auto;
+  border: 1px solid rgba(81, 208, 237, .18);
+  background: rgba(2, 14, 25, .62);
+  scrollbar-color: rgba(76, 210, 240, .4) transparent;
+  scrollbar-width: thin;
+}
+
+.seeding-theory__index button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 16px;
+  gap: 10px;
+  align-items: center;
+  min-height: 51px;
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(81, 208, 237, .11);
+  background: transparent;
+  color: #89a5b4;
+  text-align: left;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+
+.seeding-theory__index button:hover,
+.seeding-theory__index button:focus-visible,
+.seeding-theory__index button.is-active {
+  background: rgba(19, 129, 168, .17);
+  color: #fff;
+}
+
+.seeding-theory__index button>span {
+  color: #4dd5ef;
+  font-size: .6rem;
+  font-weight: 900;
+}
+
+.seeding-theory__index button>strong {
+  overflow: hidden;
+  font-size: .7rem;
+  line-height: 1.28;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seeding-theory__index button>i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .28;
+}
+
+.seeding-theory__index button.is-active>i {
+  box-shadow: 0 0 0 5px rgba(77, 213, 239, .12);
+  opacity: 1;
+}
+
+.seeding-cases__wall {
+  display: grid;
+  grid-auto-flow: dense;
+  grid-auto-rows: clamp(120px, 12vw, 180px);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.seeding-cases__wall button {
+  position: relative;
+  grid-column: span 4;
+  grid-row: span 2;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(81, 208, 237, .2);
+  background: #041522;
+  cursor: zoom-in;
+}
+
+.seeding-cases__wall button:nth-child(5n + 1),
+.seeding-cases__wall button:nth-child(5n + 4) {
+  grid-column: span 8;
+}
+
+.seeding-cases__wall button:nth-child(5n + 3) {
+  grid-row: span 3;
+}
+
+.seeding-cases__wall img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .55s cubic-bezier(.2, .8, .2, 1), filter .3s ease;
+}
+
+.seeding-cases__wall button:hover img,
+.seeding-cases__wall button:focus-visible img {
+  filter: brightness(.84);
+  transform: scale(1.045);
+}
+
+.seeding-lightbox {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 3vw, 48px);
+  background: rgba(1, 10, 19, .95);
+  backdrop-filter: blur(12px);
+}
+
+.seeding-lightbox>img {
+  display: block;
+  width: auto;
+  max-width: min(1500px, calc(100vw - 130px));
+  height: auto;
+  max-height: calc(100dvh - 110px);
+  object-fit: contain;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .42);
+}
+
+.seeding-lightbox__close,
+.seeding-lightbox__nav {
+  position: fixed;
+  z-index: 2;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+}
+
+.seeding-lightbox__close {
+  top: 22px;
+  right: 24px;
+}
+
+.seeding-lightbox__nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.seeding-lightbox__nav--prev {
+  left: 24px;
+}
+
+.seeding-lightbox__nav--next {
+  right: 24px;
+}
+
+.seeding-lightbox__close:hover,
+.seeding-lightbox__nav:hover,
+.seeding-lightbox__close:focus-visible,
+.seeding-lightbox__nav:focus-visible {
+  border-color: #54d6ef;
+  background: #087ead;
+}
+
+.seeding-lightbox__close svg,
+.seeding-lightbox__nav svg {
+  width: 19px;
+  height: 19px;
+}
+
+.seeding-lightbox__caption {
+  position: fixed;
+  right: 50%;
+  bottom: 22px;
+  display: flex;
+  max-width: calc(100vw - 140px);
+  align-items: center;
+  gap: 18px;
+  color: #fff;
+  transform: translateX(50%);
+}
+
+.seeding-lightbox__caption strong {
+  overflow: hidden;
+  font-size: .76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seeding-lightbox__caption span {
+  flex: 0 0 auto;
+  color: #58d9f2;
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+@media (max-width: 1000px) {
+  .social-seeding-showcase__intro {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .social-seeding-showcase__intro h2 {
+    max-width: 22ch;
+  }
+
+  .seeding-theory__stage {
+    grid-template-columns: 1fr;
+  }
+
+  .seeding-theory__index {
+    display: flex;
+    height: auto;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .seeding-theory__index button {
+    flex: 0 0 210px;
+    border-right: 1px solid rgba(81, 208, 237, .11);
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .social-seeding-showcase__intro,
+  .seeding-theory,
+  .seeding-cases {
+    padding: 22px 16px;
+  }
+
+  .social-seeding-showcase__intro h2 {
+    font-size: clamp(1.85rem, 10vw, 2.7rem);
+  }
+
+  .seeding-subhead {
+    gap: 12px;
+  }
+
+  .seeding-subhead>strong {
+    display: none;
+  }
+
+  .seeding-subhead>div {
+    gap: 11px;
+  }
+
+  .seeding-subhead>div>span {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .seeding-theory__controls {
+    min-height: 64px;
+    padding: 10px 11px 10px 13px;
+  }
+
+  .seeding-theory__controls strong {
+    max-width: 45vw;
+  }
+
+  .seeding-theory__controls button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .seeding-theory__index button {
+    flex-basis: 170px;
+  }
+
+  .seeding-cases__wall {
+    grid-auto-rows: 110px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seeding-cases__wall button,
+  .seeding-cases__wall button:nth-child(n) {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+
+  .seeding-cases__wall button:nth-child(3n + 1) {
+    grid-column: 1 / -1;
+  }
+
+  .seeding-lightbox {
+    padding: 64px 12px;
+  }
+
+  .seeding-lightbox>img {
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 140px);
+  }
+
+  .seeding-lightbox__close {
+    top: 12px;
+    right: 12px;
+  }
+
+  .seeding-lightbox__nav {
+    top: auto;
+    bottom: 12px;
+    transform: none;
+  }
+
+  .seeding-lightbox__nav--prev {
+    left: 12px;
+  }
+
+  .seeding-lightbox__nav--next {
+    right: 12px;
+  }
+
+  .seeding-lightbox__caption {
+    bottom: 26px;
+    max-width: calc(100vw - 150px);
+  }
+
+  .seeding-lightbox__caption strong {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seeding-cases__wall img,
+  .seeding-theory__expand,
+  .seeding-cases__wall button>span {
+    transition: none;
+  }
+}
+
+/* Social Seeding v2: open layout with a wheel-like 3D slide orbit. */
+.social-seeding-showcase {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #0b2234;
+}
+
+.social-seeding-showcase::before {
+  display: none;
+}
+
+.social-seeding-showcase>.seeding-theory:first-child,
+.social-seeding-showcase .seeding-theory {
+  padding: 0;
+}
+
+.social-seeding-showcase .seeding-theory__stage {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 330px);
+  gap: clamp(22px, 3vw, 42px);
+  align-items: stretch;
+}
+
+.social-seeding-showcase .seeding-theory__viewer {
+  align-self: start;
+  overflow: visible;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: 0 22px 52px rgba(7, 80, 123, .14);
+}
+
+.social-seeding-showcase .seeding-theory__slide {
+  overflow: hidden;
+  border: 1px solid rgba(12, 119, 181, .2);
+  border-radius: 7px 7px 0 0;
+  background: #061827;
+}
+
+.social-seeding-showcase .seeding-theory__controls {
+  min-height: 66px;
+  padding: 11px 13px 11px 17px;
+  border: 1px solid rgba(12, 119, 181, .18);
+  border-top: 0;
+  border-radius: 0 0 7px 7px;
+  background: rgba(255, 255, 255, .78);
+  backdrop-filter: blur(14px);
+}
+
+.social-seeding-showcase .seeding-theory__controls span {
+  color: #0876c9;
+}
+
+.social-seeding-showcase .seeding-theory__controls strong {
+  color: #102b3d;
+}
+
+.social-seeding-showcase .seeding-theory__controls button {
+  border-color: rgba(8, 118, 201, .28);
+  border-radius: 50%;
+  background: rgba(240, 250, 255, .9);
+  color: #0876c9;
+}
+
+.social-seeding-showcase .seeding-theory__controls button:hover,
+.social-seeding-showcase .seeding-theory__controls button:focus-visible {
+  color: #fff;
+}
+
+.seeding-theory__orbit {
+  position: relative;
+  min-width: 0;
+  min-height: 100%;
+  align-self: stretch;
+  overflow: hidden;
+  border-block: 1px solid rgba(9, 118, 184, .13);
+  perspective: 1100px;
+  perspective-origin: 35% 50%;
+  -webkit-mask-image: linear-gradient(transparent 0, #000 13%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(transparent 0, #000 13%, #000 87%, transparent 100%);
+  touch-action: pan-x;
+}
+
+.seeding-theory__orbit-axis {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 205px;
+  height: 82%;
+  border: 1px solid rgba(13, 130, 194, .14);
+  border-radius: 50%;
+  transform: translate(-51%, -50%);
+}
+
+.seeding-theory__orbit-axis::before,
+.seeding-theory__orbit-axis::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid rgba(13, 130, 194, .09);
+  border-radius: inherit;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.seeding-theory__orbit-axis::before {
+  width: 72%;
+  height: 100%;
+}
+
+.seeding-theory__orbit-axis::after {
+  width: 42%;
+  height: 100%;
+}
+
+.seeding-theory__orbit>button {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 10px;
+  display: grid;
+  grid-template-columns: 82px 28px minmax(0, 1fr) 8px;
+  gap: 9px;
+  width: calc(100% - 34px);
+  height: 66px;
+  align-items: center;
+  padding: 6px 10px 6px 6px;
+  border: 1px solid rgba(10, 112, 174, .16);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, .88);
+  color: #567182;
+  box-shadow: 0 10px 28px rgba(8, 82, 126, .1);
+  opacity: var(--orbit-opacity);
+  transform: translateY(calc(-50% + var(--orbit-y))) translateX(var(--orbit-x)) rotateX(var(--orbit-rotate)) scale(var(--orbit-scale));
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition:
+    transform .5s cubic-bezier(.2, .8, .2, 1),
+    opacity .38s ease,
+    color .3s ease,
+    background .3s ease,
+    border-color .3s ease,
+    box-shadow .35s ease;
+}
+
+.seeding-theory__orbit>button.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.seeding-theory__orbit>button.is-active {
+  z-index: 4;
+  border-color: #0876c9;
+  background: #0876c9;
+  color: #fff;
+  box-shadow: 0 18px 40px rgba(8, 118, 201, .24);
+}
+
+.seeding-theory__orbit>button:hover:not(.is-active),
+.seeding-theory__orbit>button:focus-visible:not(.is-active) {
+  border-color: rgba(8, 118, 201, .48);
+  background: #fff;
+  color: #173c53;
+}
+
+.seeding-theory__orbit>button>img {
+  width: 82px;
+  height: 52px;
+  border-radius: 3px;
+  object-fit: cover;
+  background: #061827;
+}
+
+.seeding-theory__orbit>button>span {
+  color: #0876c9;
+  font-size: .61rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+}
+
+.seeding-theory__orbit>button.is-active>span {
+  color: #a9efff;
+}
+
+.seeding-theory__orbit>button>strong {
+  overflow: hidden;
+  font-size: .68rem;
+  font-weight: 850;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seeding-theory__orbit>button>i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .42;
+}
+
+.seeding-theory__orbit>button.is-active>i {
+  box-shadow: 0 0 0 5px rgba(169, 239, 255, .18);
+  opacity: 1;
+}
+
+.social-seeding-showcase .seeding-cases {
+  margin-top: clamp(34px, 4vw, 54px);
+  padding: clamp(26px, 3vw, 38px) 0 0;
+  border-top-color: rgba(9, 118, 184, .17);
+}
+
+.social-seeding-showcase .seeding-subhead--cases {
+  margin-bottom: 18px;
+}
+
+.social-seeding-showcase .seeding-subhead h3 {
+  color: #102b3d;
+}
+
+.social-seeding-showcase .seeding-subhead p {
+  color: #597688;
+}
+
+.social-seeding-showcase .seeding-subhead>strong {
+  color: #0876c9;
+}
+
+.social-seeding-showcase .seeding-cases__wall button {
+  border-color: rgba(8, 118, 201, .18);
+  background: #fff;
+  box-shadow: 0 15px 34px rgba(7, 78, 123, .1);
+}
+
+@media (max-width: 900px) {
+  .social-seeding-showcase .seeding-theory__stage {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .seeding-theory__orbit {
+    min-height: 250px;
+    border-inline: 1px solid rgba(9, 118, 184, .1);
+    perspective-origin: 50% 35%;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  }
+
+  .seeding-theory__orbit-axis {
+    top: 47%;
+    left: 50%;
+    width: 84%;
+    height: 150px;
+    transform: translate(-50%, -50%);
+  }
+
+  .seeding-theory__orbit>button {
+    top: 47%;
+    left: 50%;
+    grid-template-columns: 1fr;
+    gap: 5px;
+    width: 170px;
+    height: 150px;
+    justify-items: center;
+    padding: 7px;
+    transform: translate(calc(-50% + var(--orbit-mobile-x)), -50%) translateY(var(--orbit-mobile-y)) rotateY(var(--orbit-mobile-rotate)) scale(var(--orbit-scale));
+    transform-origin: center center;
+    text-align: center;
+  }
+
+  .seeding-theory__orbit>button>img {
+    width: 100%;
+    height: 94px;
+  }
+
+  .seeding-theory__orbit>button>span,
+  .seeding-theory__orbit>button>i {
+    display: none;
+  }
+
+  .seeding-theory__orbit>button>strong {
+    width: 100%;
+    font-size: .62rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .seeding-theory__orbit {
+    min-height: 220px;
+  }
+
+  .seeding-theory__orbit>button {
+    width: 145px;
+    height: 130px;
+    transform: translate(calc(-50% + var(--orbit-mobile-x-small)), -50%) translateY(var(--orbit-mobile-y)) rotateY(var(--orbit-mobile-rotate)) scale(var(--orbit-scale));
+  }
+
+  .seeding-theory__orbit>button>img {
+    height: 78px;
+  }
+}
+
+/* Social Seeding image cases — compact carousel matching the Case Studies rhythm. */
+.social-seeding-showcase .seeding-cases {
+  margin-top: clamp(16px, 2vw, 26px);
+  padding: 16px 0 clamp(18px, 2vw, 28px);
+  border-top: 1px solid rgba(8, 118, 184, .14);
+  background: transparent;
+}
+
+.social-seeding-showcase .seeding-subhead--cases {
+  margin-bottom: 8px;
+}
+
+.seeding-case-carousel {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.seeding-case-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 32px) / 3.25);
+  gap: 16px;
+  padding: 10px 52px 20px 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0, #000 92%, transparent 100%);
+}
+
+.seeding-case-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.seeding-case-card {
+  position: relative;
+  display: block;
+  min-width: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  padding: 7px;
+  border: 1px solid rgba(7, 91, 145, .16);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 13px 30px rgba(8, 75, 116, .11);
+  cursor: zoom-in;
+  scroll-snap-align: start;
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+
+.seeding-case-card:hover,
+.seeding-case-card:focus-visible {
+  z-index: 2;
+  border-color: rgba(24, 177, 210, .58);
+  box-shadow: 0 18px 38px rgba(8, 75, 116, .17);
+  transform: translateY(-3px);
+}
+
+.seeding-case-card>img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #031321;
+  transition: transform .35s ease;
+}
+
+.seeding-case-card:hover>img,
+.seeding-case-card:focus-visible>img {
+  transform: scale(1.018);
+}
+
+.seeding-case-card>span {
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .42);
+  border-radius: 50%;
+  background: rgba(3, 24, 39, .76);
+  color: #fff;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.seeding-case-card>span svg {
+  width: 15px;
+}
+
+.seeding-case-card:hover>span,
+.seeding-case-card:focus-visible>span {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.seeding-case-carousel__next {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 50%;
+  background: #087dcc;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(7, 107, 172, .24);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color .2s ease, transform .2s ease;
+}
+
+.seeding-case-carousel__next:hover {
+  background: #0b97d7;
+  transform: translateY(-50%) translateX(3px);
+}
+
+.seeding-case-carousel__next svg {
+  width: 18px;
+}
+
+@media (max-width: 900px) {
+  .seeding-case-strip {
+    grid-auto-columns: 46%;
+  }
+}
+
+@media (max-width: 600px) {
+  .seeding-case-strip {
+    grid-auto-columns: 82%;
+    gap: 11px;
+    padding-right: 38px;
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 89%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 89%, transparent 100%);
+  }
+
+  .seeding-case-carousel__next {
+    right: 4px;
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seeding-theory__orbit>button {
+    transition: opacity .1s linear;
+  }
+}
+
 /* Creative Portfolio — an image-only, animated studio wall. */
 .creative-portfolio {
   position: relative;
@@ -5916,6 +6981,12 @@ main {
   width: 16px;
 }
 
+.creative-portfolio__tile.is-video>span {
+  background: rgba(8, 118, 201, .9);
+  opacity: .92;
+  transform: translateY(0);
+}
+
 .creative-portfolio__tile:hover,
 .creative-portfolio__tile:focus-visible {
   z-index: 3;
@@ -5953,6 +7024,22 @@ main {
   max-height: 86vh;
   object-fit: contain;
   box-shadow: 0 35px 100px rgba(0, 0, 0, .55);
+}
+
+.creative-lightbox__video {
+  width: min(1280px, calc(100vw - 160px));
+  max-height: calc(100dvh - 110px);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 35px 100px rgba(0, 0, 0, .55);
+}
+
+.creative-lightbox__video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .creative-lightbox__close,
@@ -6071,6 +7158,11 @@ main {
   .creative-lightbox>img {
     max-width: 100%;
     max-height: 80vh;
+  }
+
+  .creative-lightbox__video {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 136px);
   }
 
   .creative-lightbox__close {
@@ -16987,7 +18079,6 @@ body,
   position: absolute;
   z-index: 5;
   top: 50%;
-  right: 18px;
   display: grid;
   width: 42px;
   height: 42px;
@@ -16998,6 +18089,10 @@ body,
   color: #fff;
   box-shadow: 0 10px 26px rgba(5, 79, 132, .28);
   cursor: pointer;
+}
+
+.public-site--editorial .cases-section .case-rail-next {
+  right: 18px;
   animation: case-rail-next-nudge 1.25s ease-in-out infinite;
 }
 
@@ -17010,6 +18105,10 @@ body,
 .public-site--editorial .cases-section .case-rail-next:focus-visible {
   background: #045f9f;
   animation-play-state: paused;
+}
+
+.public-site--editorial .cases-section .case-rail-next:hover,
+.public-site--editorial .cases-section .case-rail-next:focus-visible {
   transform: translate(3px, -50%) scale(1.06);
 }
 
@@ -17118,6 +18217,172 @@ body,
     aspect-ratio: 4 / 3;
   }
 
+}
+
+/* Social Seeding methodology — animated paper deck and matching 3D selector. */
+.social-seeding-showcase .seeding-theory__stage {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr) minmax(285px, 330px);
+  gap: clamp(28px, 3.5vw, 48px);
+}
+
+.social-seeding-showcase .seeding-theory__viewer {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.seeding-theory__deck {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 8px;
+  overflow: visible;
+}
+
+.seeding-theory__deck::before {
+  position: absolute;
+  z-index: -1;
+  inset: 7% 5% 2%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(20, 155, 205, .18), transparent 68%);
+  content: '';
+  filter: blur(18px);
+}
+
+.seeding-theory__deck-card {
+  position: absolute;
+  inset: 13px 28px 22px 14px;
+  display: block;
+  overflow: hidden;
+  padding: clamp(6px, .65vw, 9px);
+  border: 1px solid rgba(8, 87, 137, .15);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .98);
+  box-shadow: 0 16px 34px rgba(7, 69, 108, .11);
+  cursor: pointer;
+  transform-origin: 50% 88%;
+  transition: border-color .42s ease, box-shadow .55s cubic-bezier(.2, .8, .2, 1);
+  will-change: transform, opacity;
+}
+
+.seeding-theory__deck-card.is-active {
+  border-color: rgba(25, 183, 216, .5);
+  box-shadow: 0 24px 58px rgba(7, 69, 108, .22), 0 0 0 1px rgba(42, 198, 229, .14);
+  cursor: zoom-in;
+}
+
+.seeding-theory__deck-card>img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #031321;
+}
+
+.seeding-theory__deck-card .seeding-theory__expand {
+  right: 18px;
+  bottom: 18px;
+}
+
+.seeding-theory__deck-card.is-active:hover .seeding-theory__expand,
+.seeding-theory__deck-card.is-active:focus-visible .seeding-theory__expand {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.social-seeding-showcase .seeding-theory__controls {
+  width: calc(100% - 42px);
+  min-height: 62px;
+  margin: 0 28px 0 14px;
+  border: 1px solid rgba(12, 119, 181, .16);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .74);
+  box-shadow: 0 12px 28px rgba(8, 75, 116, .08);
+}
+
+.social-seeding-showcase .seeding-theory__orbit {
+  overflow: hidden;
+  border: 0;
+  background:
+    radial-gradient(ellipse at 0 50%, rgba(44, 197, 226, .12), transparent 43%),
+    transparent;
+  perspective-origin: 22% 50%;
+}
+
+.social-seeding-showcase .seeding-theory__orbit-axis {
+  left: 2px;
+  border-color: rgba(22, 160, 205, .18);
+  box-shadow:
+    0 0 0 18px rgba(30, 175, 214, .025),
+    0 0 0 42px rgba(179, 69, 204, .02);
+}
+
+.social-seeding-showcase .seeding-theory__orbit-axis::before {
+  border-color: rgba(185, 65, 208, .1);
+}
+
+.social-seeding-showcase .seeding-theory__orbit-axis::after {
+  border-color: rgba(35, 191, 222, .13);
+}
+
+.social-seeding-showcase .seeding-theory__orbit>button {
+  left: 8px;
+  width: calc(100% - 26px);
+  height: 64px;
+  border-color: rgba(8, 95, 148, .13);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .7);
+  box-shadow: 0 10px 24px rgba(8, 75, 116, .08);
+  backdrop-filter: blur(8px);
+}
+
+.social-seeding-showcase .seeding-theory__orbit>button.is-active {
+  border-color: rgba(24, 185, 218, .72);
+  background: rgba(255, 255, 255, .97);
+  color: #102b3d;
+  box-shadow: inset 3px 0 0 #24c5e3, 0 17px 38px rgba(8, 92, 143, .18);
+}
+
+.social-seeding-showcase .seeding-theory__orbit>button.is-active>span {
+  color: #0876c9;
+}
+
+.social-seeding-showcase .seeding-theory__orbit>button.is-active>i {
+  color: #21bedf;
+  box-shadow: 0 0 0 5px rgba(33, 190, 223, .13);
+}
+
+.social-seeding-showcase .seeding-theory__orbit>button>img {
+  border: 1px solid rgba(7, 82, 129, .1);
+  border-radius: 2px;
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .social-seeding-showcase .seeding-theory__stage {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .social-seeding-showcase .seeding-theory__orbit {
+    background: radial-gradient(ellipse at 50% 42%, rgba(44, 197, 226, .1), transparent 48%);
+  }
+}
+
+@media (max-width: 560px) {
+  .seeding-theory__deck-card {
+    inset: 7px 14px 14px 7px;
+    padding: 5px;
+  }
+
+  .social-seeding-showcase .seeding-theory__controls {
+    width: calc(100% - 21px);
+    margin-inline: 7px 14px;
+  }
 }
 
 /* Multi-image editor for image-led case studies. */
@@ -17250,5 +18515,519 @@ body,
 
   .gallery-images-editor__url button {
     min-height: 42px;
+  }
+}
+
+/* Social Seeding cases — simple featured image and thumbnail selector. */
+.social-seeding-showcase .seeding-cases {
+  margin-top: clamp(16px, 2vw, 26px);
+  padding: 14px 0 clamp(18px, 2vw, 26px);
+  border-top: 1px solid rgba(8, 118, 184, .14);
+  background: transparent;
+}
+
+.social-seeding-showcase .seeding-cases__wall {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 760px) minmax(245px, 360px);
+  gap: clamp(12px, 1.3vw, 18px);
+  align-items: stretch;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
+.social-seeding-showcase .seeding-cases__wall::before {
+  display: none;
+  content: none;
+}
+
+.social-seeding-showcase .seeding-cases__wall button::before,
+.social-seeding-showcase .seeding-cases__wall button::after {
+  display: none;
+  content: none;
+}
+
+.social-seeding-showcase .seeding-cases__feature,
+.social-seeding-showcase .seeding-cases__feature:nth-child(n) {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  height: clamp(280px, 27vw, 400px);
+  aspect-ratio: auto;
+  margin: 0;
+  overflow: visible;
+  padding: 7px;
+  border: 1px solid rgba(7, 91, 145, .18);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 16px 38px rgba(8, 75, 116, .14);
+  transform: none;
+}
+
+.social-seeding-showcase .seeding-cases__feature::before,
+.social-seeding-showcase .seeding-cases__feature::after {
+  display: none;
+  content: none;
+}
+
+.social-seeding-showcase .seeding-cases__feature:hover,
+.social-seeding-showcase .seeding-cases__feature:focus-visible {
+  border-color: rgba(24, 177, 210, .55);
+  box-shadow: 0 20px 46px rgba(8, 75, 116, .18);
+  transform: translateY(-2px);
+}
+
+.social-seeding-showcase .seeding-cases__feature>img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #031321;
+}
+
+.social-seeding-showcase .seeding-cases__feature>strong {
+  position: absolute;
+  z-index: 4;
+  top: 20px;
+  left: 20px;
+  min-width: 72px;
+  padding: 9px 12px;
+  border: 1px solid rgba(88, 216, 241, .3);
+  background: rgba(3, 24, 39, .82);
+  color: #64dff4;
+  font-size: .65rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: .12em;
+  backdrop-filter: blur(10px);
+}
+
+.social-seeding-showcase .seeding-cases__feature>strong i {
+  padding-inline: 4px;
+  color: rgba(255, 255, 255, .4);
+  font-style: normal;
+}
+
+.social-seeding-showcase .seeding-cases__rail {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(58px, 1fr);
+  gap: 8px;
+  align-content: stretch;
+  height: clamp(280px, 27vw, 400px);
+  max-height: 400px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.social-seeding-showcase .seeding-cases__rail button,
+.social-seeding-showcase .seeding-cases__rail button:nth-child(n) {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  height: 100%;
+  aspect-ratio: auto;
+  margin: 0;
+  overflow: hidden;
+  padding: 4px;
+  border: 1px solid rgba(8, 104, 159, .15);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .76);
+  box-shadow: none;
+  opacity: .7;
+  transform: none;
+  transition: opacity .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+
+.social-seeding-showcase .seeding-cases__rail button:hover,
+.social-seeding-showcase .seeding-cases__rail button:focus-visible {
+  z-index: 2;
+  border-color: rgba(18, 176, 209, .52);
+  box-shadow: 0 8px 18px rgba(7, 93, 143, .1);
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.social-seeding-showcase .seeding-cases__rail button.is-active {
+  border-color: #20bddd;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(35, 191, 222, .12);
+  opacity: 1;
+}
+
+.social-seeding-showcase .seeding-cases__rail button.is-active::before {
+  display: none;
+  content: none;
+}
+
+.social-seeding-showcase .seeding-cases__rail img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #061522;
+}
+
+.social-seeding-showcase .seeding-cases__rail button>span {
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  right: auto;
+  bottom: auto;
+  left: 7px;
+  display: grid;
+  width: 27px;
+  height: 22px;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: rgba(255, 255, 255, .91);
+  color: #0876c9;
+  font-size: .56rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+  opacity: 1;
+  transform: none;
+}
+
+.social-seeding-showcase .seeding-cases__rail button:nth-child(even)>span {
+  color: #a63cba;
+}
+
+@media (max-width: 900px) {
+  .social-seeding-showcase .seeding-cases__wall {
+    grid-template-columns: 1fr;
+  }
+
+  .social-seeding-showcase .seeding-cases__wall::before {
+    display: none;
+  }
+
+  .social-seeding-showcase .seeding-cases__rail {
+    display: flex;
+    height: auto;
+    max-height: none;
+    padding: 8px 2px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .social-seeding-showcase .seeding-cases__rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .social-seeding-showcase .seeding-cases__rail button,
+  .social-seeding-showcase .seeding-cases__rail button:nth-child(n) {
+    flex: 0 0 clamp(130px, 23vw, 170px);
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 560px) {
+  .social-seeding-showcase .seeding-cases__wall {
+    padding-top: 10px;
+  }
+
+  .social-seeding-showcase .seeding-cases__feature,
+  .social-seeding-showcase .seeding-cases__feature:nth-child(n) {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .social-seeding-showcase .seeding-cases__feature>strong {
+    top: 13px;
+    left: 13px;
+    min-width: 62px;
+    padding: 7px 9px;
+  }
+
+}
+
+/* Social Seeding: the slide title travels with the paper card. */
+.social-seeding-showcase .seeding-theory__deck-card {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.social-seeding-showcase .seeding-theory__deck-card.has-caption {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.social-seeding-showcase .seeding-theory__deck-card>img {
+  min-height: 0;
+}
+
+.social-seeding-showcase .seeding-theory__card-title {
+  position: relative;
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  padding: 9px 14px 8px 17px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .98);
+  color: #102b3d;
+  font-size: clamp(.68rem, .78vw, .82rem);
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.social-seeding-showcase .seeding-theory__card-title::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 96px;
+  height: 2px;
+  background: linear-gradient(90deg, #bd44d4, #22c9e9);
+  content: "";
+}
+
+@media (max-width: 560px) {
+  .social-seeding-showcase .seeding-theory__card-title {
+    min-height: 38px;
+    padding: 7px 10px 6px 12px;
+    font-size: .66rem;
+  }
+}
+
+/* Creative Portfolio: cinematic screening reel with explicit media details. */
+.creative-portfolio-section .creative-portfolio {
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.creative-portfolio-section .creative-portfolio::before {
+  display: none;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(18px, 2.3vw, 34px);
+  margin-bottom: 20px;
+  padding: 0 2px;
+  overflow-x: auto;
+  border: 0;
+  border-bottom: 1px solid rgba(20, 91, 133, .2);
+  background: transparent;
+  scrollbar-width: none;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs button {
+  position: relative;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 2px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #567184;
+  font-size: .72rem;
+  font-weight: 850;
+  box-shadow: none;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs button::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #087dca, #25c6e4);
+  content: "";
+  opacity: 0;
+  transform: scaleX(.25);
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs button span {
+  display: none;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs button:hover:not(:disabled),
+.creative-portfolio-section .creative-portfolio__tabs button.is-active {
+  background: transparent;
+  color: #0875bb;
+  box-shadow: none;
+}
+
+.creative-portfolio-section .creative-portfolio__tabs button:hover:not(:disabled)::after,
+.creative-portfolio-section .creative-portfolio__tabs button.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.creative-portfolio-section .creative-portfolio__tabs button:disabled,
+.creative-portfolio-section .creative-portfolio__tabs button:disabled:hover {
+  background: transparent;
+  color: rgba(45, 75, 94, .28);
+  box-shadow: none;
+  opacity: 1;
+}
+
+.creative-portfolio-section .creative-portfolio__wall {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  grid-auto-rows: auto;
+  gap: clamp(14px, 1.55vw, 22px);
+}
+
+.creative-portfolio-section .creative-portfolio__tile,
+.creative-portfolio-section .creative-portfolio__tile:nth-child(n) {
+  position: relative;
+  display: block;
+  grid-column: auto;
+  grid-row: auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(8, 69, 105, .18);
+  border-radius: 4px;
+  background: #061827;
+  box-shadow: 0 16px 38px rgba(8, 66, 100, .12);
+  color: #fff;
+  text-align: left;
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+}
+
+.creative-portfolio-section .creative-portfolio__tile:only-child {
+  max-width: 680px;
+}
+
+.creative-portfolio-section .creative-portfolio__media {
+  position: relative;
+  inset: auto;
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #031321;
+  color: inherit;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.creative-portfolio-section .creative-portfolio__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #031321;
+  transition: transform .55s cubic-bezier(.2, .8, .2, 1), filter .35s ease;
+}
+
+.creative-portfolio-section .creative-portfolio__action {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .56);
+  border-radius: 50%;
+  background: rgba(4, 40, 62, .78);
+  color: #fff;
+  opacity: 0;
+  transform: translate(-50%, -42%) scale(.86);
+  transition: opacity .25s ease, transform .3s ease, background-color .25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.creative-portfolio-section .creative-portfolio__action svg {
+  width: 19px;
+  height: 19px;
+}
+
+.creative-portfolio-section .creative-portfolio__tile.is-video .creative-portfolio__action {
+  width: 58px;
+  height: 58px;
+  background: rgba(8, 126, 202, .9);
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.creative-portfolio-section .creative-portfolio__tile.is-video .creative-portfolio__action svg {
+  width: 23px;
+  height: 23px;
+  margin-left: 3px;
+  fill: currentColor;
+}
+
+.creative-portfolio-section .creative-portfolio__tile:hover,
+.creative-portfolio-section .creative-portfolio__tile:focus-visible {
+  border-color: rgba(37, 196, 228, .66);
+  box-shadow: 0 22px 48px rgba(8, 66, 100, .2), 0 0 0 1px rgba(37, 196, 228, .12);
+  transform: translateY(-3px);
+}
+
+.creative-portfolio-section .creative-portfolio__tile:hover .creative-portfolio__media img,
+.creative-portfolio-section .creative-portfolio__tile:focus-visible .creative-portfolio__media img {
+  filter: saturate(1.05) contrast(1.02);
+  transform: scale(1.025);
+}
+
+.creative-portfolio-section .creative-portfolio__tile.is-video:hover .creative-portfolio__action,
+.creative-portfolio-section .creative-portfolio__tile.is-video:focus-visible .creative-portfolio__action {
+  background: #0b91d6;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+@media (max-width: 760px) {
+  .creative-portfolio-section .creative-portfolio__tabs {
+    gap: 20px;
+  }
+
+  .creative-portfolio-section .creative-portfolio__tabs button {
+    min-height: 41px;
+    padding-bottom: 10px;
+  }
+
+  .creative-portfolio-section .creative-portfolio__wall {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .creative-portfolio-section .creative-portfolio__tile:only-child {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .creative-portfolio-section .creative-portfolio {
+    margin-inline: 0;
+    padding: 0;
+  }
+
+  .creative-portfolio-section .creative-portfolio__tile.is-video .creative-portfolio__action {
+    width: 50px;
+    height: 50px;
   }
 }

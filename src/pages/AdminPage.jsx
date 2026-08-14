@@ -10,6 +10,7 @@ import {
   ImagePlus,
   Layers3,
   LogOut,
+  Play,
   Plus,
   RotateCcw,
   Save,
@@ -30,7 +31,7 @@ const copyGroups = [
     key: 'sectionLabels', title: 'Section headlines', description: 'Tên nhỏ ở góc trên trái giúp nhận biết từng session trên trang chủ.',
     fields: [
       ['about', 'About Us'], ['milestones', 'Timeline / Journey'], ['recognition', 'Recognition'],
-      ['services', 'Services'], ['portfolio', 'Creative Portfolio'], ['cases', 'Case Studies'], ['team', 'Our Team'],
+      ['services', 'Services'], ['portfolio', 'Creative Portfolio'], ['cases', 'Case Studies'], ['seeding', 'Social Seeding'], ['team', 'Our Team'],
       ['partners', 'Partners'], ['footer', 'Contact / Footer']
     ]
   },
@@ -38,7 +39,7 @@ const copyGroups = [
     key: 'ui', title: 'Navigation & interface labels', description: 'Tên menu và các nhãn hướng dẫn đang hiển thị trên trang chủ.',
     fields: [
       ['navAbout', 'Menu — About'], ['navJourney', 'Menu — Journey'], ['navRecognition', 'Menu — Recognition'],
-      ['navServices', 'Menu — Services'], ['navPortfolio', 'Menu — Creative Portfolio'], ['navCases', 'Menu — Case Studies'], ['navTeam', 'Menu — Team'],
+      ['navServices', 'Menu — Services'], ['navPortfolio', 'Menu — Creative Portfolio'], ['navCases', 'Menu — Case Studies'], ['navSeeding', 'Menu — Social Seeding'], ['navTeam', 'Menu — Team'],
       ['navPartners', 'Menu — Partners'], ['navContact', 'Menu — Contact'],
       ['pressSourcesLabel', 'Press sources label'], ['pressReadMore', 'Press read-more label'],
       ['allCasesLabel', 'All cases filter']
@@ -52,6 +53,13 @@ const copyGroups = [
       ['categoryTwo', 'Category 02'],
       ['categoryThree', 'Category 03'],
       ['categoryFour', 'Category 04']
+    ]
+  },
+  {
+    key: 'socialSeeding', title: 'Social Seeding', description: 'Nhãn cho trình xem slide và phần case images.',
+    fields: [
+      ['casesLabel', 'Cases section title'],
+      ['slideLabel', 'Slide label'], ['caseLabel', 'Case image label']
     ]
   },
   {
@@ -105,14 +113,15 @@ const collectionDefinitions = [
   },
   {
     key: 'creativePortfolio', anchor: 'creative-portfolio-admin', no: '07', title: 'Creative Portfolio', singular: 'portfolio image', icon: ImagePlus,
-    description: 'Gallery chỉ gồm hình ảnh, chia theo 4 nhóm có thể đổi tên trong Homepage copy.', save: contentRepository.saveCreativePortfolio,
-    empty: { id: '', category: 1, image: '', alt: '' },
+    description: 'Creative Portfolio chia theo 4 nhóm. Mọi nhóm, bao gồm iTVC và Experiential / Testimonial, đều hỗ trợ nhúng YouTube phát trực tiếp trên website.', save: contentRepository.saveCreativePortfolio,
+    empty: { id: '', category: 1, image: '', youtubeUrl: '', alt: '' },
     fields: [
       ['category', 'Portfolio category', 'portfolio-category'],
-      ['image', 'Portfolio image', 'image', 'Khuyến nghị ảnh rõ nét, tối thiểu 1200 px. Gallery hỗ trợ ảnh ngang, vuông và dọc.'],
+      ['image', 'Portfolio image / video thumbnail', 'image', 'Không bắt buộc nếu item dùng link YouTube. Khuyến nghị ảnh rõ nét, tối thiểu 1200 px.'],
+      ['youtubeUrl', 'YouTube video URL (optional)', 'optional'],
       ['alt', 'Image description for accessibility', 'optional']
     ],
-    meta: (item) => `Category ${String(item.category || 1).padStart(2, '0')}`, summary: (item) => item.alt || 'Image-only portfolio item'
+    meta: (item) => `Category ${String(item.category || 1).padStart(2, '0')}`, summary: (item) => item.alt || (item.youtubeUrl ? 'YouTube video' : 'Portfolio item')
   },
   {
     key: 'cases', anchor: 'cases', no: '08', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
@@ -128,14 +137,35 @@ const collectionDefinitions = [
     meta: (item) => `${item.category} / ${item.year}`, summary: (item) => item.cardSummary || item.summary
   },
   {
-    key: 'teamMembers', anchor: 'team-admin', no: '09', title: 'Team departments', singular: 'team department', icon: UsersRound,
+    key: 'socialSeedingTheory', anchor: 'social-seeding-theory-admin', no: '09', title: 'Social Seeding — Theory slides', singular: 'theory slide', icon: Workflow,
+    description: 'Các slide lớn giải thích chiến lược, insight framework và quy trình Social Seeding.', save: contentRepository.saveSocialSeedingTheory,
+    empty: { id: '', title: '', image: '', alt: '' },
+    fields: [
+      ['title', 'Slide title (optional)', 'optional'],
+      ['image', 'Theory slide image', 'image', 'Khuyến nghị 1920 × 1080 px (16:9). Ảnh hiển thị trọn vẹn, không crop.'],
+      ['alt', 'Image description for accessibility (optional)', 'optional']
+    ],
+    meta: () => 'Methodology slide', summary: (item) => item.alt || 'Social Seeding theory'
+  },
+  {
+    key: 'socialSeedingCases', anchor: 'social-seeding-cases-admin', no: '10', title: 'Social Seeding — Case images', singular: 'seeding case image', icon: ImagePlus,
+    description: 'Gallery case studies chỉ gồm ảnh. Website tự xếp collage và mở ảnh full-screen khi click.', save: contentRepository.saveSocialSeedingCases,
+    empty: { id: '', image: '', alt: '' },
+    fields: [
+      ['image', 'Case image', 'image', 'Hỗ trợ ảnh ngang, vuông và dọc; khuyến nghị tối thiểu 1200 px.'],
+      ['alt', 'Image description for accessibility (optional)', 'optional']
+    ],
+    meta: () => 'Image-only case', summary: (item) => item.alt || 'Social Seeding case image'
+  },
+  {
+    key: 'teamMembers', anchor: 'team-admin', no: '11', title: 'Team departments', singular: 'team department', icon: UsersRound,
     description: 'Các nhóm chuyên môn và quy mô nhân sự.', save: contentRepository.saveTeamMembers,
     empty: { id: '', role: '', count: '01', detail: '', tags: [] },
     fields: [['role', 'Department / role'], ['count', 'People count'], ['detail', 'Description', 'textarea'], ['tags', 'Expertise tags — separated by commas']],
     meta: (item) => `${item.count} people`, summary: (item) => item.detail
   },
   {
-    key: 'partners', anchor: 'partners', no: '10', title: 'Partner logos', singular: 'partner', icon: Handshake,
+    key: 'partners', anchor: 'partners', no: '12', title: 'Partner logos', singular: 'partner', icon: Handshake,
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
     empty: { id: '', name: '', group: '', logo: '', row: 1 },
     fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'File logo được upload nguyên bản, không crop, không resize và không chuyển WebP. Nên dùng PNG/SVG nền trong suốt, có khoảng an toàn nhỏ quanh logo.']],
@@ -155,6 +185,8 @@ function loadCollections() {
     services: contentRepository.getServices(),
     creativePortfolio: contentRepository.getCreativePortfolio(),
     cases: contentRepository.getCaseStudies(),
+    socialSeedingTheory: contentRepository.getSocialSeedingTheory(),
+    socialSeedingCases: contentRepository.getSocialSeedingCases(),
     teamMembers: contentRepository.getTeamMembers(),
     partners: contentRepository.getPartners()
   }
@@ -703,7 +735,8 @@ function PartnerCollectionSection({ definition, items, onAdd, onEdit, onRemove }
 
 function CollectionPreview({ type, item, icon: Icon }) {
   if (type === 'cases') return <div className="admin-preview"><CaseVisual item={item} compact /></div>
-  if (type === 'creativePortfolio') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : <ImagePlus />}</div>
+  if (type === 'creativePortfolio') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : item.youtubeUrl ? <Play /> : <ImagePlus />}</div>
+  if (type === 'socialSeedingTheory' || type === 'socialSeedingCases') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : <ImagePlus />}</div>
   if (type === 'pressArticles') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : item.logo ? <img src={item.logo} alt="" /> : <strong>{item.year}</strong>}</div>
   if (type === 'recognitions') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : <strong>{item.year}</strong>}</div>
   if (type === 'partners') return <div className="admin-preview admin-preview--logo">{item.logo ? <img src={item.logo} alt="" /> : <strong>{item.name}</strong>}</div>

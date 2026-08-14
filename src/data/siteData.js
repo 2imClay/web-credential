@@ -34,6 +34,7 @@ export const defaultPageContent = {
     services: 'Our Services',
     portfolio: 'Creative Portfolio',
     cases: 'Case Studies',
+    seeding: 'Social Seeding',
     team: 'Our Team',
     partners: 'Partners',
     footer: 'Contact DGM'
@@ -45,6 +46,7 @@ export const defaultPageContent = {
     navServices: 'Services',
     navPortfolio: 'Portfolio',
     navCases: 'Case Studies',
+    navSeeding: 'Social Seeding',
     navTeam: 'Our Team',
     navPartners: 'Partners',
     navContact: 'Contact',
@@ -84,10 +86,20 @@ export const defaultPageContent = {
   },
   portfolio: {
     allLabel: 'All',
-    categoryOne: 'Social Content',
-    categoryTwo: 'Key Visual',
-    categoryThree: 'Digital Design',
-    categoryFour: 'Event & Activation'
+    categoryOne: 'iTVC',
+    categoryTwo: 'Experiential Video / Testimonial Video',
+    categoryThree: 'KV / Social Post Always On',
+    categoryFour: 'Photo Shooting'
+  },
+  socialSeeding: {
+    kicker: 'Automotive Seeding 2.0',
+    title: 'Social conversations built on real customer insight.',
+    intro: 'A research-led seeding system that turns category understanding into credible conversations, useful content and measurable brand impact.',
+    theoryLabel: 'Approach & methodology',
+    theoryIntro: 'Explore the strategic thinking, insight framework and delivery process behind DGM Social Seeding.',
+    casesLabel: 'Selected seeding cases',
+    slideLabel: 'Methodology',
+    caseLabel: 'Case image'
   },
   data: {
     eyebrow: 'D-AI Sense / Data Hub',
@@ -292,7 +304,42 @@ export const defaultPartners = [
   { id: 'kia', name: 'KIA', group: 'Client', logo: '', row: 3 }
 ]
 
-export const defaultCreativePortfolio = []
+export const defaultCreativePortfolio = [
+  {
+    id: 'portfolio-itvc-cover',
+    category: 1,
+    image: '/creative-portfolio/itvc/01-cover.jpg',
+    alt: 'DGM Creative Portfolio — iTVC'
+  },
+  {
+    id: 'portfolio-itvc-isuzu-nhap-hoi-dan-chuyen',
+    category: 1,
+    image: '/creative-portfolio/itvc/02-nhap-hoi-dan-chuyen.jpg',
+    alt: 'Nhập Hội Dẫn Chuyện — Isuzu Vietnam 2024'
+  },
+  {
+    id: 'portfolio-itvc-mazda-every-mile-memory',
+    category: 1,
+    image: '/creative-portfolio/itvc/03-every-mile-is-a-memory.jpg',
+    alt: 'Every mile is a memory — Mazda Vietnam 2024'
+  }
+]
+
+export const defaultSocialSeedingTheory = [
+  { id: 'seeding-theory-01', title: 'Automotive Seeding 2.0: No Bragging, Non-Traditional', image: '/social-seeding/theory/1.jpg', alt: 'Automotive Seeding 2.0 principles' },
+  { id: 'seeding-theory-02', title: 'Automotive Seeding 1.0 vs 2.0', image: '/social-seeding/theory/2.jpg', alt: 'Comparison of Automotive Seeding 1.0 and 2.0' },
+  { id: 'seeding-theory-03', title: 'From Generic Claims to Expert-Led Content', image: '/social-seeding/theory/3.jpg', alt: 'Expert-led Automotive Seeding content approach' },
+  { id: 'seeding-theory-04', title: 'Accurate Social Seeding Strategy', image: '/social-seeding/theory/4.jpg', alt: 'Social Seeding strategy framework' },
+  { id: 'seeding-theory-05', title: 'Customer Insight Interview Guide', image: '/social-seeding/theory/5.jpg', alt: 'Customer insight interview questions' },
+  { id: 'seeding-theory-06', title: 'Customer Insight Framework', image: '/social-seeding/theory/6.jpg', alt: 'Five-part customer insight research framework' },
+  { id: 'seeding-theory-07', title: 'Campaign Building Workflow', image: '/social-seeding/theory/7.jpg', alt: 'Social Seeding campaign workflow' },
+  { id: 'seeding-theory-08', title: 'Customer Insight Fieldwork', image: '/social-seeding/theory/8.jpg', alt: 'Customer interview and fieldwork examples' },
+  { id: 'seeding-theory-09', title: 'Sample Master Seeding Strategy', image: '/social-seeding/theory/9.jpg', alt: 'Sample master seeding strategy QR code' },
+  { id: 'seeding-theory-10', title: 'Fast-Track Seeding Creative', image: '/social-seeding/theory/10.jpg', alt: 'Fast-track seeding creative method' },
+  { id: 'seeding-theory-11', title: 'Our Planning Process', image: '/social-seeding/theory/11.jpg', alt: 'Five-step Social Seeding planning process' }
+]
+
+export const defaultSocialSeedingCases = []
 
 export const defaultCaseStudies = [
   {

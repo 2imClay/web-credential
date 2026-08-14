@@ -4,6 +4,8 @@ import { contentRepository } from '../services/contentRepository'
 export function useContent() {
   const [caseStudies, setCaseStudies] = useState(contentRepository.getCaseStudies())
   const [creativePortfolio, setCreativePortfolio] = useState(contentRepository.getCreativePortfolio())
+  const [socialSeedingTheory, setSocialSeedingTheory] = useState(contentRepository.getSocialSeedingTheory())
+  const [socialSeedingCases, setSocialSeedingCases] = useState(contentRepository.getSocialSeedingCases())
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [recognitions, setRecognitions] = useState(contentRepository.getRecognitions())
   const [pressArticles, setPressArticles] = useState(contentRepository.getPressArticles())
@@ -18,6 +20,8 @@ export function useContent() {
     const refresh = () => {
       setCaseStudies(contentRepository.getCaseStudies())
       setCreativePortfolio(contentRepository.getCreativePortfolio())
+      setSocialSeedingTheory(contentRepository.getSocialSeedingTheory())
+      setSocialSeedingCases(contentRepository.getSocialSeedingCases())
       setSettings(contentRepository.getSiteSettings())
       setRecognitions(contentRepository.getRecognitions())
       setPressArticles(contentRepository.getPressArticles())
@@ -42,6 +46,8 @@ export function useContent() {
   return {
     caseStudies,
     creativePortfolio,
+    socialSeedingTheory,
+    socialSeedingCases,
     settings,
     recognitions,
     pressArticles,

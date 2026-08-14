@@ -1,6 +1,8 @@
 import {
   defaultCaseStudies,
   defaultCreativePortfolio,
+  defaultSocialSeedingCases,
+  defaultSocialSeedingTheory,
   defaultPageContent,
   defaultPartners,
   defaultPressArticles,
@@ -20,6 +22,8 @@ const ASSET_BUCKET = 'site-assets'
 const defaults = {
   case_studies: defaultCaseStudies,
   creative_portfolio: defaultCreativePortfolio,
+  social_seeding_theory: defaultSocialSeedingTheory,
+  social_seeding_cases: defaultSocialSeedingCases,
   site_settings: defaultSiteSettings,
   recognitions: defaultRecognitions,
   press_articles: defaultPressArticles,
@@ -103,6 +107,10 @@ export const contentRepository = {
   saveCaseStudies: (items) => save('case_studies', items),
   getCreativePortfolio: () => cache.creative_portfolio,
   saveCreativePortfolio: (items) => save('creative_portfolio', items),
+  getSocialSeedingTheory: () => cache.social_seeding_theory,
+  saveSocialSeedingTheory: (items) => save('social_seeding_theory', items),
+  getSocialSeedingCases: () => cache.social_seeding_cases,
+  saveSocialSeedingCases: (items) => save('social_seeding_cases', items),
   getSiteSettings: () => ({ ...defaultSiteSettings, ...cache.site_settings }),
   saveSiteSettings: (settings) => save('site_settings', settings),
   getRecognitions: () => cache.recognitions,
