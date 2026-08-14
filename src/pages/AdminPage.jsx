@@ -115,7 +115,7 @@ const collectionDefinitions = [
     key: 'partners', anchor: 'partners', no: '09', title: 'Partner logos', singular: 'partner', icon: Handshake,
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
     empty: { id: '', name: '', group: '', logo: '', row: 1 },
-    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'Logo được chuẩn hóa theo chiều cao; chiều rộng tự mở theo đúng tỷ lệ ảnh. Không crop, không kéo méo. Nên dùng PNG/WebP nền trong suốt, ít khoảng trắng quanh logo.']],
+    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'File logo được upload nguyên bản, không crop, không resize và không chuyển WebP. Nên dùng PNG/SVG nền trong suốt, có khoảng an toàn nhỏ quanh logo.']],
     meta: (item) => item.group || (item.logo ? 'Logo only' : 'Partner'), summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   }
 ]
@@ -199,7 +199,7 @@ export default function AdminPage() {
     }
   }
 
-  async function readImage(event, onReady) {
+  async function readImage(event, onReady, { preserveOriginal = false } = {}) {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith('image/')) return setStatus('Vui lòng chọn đúng file hình ảnh.')
@@ -207,10 +207,12 @@ export default function AdminPage() {
     if (file.size > maxSize * 1024 * 1024) return setStatus(`Ảnh tải lên cần nhỏ hơn ${maxSize} MB.`)
 
     setSaving(true)
-    setStatus('Đang tối ưu và tải ảnh lên Supabase Storage...')
+    setStatus(preserveOriginal
+      ? 'Đang tải nguyên file logo lên Supabase Storage...'
+      : 'Đang tối ưu và tải ảnh lên Supabase Storage...')
     const objectUrl = URL.createObjectURL(file)
     try {
-      const optimizedFile = file.type === 'image/gif' ? file : await new Promise((resolve, reject) => {
+      const optimizedFile = preserveOriginal || file.type === 'image/gif' ? file : await new Promise((resolve, reject) => {
         const image = new Image()
         image.onload = () => {
           const maxSide = 1800
@@ -478,7 +480,20 @@ export default function AdminPage() {
               {activeDefinition.fields.map(([field, label, type, note]) => {
                 const value = Array.isArray(editing.item[field]) ? editing.item[field].join(', ') : (editing.item[field] ?? '')
                 if (type === 'image') {
-                  return <ImageEditor key={field} label={label} note={note} value={value} onChange={(next) => updateEditing(field, next)} onUpload={(event) => readImage(event, (next) => updateEditing(field, next))} />
+                  return (
+                    <ImageEditor
+                      key={field}
+                      label={label}
+                      note={note}
+                      value={value}
+                      onChange={(next) => updateEditing(field, next)}
+                      onUpload={(event) => readImage(
+                        event,
+                        (next) => updateEditing(field, next),
+                        { preserveOriginal: activeDefinition.key === 'partners' && field === 'logo' }
+                      )}
+                    />
+                  )
                 }
                 if (type === 'partner-row') {
                   return (
