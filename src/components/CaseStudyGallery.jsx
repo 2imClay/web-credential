@@ -1,15 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CaseStudyCard from './CaseStudyCard'
+import CaseStudyModal from './CaseStudyModal'
 
 export default function CaseStudyGallery({ items, copy = {} }) {
   const allLabel = copy.allCasesLabel || 'All'
   const categories = useMemo(() => [allLabel, ...new Set(items.map((item) => item.category))], [allLabel, items])
   const [active, setActive] = useState(allLabel)
   const [isDragging, setIsDragging] = useState(false)
+  const [selectedCase, setSelectedCase] = useState(null)
   const railRef = useRef(null)
   const dragState = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false })
   const suppressClick = useRef(false)
   const visible = active === allLabel ? items : items.filter((item) => item.category === active)
+  const closeCase = useCallback(() => setSelectedCase(null), [])
 
   useEffect(() => {
     if (!categories.includes(active)) setActive(allLabel)
@@ -55,7 +58,8 @@ export default function CaseStudyGallery({ items, copy = {} }) {
   }
 
   return (
-    <div className="case-gallery">
+    <>
+      <div className="case-gallery">
       <div className="case-gallery-toolbar">
         <div className="case-tabs" role="tablist" aria-label="Case study categories">
           {categories.map((category) => (
@@ -81,8 +85,11 @@ export default function CaseStudyGallery({ items, copy = {} }) {
         onPointerCancel={finishDrag}
         onClickCapture={blockDraggedClick}
       >
-        {visible.map((item) => <CaseStudyCard item={item} key={item.id} />)}
+        {visible.map((item) => <CaseStudyCard item={item} onView={setSelectedCase} key={item.id} />)}
       </div>
-    </div>
+      </div>
+
+      {selectedCase && <CaseStudyModal item={selectedCase} onClose={closeCase} />}
+    </>
   )
 }
