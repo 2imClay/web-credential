@@ -290,6 +290,7 @@ export default function AdminPage() {
     const definition = activeDefinition
     if (!definition) return
     let item = { ...editing.item, id: editing.item.id || crypto.randomUUID() }
+    if (definition.key !== 'partners') delete item.row
     if (definition.key === 'services' || definition.key === 'teamMembers') {
       item.tags = Array.isArray(item.tags)
         ? item.tags
@@ -457,7 +458,10 @@ export default function AdminPage() {
             key={definition.key}
             definition={definition}
             items={collections[definition.key]}
-            onAdd={(row) => openEditor(definition, row ? { ...definition.empty, row } : undefined)}
+            onAdd={(row) => openEditor(
+              definition,
+              Number.isInteger(row) ? { ...definition.empty, row } : undefined
+            )}
             onEdit={(item) => openEditor(definition, item)}
             onRemove={(id) => removeCollectionItem(definition, id)}
           />
@@ -521,7 +525,7 @@ function CollectionSection({ definition, items, onAdd, onEdit, onRemove }) {
       <PanelTitle
         no={definition.no}
         title={definition.title}
-        action={<button type="button" className="button button-dark" onClick={onAdd}><Plus /> Add {definition.singular}</button>}
+        action={<button type="button" className="button button-dark" onClick={() => onAdd()}><Plus /> Add {definition.singular}</button>}
       />
       <p className="admin-panel-description">{definition.description}</p>
       <div className="admin-content-list">
