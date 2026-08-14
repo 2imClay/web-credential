@@ -9,13 +9,8 @@ function RecognitionCardVisual({ item }) {
 
   return (
     <div className="recognition-paper__placeholder" aria-label={item.title}>
-      <div className="recognition-paper__placeholderTop">
-        <span>DGM</span><span>{item.year || 'PRESS'}</span>
-      </div>
       <div className="recognition-paper__placeholderCore">
         <Award />
-        <strong>{item.title}</strong>
-        {item.subtitle && <p>{item.subtitle}</p>}
       </div>
       <div className="recognition-paper__placeholderLines"><i /><i /><i /></div>
     </div>
@@ -36,12 +31,12 @@ function MobileRecognitionCard({ item, index, count, progress }) {
       className="recognition-paper recognition-paper--mobile"
       style={{ y, scale, rotate: cardAngles[index % cardAngles.length], zIndex: 10 + index }}
     >
-      <span className="recognition-paper__index">{String(index + 1).padStart(2, '0')}</span>
       <div className="recognition-paper__media">
         <RecognitionCardVisual item={item} />
       </div>
       <figcaption>
-        <p>{item.description || item.subtitle || item.title}</p>
+        {item.title && <h3>{item.title}</h3>}
+        {(item.description || item.subtitle) && <p>{item.description || item.subtitle}</p>}
       </figcaption>
     </motion.figure>
   )
@@ -69,12 +64,12 @@ export default function RecognitionShowcase({ items }) {
               '--paper-z': 10 + index
             }}
           >
-            <span className="recognition-paper__index">{String(index + 1).padStart(2, '0')}</span>
             <div className="recognition-paper__media">
               <RecognitionCardVisual item={item} />
             </div>
             <figcaption>
-              <p>{item.description || item.subtitle || item.title}</p>
+              {item.title && <h3>{item.title}</h3>}
+              {(item.description || item.subtitle) && <p>{item.description || item.subtitle}</p>}
             </figcaption>
           </figure>
         ))}

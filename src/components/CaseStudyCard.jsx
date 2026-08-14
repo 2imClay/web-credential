@@ -12,13 +12,15 @@ export function CaseVisual({ item, compact = false }) {
 }
 
 export default function CaseStudyCard({ item, onView }) {
+  const cardSummary = Object.hasOwn(item, 'cardSummary') ? item.cardSummary : item.summary
+
   return (
     <article className="case-card">
       <div className="case-card-image"><CaseVisual item={item} /></div>
       <div className="case-card-meta"><span>{item.category}</span><span>{item.year}</span></div>
       <div className="case-card-copy">
         <h3>{item.title}</h3>
-        <p>{item.summary}</p>
+        {cardSummary && <p>{cardSummary}</p>}
       </div>
       <div className="case-card-footerbar">
         <button className="case-card-link" type="button" onClick={() => onView(item)}>View case <ArrowUpRight /></button>

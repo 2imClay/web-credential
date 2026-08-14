@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
-import { CaseVisual } from './CaseStudyCard'
 
 export default function CaseStudyModal({ item, onClose }) {
   const dialogRef = useRef(null)
-  const gallery = [item.image, ...(Array.isArray(item.gallery) ? item.gallery : [])]
+  const gallery = (Array.isArray(item.gallery) ? item.gallery : [])
     .filter((source, index, sources) => source && sources.indexOf(source) === index)
 
   useEffect(() => {
@@ -53,17 +52,17 @@ export default function CaseStudyModal({ item, onClose }) {
           </div>
         </div>
 
-        <div className="case-study-modal__body case-study-modal__body--media-only">
-          <div className="case-study-modal__gallery">
-            {gallery.length ? gallery.map((source, index) => (
+        {gallery.length > 0 && (
+          <div className="case-study-modal__body case-study-modal__body--media-only">
+            <div className="case-study-modal__gallery">
+              {gallery.map((source, index) => (
               <figure className={index === 0 ? 'is-cover' : ''} key={`${source}-${index}`}>
                 <img src={source} alt={`${item.title} — image ${index + 1}`} />
               </figure>
-            )) : (
-              <figure className="is-cover case-study-modal__fallback"><CaseVisual item={item} /></figure>
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>,
     document.body

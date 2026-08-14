@@ -96,13 +96,14 @@ const collectionDefinitions = [
   {
     key: 'cases', anchor: 'cases', no: '07', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
     description: 'Case study ưu tiên hình ảnh: một ảnh cover cho thẻ và nhiều ảnh nội dung trong box chi tiết.', save: contentRepository.saveCaseStudies,
-    empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', gallery: [], summary: '' },
+    empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', cardSummary: '', gallery: [], summary: '' },
     fields: [
-      ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Cover image', 'image', 'Ảnh đại diện ngoài thẻ: khuyến nghị 1380 × 1000 px (tỷ lệ 1.38:1).'],
+      ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Cover image', 'image', 'Ảnh này chỉ dùng làm đại diện ngoài thẻ, không lặp lại trong box chi tiết. Khuyến nghị 1380 × 1000 px (tỷ lệ 1.38:1).'],
+      ['cardSummary', 'Card short text', 'textarea', 'Nội dung ngắn chỉ hiển thị bên ngoài thẻ Case Study.'],
       ['gallery', 'Case gallery', 'images', 'Upload nhiều ảnh nội dung cùng lúc. Có thể đổi thứ tự; ảnh trong box được hiển thị trọn vẹn, không crop.'],
-      ['summary', 'Content', 'textarea']
+      ['summary', 'Box content', 'textarea', 'Nội dung chỉ hiển thị ở phần đầu box chi tiết.']
     ],
-    meta: (item) => `${item.category} / ${item.year}`, summary: (item) => item.summary
+    meta: (item) => `${item.category} / ${item.year}`, summary: (item) => item.cardSummary || item.summary
   },
   {
     key: 'teamMembers', anchor: 'team-admin', no: '08', title: 'Team departments', singular: 'team department', icon: UsersRound,
@@ -308,7 +309,11 @@ export default function AdminPage() {
   }
 
   function openEditor(definition, item) {
-    setEditing({ type: definition.key, item: { ...(item || definition.empty) } })
+    const nextItem = { ...(item || definition.empty) }
+    if (definition.key === 'cases' && item && !Object.hasOwn(item, 'cardSummary')) {
+      nextItem.cardSummary = item.summary || ''
+    }
+    setEditing({ type: definition.key, item: nextItem })
   }
 
   function updateEditing(field, value) {

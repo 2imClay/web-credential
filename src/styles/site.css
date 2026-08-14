@@ -953,13 +953,21 @@
 
 .recognition-section--content-only .recognition-paper figcaption {
   display: block;
-  min-height: 92px;
+  min-height: 128px;
   padding: 16px 8px;
+}
+
+.recognition-section--content-only .recognition-paper figcaption h3 {
+  margin: 0;
+  color: #071b2d;
+  font-size: .92rem;
+  font-weight: 900;
+  line-height: 1.25;
 }
 
 .recognition-section--content-only .recognition-paper figcaption p {
   display: -webkit-box;
-  margin: 0;
+  margin: 9px 0 0;
   overflow: hidden;
   color: #4e687b;
   font-size: .72rem;
@@ -14056,7 +14064,8 @@ body,
   display: flex;
   height: 100%;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   padding: 25px;
   color: #fff;
   background: linear-gradient(145deg, #087ac7, #0d9bd7);
@@ -14084,11 +14093,13 @@ body,
 
 .recognition-paper__placeholderCore {
   display: grid;
-  gap: 13px;
+  place-items: center;
 }
 
 .recognition-paper__placeholderCore svg {
-  width: 34px;
+  width: clamp(52px, 6vw, 78px);
+  height: auto;
+  opacity: .9;
 }
 
 .recognition-paper__placeholderCore strong {
@@ -14104,8 +14115,7 @@ body,
 }
 
 .recognition-paper__placeholderLines {
-  display: grid;
-  gap: 7px;
+  display: none;
 }
 
 .recognition-paper__placeholderLines i {
@@ -16391,14 +16401,14 @@ body,
   min-width: 0;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(46px, 5vw, 72px);
+  padding: clamp(28px, 3vw, 42px) clamp(72px, 5vw, 86px) clamp(28px, 3vw, 42px) clamp(30px, 3.5vw, 52px);
   color: #fff;
 }
 
 .case-study-modal__meta {
   display: flex;
   gap: 12px;
-  margin: 0 0 22px;
+  margin: 0 0 12px;
   color: #5edcf4;
   font-size: .72rem;
   font-weight: 900;
@@ -16416,17 +16426,17 @@ body,
   max-width: 20ch;
   margin: 0;
   color: #fff;
-  font-size: clamp(2.4rem, 4.6vw, 5.3rem);
-  line-height: .93;
-  letter-spacing: -.065em;
+  font-size: clamp(2rem, 3vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -.05em;
 }
 
 .case-study-modal__summary {
-  max-width: 72ch;
-  margin: 28px 0 0;
+  max-width: 84ch;
+  margin: 13px 0 0;
   color: #b9cbd7;
-  font-size: 1rem;
-  line-height: 1.7;
+  font-size: .88rem;
+  line-height: 1.55;
 }
 
 .case-study-modal__body {
@@ -16485,9 +16495,9 @@ body,
 
 @media (min-width: 1181px) {
   .site-header.site-header--reference .reference-nav>a:not(.nav-cta) {
-    padding-inline: 10px;
-    font-size: .76rem;
-    font-weight: 800;
+    padding-inline: 9px;
+    font-size: .86rem;
+    font-weight: 850;
   }
 }
 
@@ -16564,11 +16574,11 @@ body,
   }
 
   .case-study-modal__intro {
-    padding: 38px 22px 44px;
+    padding: 28px 72px 30px 20px;
   }
 
   .case-study-modal__intro h2 {
-    font-size: clamp(2.35rem, 12vw, 4rem);
+    font-size: clamp(1.9rem, 9vw, 2.75rem);
   }
 
   .case-study-modal__body {
