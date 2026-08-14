@@ -115,7 +115,7 @@ const collectionDefinitions = [
     key: 'partners', anchor: 'partners', no: '09', title: 'Partner logos', singular: 'partner', icon: Handshake,
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
     empty: { id: '', name: '', group: '', logo: '', row: 1 },
-    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'Logo sẽ tự căn giữa và fit trọn vẹn vào cùng một khung, không crop và không kéo méo. Nên dùng PNG/WebP nền trong suốt, ít khoảng trắng quanh logo.']],
+    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'Logo được chuẩn hóa theo chiều cao; chiều rộng tự mở theo đúng tỷ lệ ảnh. Không crop, không kéo méo. Nên dùng PNG/WebP nền trong suốt, ít khoảng trắng quanh logo.']],
     meta: (item) => item.group || (item.logo ? 'Logo only' : 'Partner'), summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   }
 ]
