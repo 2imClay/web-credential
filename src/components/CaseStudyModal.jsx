@@ -3,15 +3,10 @@ import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { CaseVisual } from './CaseStudyCard'
 
-const detailSections = [
-  ['01', 'Objective', 'objective'],
-  ['02', 'Challenge', 'challenge'],
-  ['03', 'Solution / Key work', 'solution'],
-  ['04', 'Results / Impact', 'result']
-]
-
 export default function CaseStudyModal({ item, onClose }) {
   const dialogRef = useRef(null)
+  const gallery = [item.image, ...(Array.isArray(item.gallery) ? item.gallery : [])]
+    .filter((source, index, sources) => source && sources.indexOf(source) === index)
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -51,7 +46,6 @@ export default function CaseStudyModal({ item, onClose }) {
         </button>
 
         <div className="case-study-modal__hero">
-          <div className="case-study-modal__visual"><CaseVisual item={item} /></div>
           <div className="case-study-modal__intro">
             <p className="case-study-modal__meta"><span>{item.category}</span><span>{item.year}</span></p>
             <h2 id="case-study-modal-title">{item.title}</h2>
@@ -59,14 +53,16 @@ export default function CaseStudyModal({ item, onClose }) {
           </div>
         </div>
 
-        <div className="case-study-modal__details">
-          {detailSections.map(([no, title, field]) => (
-            <article key={field}>
-              <span>{no}</span>
-              <h3>{title}</h3>
-              <p>{item[field]?.trim() || 'Content is being updated.'}</p>
-            </article>
-          ))}
+        <div className="case-study-modal__body case-study-modal__body--media-only">
+          <div className="case-study-modal__gallery">
+            {gallery.length ? gallery.map((source, index) => (
+              <figure className={index === 0 ? 'is-cover' : ''} key={`${source}-${index}`}>
+                <img src={source} alt={`${item.title} — image ${index + 1}`} />
+              </figure>
+            )) : (
+              <figure className="is-cover case-study-modal__fallback"><CaseVisual item={item} /></figure>
+            )}
+          </div>
         </div>
       </section>
     </div>,

@@ -95,12 +95,12 @@ const collectionDefinitions = [
   },
   {
     key: 'cases', anchor: 'cases', no: '07', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
-    description: 'Dự án, hình ảnh, bài toán, giải pháp và kết quả. Ảnh thẻ đẹp nhất ở kích thước 1380 × 1000 px (tỷ lệ 1.38:1).', save: contentRepository.saveCaseStudies,
-    empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', summary: '', objective: '', challenge: '', solution: '', result: '' },
+    description: 'Case study ưu tiên hình ảnh: một ảnh cover cho thẻ và nhiều ảnh nội dung trong box chi tiết.', save: contentRepository.saveCaseStudies,
+    empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', gallery: [], summary: '' },
     fields: [
-      ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Case image', 'image', 'Khuyến nghị: 1380 × 1000 px (tỷ lệ 1.38:1). Đặt chủ thể và chữ quan trọng ở vùng giữa vì ảnh sẽ được crop theo khung thẻ.'],
-      ['summary', 'Summary', 'textarea'], ['objective', 'Objective', 'textarea'], ['challenge', 'Challenge', 'textarea'],
-      ['solution', 'Solution / Key work', 'textarea'], ['result', 'Results / Impact', 'textarea']
+      ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Cover image', 'image', 'Ảnh đại diện ngoài thẻ: khuyến nghị 1380 × 1000 px (tỷ lệ 1.38:1).'],
+      ['gallery', 'Case gallery', 'images', 'Upload nhiều ảnh nội dung cùng lúc. Có thể đổi thứ tự; ảnh trong box được hiển thị trọn vẹn, không crop.'],
+      ['summary', 'Content', 'textarea']
     ],
     meta: (item) => `${item.category} / ${item.year}`, summary: (item) => item.summary
   },
@@ -199,18 +199,12 @@ export default function AdminPage() {
     }
   }
 
-  async function readImage(event, onReady, { preserveOriginal = false } = {}) {
-    const file = event.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith('image/')) return setStatus('Vui lòng chọn đúng file hình ảnh.')
+  async function uploadImageFile(file, { preserveOriginal = false } = {}) {
+    if (!file.type.startsWith('image/')) throw new Error('Vui lòng chọn đúng file hình ảnh.')
     const maxSize = file.type === 'image/gif' ? 20 : 8
-    if (file.size > maxSize * 1024 * 1024) return setStatus(`Ảnh tải lên cần nhỏ hơn ${maxSize} MB.`)
-
-    setSaving(true)
-    setStatus(preserveOriginal
-      ? 'Đang tải nguyên file logo lên Supabase Storage...'
-      : 'Đang tối ưu và tải ảnh lên Supabase Storage...')
+    if (file.size > maxSize * 1024 * 1024) throw new Error(`Ảnh tải lên cần nhỏ hơn ${maxSize} MB.`)
     const objectUrl = URL.createObjectURL(file)
+
     try {
       const optimizedFile = preserveOriginal || file.type === 'image/gif' ? file : await new Promise((resolve, reject) => {
         const image = new Image()
@@ -229,13 +223,47 @@ export default function AdminPage() {
         image.onerror = () => reject(new Error('Không đọc được file ảnh.'))
         image.src = objectUrl
       })
-      const publicUrl = await contentRepository.uploadImage(optimizedFile)
-      onReady(publicUrl)
+      return await contentRepository.uploadImage(optimizedFile)
+    } finally {
+      URL.revokeObjectURL(objectUrl)
+    }
+  }
+
+  async function readImage(event, onReady, { preserveOriginal = false } = {}) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setSaving(true)
+    setStatus(preserveOriginal
+      ? 'Đang tải nguyên file logo lên Supabase Storage...'
+      : 'Đang tối ưu và tải ảnh lên Supabase Storage...')
+    try {
+      onReady(await uploadImageFile(file, { preserveOriginal }))
       setStatus('Đã tải ảnh lên Supabase Storage.')
     } catch (error) {
       setStatus(`Không thể tải ảnh: ${error.message}`)
     } finally {
-      URL.revokeObjectURL(objectUrl)
+      event.target.value = ''
+      setSaving(false)
+    }
+  }
+
+  async function readImageGallery(event, onReady) {
+    const files = Array.from(event.target.files || []).slice(0, 20)
+    if (!files.length) return
+
+    setSaving(true)
+    try {
+      const urls = []
+      for (let index = 0; index < files.length; index += 1) {
+        setStatus(`Đang tối ưu và tải ảnh ${index + 1} / ${files.length}...`)
+        urls.push(await uploadImageFile(files[index]))
+      }
+      onReady(urls)
+      setStatus(`Đã tải ${urls.length} ảnh Case Study lên Supabase Storage.`)
+    } catch (error) {
+      setStatus(`Không thể tải gallery: ${error.message}`)
+    } finally {
       event.target.value = ''
       setSaving(false)
     }
@@ -478,7 +506,24 @@ export default function AdminPage() {
             <ModalTitle eyebrow={`${activeDefinition.title} editor`} title={`${editing.item.id ? 'Edit' : 'Add'} ${activeDefinition.singular}`} onClose={() => setEditing(null)} />
             <div className="admin-form">
               {activeDefinition.fields.map(([field, label, type, note]) => {
-                const value = Array.isArray(editing.item[field]) ? editing.item[field].join(', ') : (editing.item[field] ?? '')
+                const rawValue = editing.item[field]
+                if (type === 'images') {
+                  const images = Array.isArray(rawValue) ? rawValue : []
+                  return (
+                    <GalleryImagesEditor
+                      key={field}
+                      label={label}
+                      note={note}
+                      images={images}
+                      onChange={(next) => updateEditing(field, next)}
+                      onUpload={(event) => readImageGallery(
+                        event,
+                        (urls) => updateEditing(field, [...images, ...urls].slice(0, 30))
+                      )}
+                    />
+                  )
+                }
+                const value = Array.isArray(rawValue) ? rawValue.join(', ') : (rawValue ?? '')
                 if (type === 'image') {
                   return (
                     <ImageEditor
@@ -601,6 +646,55 @@ function CollectionPreview({ type, item, icon: Icon }) {
 
 function ModalTitle({ eyebrow, title, onClose }) {
   return <div className="modal-title"><div><p className="eyebrow">{eyebrow}</p><h2>{title}</h2></div><button type="button" onClick={onClose}>×</button></div>
+}
+
+function GalleryImagesEditor({ label, note, images, onChange, onUpload }) {
+  const [imageUrl, setImageUrl] = useState('')
+
+  function addImageUrl() {
+    const url = imageUrl.trim()
+    if (!url) return
+    onChange([...images, url].slice(0, 30))
+    setImageUrl('')
+  }
+
+  function moveImage(index, direction) {
+    const nextIndex = index + direction
+    if (nextIndex < 0 || nextIndex >= images.length) return
+    const next = [...images]
+    ;[next[index], next[nextIndex]] = [next[nextIndex], next[index]]
+    onChange(next)
+  }
+
+  return (
+    <div className="gallery-images-editor full">
+      <div className="gallery-images-editor__head">
+        <div><strong>{label}</strong>{note && <small>{note}</small>}</div>
+        <label className="upload-button"><ImagePlus /> Upload multiple images<input type="file" accept="image/*,.gif" multiple onChange={onUpload} /></label>
+      </div>
+
+      <div className="gallery-images-editor__url">
+        <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="Dán URL ảnh rồi bấm Add image" />
+        <button type="button" onClick={addImageUrl}>Add image</button>
+      </div>
+
+      {images.length ? (
+        <div className="gallery-images-editor__grid">
+          {images.map((src, index) => (
+            <article key={`${src}-${index}`}>
+              <img src={src} alt={`Case gallery ${index + 1}`} />
+              <div>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <button type="button" disabled={index === 0} onClick={() => moveImage(index, -1)} aria-label="Move image left">←</button>
+                <button type="button" disabled={index === images.length - 1} onClick={() => moveImage(index, 1)} aria-label="Move image right">→</button>
+                <button type="button" onClick={() => onChange(images.filter((_, imageIndex) => imageIndex !== index))} aria-label="Remove image"><Trash2 /></button>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : <p className="gallery-images-editor__empty">Chưa có ảnh nội dung. Upload nhiều ảnh hoặc thêm bằng URL.</p>}
+    </div>
+  )
 }
 
 function ImageEditor({ label, note, value, onChange, onUpload }) {

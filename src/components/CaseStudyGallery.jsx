@@ -21,6 +21,7 @@ export default function CaseStudyGallery({ items, copy = {} }) {
   const handlePointerDown = (event) => {
     const rail = railRef.current
     if (!rail || event.pointerType === 'mouse' && event.button !== 0) return
+    if (event.target.closest('button, a, input, textarea, select, label')) return
 
     dragState.current = {
       active: true,
