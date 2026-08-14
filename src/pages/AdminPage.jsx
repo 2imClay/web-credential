@@ -551,13 +551,12 @@ export default function AdminPage() {
                   )
                 }
                 const isTextarea = type === 'textarea' || type === 'textarea-optional'
-                const isOptional = type === 'optional' || type === 'textarea-optional'
                 return (
                   <label className={isTextarea ? 'full' : ''} key={field}>
                     {label}
                     {isTextarea
-                      ? <textarea required={!isOptional} rows="3" value={value} onChange={(event) => updateEditing(field, event.target.value)} />
-                      : <input required={!isOptional} value={value} onChange={(event) => updateEditing(field, event.target.value)} />}
+                      ? <textarea rows="3" value={value} onChange={(event) => updateEditing(field, event.target.value)} />
+                      : <input value={value} onChange={(event) => updateEditing(field, event.target.value)} />}
                   </label>
                 )
               })}
