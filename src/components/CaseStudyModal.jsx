@@ -2,10 +2,38 @@ import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
+function getYouTubeEmbedUrl(value) {
+  if (!value) return ''
+
+  try {
+    const url = new URL(value)
+    const host = url.hostname.replace(/^www\./, '').toLowerCase()
+    let videoId = ''
+
+    if (host === 'youtu.be') {
+      videoId = url.pathname.split('/').filter(Boolean)[0] || ''
+    } else if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
+      if (url.pathname === '/watch') videoId = url.searchParams.get('v') || ''
+      else videoId = url.pathname.match(/^\/(?:embed|shorts|live)\/([^/?#]+)/)?.[1] || ''
+    }
+
+    if (!/^[a-zA-Z0-9_-]{6,}$/.test(videoId)) return ''
+    return `https://www.youtube-nocookie.com/embed/${videoId}`
+  } catch {
+    return ''
+  }
+}
+
 export default function CaseStudyModal({ item, onClose }) {
   const dialogRef = useRef(null)
   const gallery = (Array.isArray(item.gallery) ? item.gallery : [])
     .filter((source, index, sources) => source && sources.indexOf(source) === index)
+  const youtubeUrls = Array.isArray(item.youtubeUrls)
+    ? item.youtubeUrls
+    : String(item.youtubeUrls || '').split(/[\r\n,]+/)
+  const videos = youtubeUrls
+    .map((url) => ({ source: url.trim(), embedUrl: getYouTubeEmbedUrl(url.trim()) }))
+    .filter(({ embedUrl }, index, sources) => embedUrl && sources.findIndex((video) => video.embedUrl === embedUrl) === index)
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -52,15 +80,34 @@ export default function CaseStudyModal({ item, onClose }) {
           </div>
         </div>
 
-        {gallery.length > 0 && (
+        {(gallery.length > 0 || videos.length > 0) && (
           <div className="case-study-modal__body case-study-modal__body--media-only">
-            <div className="case-study-modal__gallery">
-              {gallery.map((source, index) => (
-              <figure className={index === 0 ? 'is-cover' : ''} key={`${source}-${index}`}>
-                <img src={source} alt={`${item.title} — image ${index + 1}`} />
-              </figure>
-              ))}
-            </div>
+            {gallery.length > 0 && (
+              <div className="case-study-modal__gallery">
+                {gallery.map((source, index) => (
+                  <figure className={index === 0 ? 'is-cover' : ''} key={`${source}-${index}`}>
+                    <img src={source} alt={`${item.title} — image ${index + 1}`} />
+                  </figure>
+                ))}
+              </div>
+            )}
+            {videos.length > 0 && (
+              <div className="case-study-modal__videos">
+                {videos.map(({ source, embedUrl }, index) => (
+                  <figure key={embedUrl}>
+                    <iframe
+                      src={embedUrl}
+                      title={`${item.title || 'Case study'} — YouTube video ${index + 1}`}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                    <a href={source} target="_blank" rel="noreferrer">Xem trên YouTube</a>
+                  </figure>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </section>

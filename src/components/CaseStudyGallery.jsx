@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import CaseStudyCard from './CaseStudyCard'
 import CaseStudyModal from './CaseStudyModal'
 
@@ -14,6 +15,11 @@ export default function CaseStudyGallery({ items, copy = {} }) {
   const suppressClick = useRef(false)
   const visible = active === allLabel ? items : items.filter((item) => item.category === active)
   const closeCase = useCallback(() => setSelectedCase(null), [])
+  const showNextCases = useCallback(() => {
+    const rail = railRef.current
+    if (!rail) return
+    rail.scrollBy({ left: Math.max(280, rail.clientWidth * .72), behavior: 'smooth' })
+  }, [])
   const updateScrollCue = useCallback(() => {
     const rail = railRef.current
     if (!rail) return
@@ -92,17 +98,24 @@ export default function CaseStudyGallery({ items, copy = {} }) {
 
       </div>
 
-      <div
-        ref={railRef}
-        className={`case-rail ${isDragging ? 'is-dragging' : ''} ${canScrollRight ? 'has-more-right' : ''}`}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={finishDrag}
-        onPointerCancel={finishDrag}
-        onScroll={updateScrollCue}
-        onClickCapture={blockDraggedClick}
-      >
-        {visible.map((item) => <CaseStudyCard item={item} onView={setSelectedCase} key={item.id} />)}
+      <div className="case-rail-shell">
+        <div
+          ref={railRef}
+          className={`case-rail ${isDragging ? 'is-dragging' : ''} ${canScrollRight ? 'has-more-right' : ''}`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={finishDrag}
+          onPointerCancel={finishDrag}
+          onScroll={updateScrollCue}
+          onClickCapture={blockDraggedClick}
+        >
+          {visible.map((item) => <CaseStudyCard item={item} onView={setSelectedCase} key={item.id} />)}
+        </div>
+        {canScrollRight && (
+          <button className="case-rail-next" type="button" onClick={showNextCases} aria-label="Xem case study tiếp theo">
+            <ArrowRight />
+          </button>
+        )}
       </div>
       </div>
 
