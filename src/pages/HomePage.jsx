@@ -34,11 +34,10 @@ export default function HomePage() {
       <div className="editorial-home-flow">
         <section id="about" className="section newsroom-section">
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.about}</span></div>
-          {(pageContent.about.title?.trim() || pageContent.about.intro?.trim()) && (
-            <div className="page-shell newsroom-heading">
+          {pageContent.about.intro?.trim() && (
+            <div className="page-shell newsroom-heading newsroom-heading--intro-only">
               <Reveal>
-                {pageContent.about.title?.trim() && <h2>{pageContent.about.title}</h2>}
-                {pageContent.about.intro?.trim() && <p>{pageContent.about.intro}</p>}
+                <p>{pageContent.about.intro}</p>
               </Reveal>
             </div>
           )}

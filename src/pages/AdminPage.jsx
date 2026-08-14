@@ -47,7 +47,7 @@ const copyGroups = [
   {
     key: 'about', title: 'About us / Newsroom', description: 'Tiêu đề và mô tả ngắn phía trên khu vực bài báo.',
     fields: [
-      ['title', 'Title'], ['intro', 'Short description', 'textarea']
+      ['intro', 'About content', 'textarea']
     ]
   },
   {

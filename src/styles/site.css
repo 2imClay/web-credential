@@ -222,6 +222,18 @@
   line-height: 1.75;
 }
 
+.newsroom-heading--intro-only>div {
+  display: block;
+}
+
+.newsroom-heading--intro-only>div>p:last-child {
+  max-width: 760px;
+  margin: 0;
+  color: #405f73;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
+  line-height: 1.7;
+}
+
 .press-room {
   position: relative;
   display: grid;
@@ -13939,9 +13951,15 @@ body,
   overflow-x: auto;
   overflow-y: hidden;
   padding: 55px 28px 75px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--credential-blue) #dcecf6;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   scroll-snap-type: x proximity;
+}
+
+.recognition-paper-wall__grid::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .recognition-paper {
@@ -15969,7 +15987,17 @@ body,
   min-height: 44px;
   padding-inline: 19px;
   border-radius: 3px !important;
+  background: rgba(255, 255, 255, .58);
+  color: #173f56;
   font-size: .92rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  box-shadow: 0 5px 14px rgba(8, 91, 145, .08);
+}
+
+.public-site--editorial .case-tabs button.is-active {
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(8, 119, 189, .22);
 }
 
 /* Source logos float directly on the About background without card boxes. */
