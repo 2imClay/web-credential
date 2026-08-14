@@ -32,6 +32,7 @@ export const defaultPageContent = {
     milestones: 'Our Journey',
     recognition: 'Our Recognition',
     services: 'Our Services',
+    portfolio: 'Creative Portfolio',
     cases: 'Case Studies',
     team: 'Our Team',
     partners: 'Partners',
@@ -42,6 +43,7 @@ export const defaultPageContent = {
     navJourney: 'Our Journey',
     navRecognition: 'Recognition',
     navServices: 'Services',
+    navPortfolio: 'Portfolio',
     navCases: 'Case Studies',
     navTeam: 'Our Team',
     navPartners: 'Partners',
@@ -79,6 +81,13 @@ export const defaultPageContent = {
     titleBefore: 'Built for',
     titleHighlight: 'connected growth',
     intro: 'Strategy, creative, technology and performance — connected in one practical delivery system.'
+  },
+  portfolio: {
+    allLabel: 'All',
+    categoryOne: 'Social Content',
+    categoryTwo: 'Key Visual',
+    categoryThree: 'Digital Design',
+    categoryFour: 'Event & Activation'
   },
   data: {
     eyebrow: 'D-AI Sense / Data Hub',
@@ -282,6 +291,8 @@ export const defaultPartners = [
   { id: 'isuzu', name: 'ISUZU', group: 'Client', logo: '', row: 3 },
   { id: 'kia', name: 'KIA', group: 'Client', logo: '', row: 3 }
 ]
+
+export const defaultCreativePortfolio = []
 
 export const defaultCaseStudies = [
   {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 
-export default function Header({ settings, copy = {} }) {
+export default function Header({ settings, copy = {}, showPortfolio = false }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const links = [
@@ -9,6 +9,7 @@ export default function Header({ settings, copy = {} }) {
     [copy.navJourney || 'Our Journey', '#milestones'],
     [copy.navRecognition || 'Recognition', '#recognition'],
     [copy.navServices || 'Services', '#services'],
+    ...(showPortfolio ? [[copy.navPortfolio || 'Portfolio', '#creative-portfolio']] : []),
     [copy.navCases || 'Case Studies', '#case-studies'],
     [copy.navTeam || 'Our Team', '#team'],
     [copy.navPartners || 'Partners', '#partners'],

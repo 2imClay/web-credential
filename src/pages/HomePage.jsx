@@ -10,6 +10,7 @@ import TeamScroll from '../components/TeamScroll'
 import PartnerLogoMarquee from '../components/PartnerLogoMarquee'
 import SiteExperience from '../components/SiteExperience'
 import ServicesShowcase from '../components/ServicesShowcase'
+import CreativePortfolio from '../components/CreativePortfolio'
 import { useContent } from '../hooks/useContent'
 
 export default function HomePage() {
@@ -19,6 +20,7 @@ export default function HomePage() {
     recognitions,
     milestones,
     services,
+    creativePortfolio,
     caseStudies,
     teamMembers,
     partners,
@@ -28,7 +30,7 @@ export default function HomePage() {
   return (
     <main className="public-site public-site--editorial">
       <SiteExperience />
-      <Header settings={settings} copy={pageContent.ui} />
+      <Header settings={settings} copy={pageContent.ui} showPortfolio={creativePortfolio.some((item) => item?.image)} />
       <Hero settings={settings} services={services} />
 
       <div className="editorial-home-flow">
@@ -58,6 +60,15 @@ export default function HomePage() {
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.services}</span></div>
           <div className="page-shell"><ServicesShowcase items={services} /></div>
         </section>
+
+        {creativePortfolio.some((item) => item?.image) && (
+          <section id="creative-portfolio" className="section creative-portfolio-section content-only-section">
+            <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.portfolio}</span></div>
+            <div className="page-shell">
+              <CreativePortfolio items={creativePortfolio} copy={pageContent.portfolio} />
+            </div>
+          </section>
+        )}
 
         <section id="case-studies" className="section cases-section cases-section--content-only content-only-section">
           <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.cases}</span></div>

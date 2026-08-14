@@ -30,7 +30,7 @@ const copyGroups = [
     key: 'sectionLabels', title: 'Section headlines', description: 'Tên nhỏ ở góc trên trái giúp nhận biết từng session trên trang chủ.',
     fields: [
       ['about', 'About Us'], ['milestones', 'Timeline / Journey'], ['recognition', 'Recognition'],
-      ['services', 'Services'], ['cases', 'Case Studies'], ['team', 'Our Team'],
+      ['services', 'Services'], ['portfolio', 'Creative Portfolio'], ['cases', 'Case Studies'], ['team', 'Our Team'],
       ['partners', 'Partners'], ['footer', 'Contact / Footer']
     ]
   },
@@ -38,10 +38,20 @@ const copyGroups = [
     key: 'ui', title: 'Navigation & interface labels', description: 'Tên menu và các nhãn hướng dẫn đang hiển thị trên trang chủ.',
     fields: [
       ['navAbout', 'Menu — About'], ['navJourney', 'Menu — Journey'], ['navRecognition', 'Menu — Recognition'],
-      ['navServices', 'Menu — Services'], ['navCases', 'Menu — Case Studies'], ['navTeam', 'Menu — Team'],
+      ['navServices', 'Menu — Services'], ['navPortfolio', 'Menu — Creative Portfolio'], ['navCases', 'Menu — Case Studies'], ['navTeam', 'Menu — Team'],
       ['navPartners', 'Menu — Partners'], ['navContact', 'Menu — Contact'],
       ['pressSourcesLabel', 'Press sources label'], ['pressReadMore', 'Press read-more label'],
       ['allCasesLabel', 'All cases filter']
+    ]
+  },
+  {
+    key: 'portfolio', title: 'Creative Portfolio categories', description: 'Đổi tên bốn nhóm ảnh. Ảnh đã gắn nhóm vẫn được giữ nguyên khi đổi tên.',
+    fields: [
+      ['allLabel', 'All filter label'],
+      ['categoryOne', 'Category 01'],
+      ['categoryTwo', 'Category 02'],
+      ['categoryThree', 'Category 03'],
+      ['categoryFour', 'Category 04']
     ]
   },
   {
@@ -94,7 +104,18 @@ const collectionDefinitions = [
     meta: (item) => `Service ${item.no}`, summary: (item) => item.text
   },
   {
-    key: 'cases', anchor: 'cases', no: '07', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
+    key: 'creativePortfolio', anchor: 'creative-portfolio-admin', no: '07', title: 'Creative Portfolio', singular: 'portfolio image', icon: ImagePlus,
+    description: 'Gallery chỉ gồm hình ảnh, chia theo 4 nhóm có thể đổi tên trong Homepage copy.', save: contentRepository.saveCreativePortfolio,
+    empty: { id: '', category: 1, image: '', alt: '' },
+    fields: [
+      ['category', 'Portfolio category', 'portfolio-category'],
+      ['image', 'Portfolio image', 'image', 'Khuyến nghị ảnh rõ nét, tối thiểu 1200 px. Gallery hỗ trợ ảnh ngang, vuông và dọc.'],
+      ['alt', 'Image description for accessibility', 'optional']
+    ],
+    meta: (item) => `Category ${String(item.category || 1).padStart(2, '0')}`, summary: (item) => item.alt || 'Image-only portfolio item'
+  },
+  {
+    key: 'cases', anchor: 'cases', no: '08', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
     description: 'Case study ưu tiên hình ảnh: một ảnh cover cho thẻ và nhiều ảnh nội dung trong box chi tiết.', save: contentRepository.saveCaseStudies,
     empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', cardSummary: '', gallery: [], youtubeUrls: [], summary: '' },
     fields: [
@@ -107,14 +128,14 @@ const collectionDefinitions = [
     meta: (item) => `${item.category} / ${item.year}`, summary: (item) => item.cardSummary || item.summary
   },
   {
-    key: 'teamMembers', anchor: 'team-admin', no: '08', title: 'Team departments', singular: 'team department', icon: UsersRound,
+    key: 'teamMembers', anchor: 'team-admin', no: '09', title: 'Team departments', singular: 'team department', icon: UsersRound,
     description: 'Các nhóm chuyên môn và quy mô nhân sự.', save: contentRepository.saveTeamMembers,
     empty: { id: '', role: '', count: '01', detail: '', tags: [] },
     fields: [['role', 'Department / role'], ['count', 'People count'], ['detail', 'Description', 'textarea'], ['tags', 'Expertise tags — separated by commas']],
     meta: (item) => `${item.count} people`, summary: (item) => item.detail
   },
   {
-    key: 'partners', anchor: 'partners', no: '09', title: 'Partner logos', singular: 'partner', icon: Handshake,
+    key: 'partners', anchor: 'partners', no: '10', title: 'Partner logos', singular: 'partner', icon: Handshake,
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
     empty: { id: '', name: '', group: '', logo: '', row: 1 },
     fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image', 'File logo được upload nguyên bản, không crop, không resize và không chuyển WebP. Nên dùng PNG/SVG nền trong suốt, có khoảng an toàn nhỏ quanh logo.']],
@@ -132,6 +153,7 @@ function loadCollections() {
     pressArticles: contentRepository.getPressArticles(),
     recognitions: contentRepository.getRecognitions(),
     services: contentRepository.getServices(),
+    creativePortfolio: contentRepository.getCreativePortfolio(),
     cases: contentRepository.getCaseStudies(),
     teamMembers: contentRepository.getTeamMembers(),
     partners: contentRepository.getPartners()
@@ -551,6 +573,24 @@ export default function AdminPage() {
                     />
                   )
                 }
+                if (type === 'portfolio-category') {
+                  const categoryNames = [
+                    pageContent.portfolio.categoryOne,
+                    pageContent.portfolio.categoryTwo,
+                    pageContent.portfolio.categoryThree,
+                    pageContent.portfolio.categoryFour
+                  ]
+                  return (
+                    <label key={field}>
+                      {label}
+                      <select value={Number(value) || 1} onChange={(event) => updateEditing(field, Number(event.target.value))}>
+                        {categoryNames.map((name, index) => (
+                          <option value={index + 1} key={index + 1}>{String(index + 1).padStart(2, '0')} — {name || `Category ${index + 1}`}</option>
+                        ))}
+                      </select>
+                    </label>
+                  )
+                }
                 if (type === 'partner-row') {
                   return (
                     <label key={field}>
@@ -617,7 +657,7 @@ function CollectionSection({ definition, items, onAdd, onEdit, onRemove }) {
         {items.map((item) => (
           <article key={item.id}>
             <CollectionPreview type={definition.key} item={item} icon={Icon} />
-            <div><span>{definition.meta(item)}</span><h3>{item.title || item.name || item.role}</h3><p>{definition.summary(item)}</p></div>
+            <div><span>{definition.meta(item)}</span><h3>{item.title || item.name || item.role || item.alt || 'Untitled item'}</h3><p>{definition.summary(item)}</p></div>
             <div className="row-actions"><button type="button" onClick={() => onEdit(item)} aria-label={`Sửa ${definition.singular}`}><Edit3 /></button><button type="button" onClick={() => onRemove(item.id)} aria-label={`Xóa ${definition.singular}`}><Trash2 /></button></div>
           </article>
         ))}
@@ -663,6 +703,7 @@ function PartnerCollectionSection({ definition, items, onAdd, onEdit, onRemove }
 
 function CollectionPreview({ type, item, icon: Icon }) {
   if (type === 'cases') return <div className="admin-preview"><CaseVisual item={item} compact /></div>
+  if (type === 'creativePortfolio') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : <ImagePlus />}</div>
   if (type === 'pressArticles') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : item.logo ? <img src={item.logo} alt="" /> : <strong>{item.year}</strong>}</div>
   if (type === 'recognitions') return <div className="admin-preview admin-preview--recognition">{item.image ? <img src={item.image} alt="" /> : <strong>{item.year}</strong>}</div>
   if (type === 'partners') return <div className="admin-preview admin-preview--logo">{item.logo ? <img src={item.logo} alt="" /> : <strong>{item.name}</strong>}</div>

@@ -1,5 +1,6 @@
 import {
   defaultCaseStudies,
+  defaultCreativePortfolio,
   defaultPageContent,
   defaultPartners,
   defaultPressArticles,
@@ -18,6 +19,7 @@ const ASSET_BUCKET = 'site-assets'
 
 const defaults = {
   case_studies: defaultCaseStudies,
+  creative_portfolio: defaultCreativePortfolio,
   site_settings: defaultSiteSettings,
   recognitions: defaultRecognitions,
   press_articles: defaultPressArticles,
@@ -99,6 +101,8 @@ export const contentRepository = {
 
   getCaseStudies: () => cache.case_studies,
   saveCaseStudies: (items) => save('case_studies', items),
+  getCreativePortfolio: () => cache.creative_portfolio,
+  saveCreativePortfolio: (items) => save('creative_portfolio', items),
   getSiteSettings: () => ({ ...defaultSiteSettings, ...cache.site_settings }),
   saveSiteSettings: (settings) => save('site_settings', settings),
   getRecognitions: () => cache.recognitions,

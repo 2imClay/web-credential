@@ -3,6 +3,7 @@ import { contentRepository } from '../services/contentRepository'
 
 export function useContent() {
   const [caseStudies, setCaseStudies] = useState(contentRepository.getCaseStudies())
+  const [creativePortfolio, setCreativePortfolio] = useState(contentRepository.getCreativePortfolio())
   const [settings, setSettings] = useState(contentRepository.getSiteSettings())
   const [recognitions, setRecognitions] = useState(contentRepository.getRecognitions())
   const [pressArticles, setPressArticles] = useState(contentRepository.getPressArticles())
@@ -16,6 +17,7 @@ export function useContent() {
   useEffect(() => {
     const refresh = () => {
       setCaseStudies(contentRepository.getCaseStudies())
+      setCreativePortfolio(contentRepository.getCreativePortfolio())
       setSettings(contentRepository.getSiteSettings())
       setRecognitions(contentRepository.getRecognitions())
       setPressArticles(contentRepository.getPressArticles())
@@ -39,6 +41,7 @@ export function useContent() {
 
   return {
     caseStudies,
+    creativePortfolio,
     settings,
     recognitions,
     pressArticles,
