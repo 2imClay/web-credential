@@ -16535,6 +16535,39 @@ body,
   padding-top: 14px;
 }
 
+/* Compact case cards: one short copy line and a restrained centered action. */
+.public-site--editorial .cases-section .case-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.public-site--editorial .cases-section .case-card-copy {
+  min-height: 78px;
+}
+
+.public-site--editorial .cases-section .case-card-copy p {
+  -webkit-line-clamp: 1;
+}
+
+.public-site--editorial .cases-section .case-card-footerbar {
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.public-site--editorial .cases-section .case-card-link {
+  min-height: 36px;
+  gap: 6px;
+  padding-inline: 13px;
+  border-radius: 4px !important;
+  font-size: .68rem;
+}
+
+.public-site--editorial .cases-section .case-card-link svg {
+  width: 14px;
+  height: 14px;
+}
+
 @media (max-width: 640px) {
   .public-site--editorial .newsroom-heading--intro-only>div>p:last-child {
     font-size: .9rem;
