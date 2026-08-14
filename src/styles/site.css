@@ -12561,6 +12561,7 @@ body {
 
 .admin-shell--refresh .admin-form input,
 .admin-shell--refresh .admin-form textarea,
+.admin-shell--refresh .admin-form select,
 .admin-shell--refresh .image-editor input {
   border-color: #d0dcdd;
   border-radius: 9px;
@@ -12571,6 +12572,7 @@ body {
 
 .admin-shell--refresh .admin-form input:focus,
 .admin-shell--refresh .admin-form textarea:focus,
+.admin-shell--refresh .admin-form select:focus,
 .admin-shell--refresh .image-editor input:focus {
   border-color: #42bed8;
   background: #fff;
@@ -12730,6 +12732,65 @@ body {
 .admin-shell--refresh .row-actions button:hover {
   border-color: #58c9dd;
   color: #0982a0;
+}
+
+.admin-form select {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #d0dcdd;
+  border-radius: 9px;
+  outline: none;
+  background: #f9fbfa;
+  color: #0c202a;
+  font: inherit;
+}
+
+.partner-admin-rows {
+  display: grid;
+  gap: 22px;
+  margin-top: 26px;
+}
+
+.partner-admin-row {
+  overflow: hidden;
+  padding: 20px 22px 0;
+  border: 1px solid #d8e3e2;
+  border-radius: 14px;
+  background: #fbfdfc;
+}
+
+.partner-admin-row__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #dce6e4;
+}
+
+.partner-admin-row__header>div {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.partner-admin-row__header span,
+.partner-admin-row__header small {
+  color: #1688a4;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.partner-admin-row__header h3 {
+  margin: 0;
+  color: #102833;
+  font-size: 1.05rem;
+}
+
+.partner-admin-row .admin-empty-state {
+  padding: 32px;
 }
 
 .admin-empty-state {
@@ -12994,6 +13055,21 @@ body {
   .admin-shell--refresh .admin-panel-title {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .partner-admin-row {
+    padding-inline: 14px;
+  }
+
+  .partner-admin-row__header,
+  .partner-admin-row__header>div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .partner-admin-row__header .button {
+    width: 100%;
+    justify-content: center;
   }
 
   .admin-shell--refresh .admin-form {
@@ -15763,5 +15839,384 @@ body,
 
   .footer-lower--soft {
     margin-top: 58px;
+  }
+}
+
+/* ============================================================
+   EDITORIAL FLOW REFINEMENTS
+   ============================================================ */
+
+/* One continuous surface keeps every homepage section visually connected. */
+.public-site--editorial .editorial-home-flow {
+  background:
+    radial-gradient(circle at 8% 12%, rgba(52, 200, 231, .15), transparent 25%),
+    radial-gradient(circle at 92% 48%, rgba(34, 130, 205, .1), transparent 28%),
+    radial-gradient(circle at 15% 82%, rgba(67, 208, 218, .11), transparent 24%),
+    linear-gradient(180deg, #effafd 0%, #edf8fc 50%, #eaf6fa 100%);
+}
+
+.public-site--editorial .editorial-home-flow>.section {
+  padding-block: clamp(52px, 5.5vw, 78px) !important;
+  background: transparent !important;
+}
+
+.public-site--editorial .editorial-home-flow>.section::before {
+  content: none;
+}
+
+.public-site--editorial .section-corner-label {
+  margin-bottom: clamp(25px, 3vw, 38px);
+}
+
+.public-site--editorial .section-corner-label span {
+  font-size: clamp(.76rem, .78vw, .86rem);
+  letter-spacing: .19em;
+}
+
+.public-site--editorial .section-corner-label span::before {
+  width: 36px;
+}
+
+.public-site--editorial .newsroom-section>.section-corner-label {
+  margin-bottom: 24px;
+}
+
+.public-site--editorial .newsroom-section .press-room {
+  margin-top: clamp(36px, 4vw, 58px);
+}
+
+.public-site--editorial .cases-section .case-gallery {
+  margin-top: 30px;
+}
+
+/* Services copy is intentionally more readable at presentation distance. */
+.public-site--editorial .service-console__nav button>small {
+  font-size: .66rem;
+}
+
+.public-site--editorial .service-console__nav button>span {
+  font-size: clamp(.84rem, .9vw, .96rem);
+  line-height: 1.25;
+}
+
+.public-site--editorial .service-console__copy p {
+  font-size: .9rem;
+  line-height: 1.7;
+}
+
+.public-site--editorial .service-console__capabilities span {
+  min-height: 62px;
+}
+
+.public-site--editorial .service-console__capabilities small {
+  font-size: .61rem;
+}
+
+.public-site--editorial .service-console__capabilities strong {
+  font-size: clamp(.82rem, .86vw, .94rem);
+  line-height: 1.4;
+}
+
+/* Case category controls use compact square corners; rail remains draggable. */
+.public-site--editorial .case-gallery-toolbar {
+  justify-content: flex-start;
+}
+
+.public-site--editorial .case-tabs {
+  gap: 10px;
+}
+
+.public-site--editorial .case-tabs button {
+  min-height: 44px;
+  padding-inline: 19px;
+  border-radius: 3px !important;
+  font-size: .92rem;
+}
+
+/* Source logos float directly on the About background without card boxes. */
+.public-site--editorial .press-room__sources>div {
+  gap: 24px;
+  padding: 8px 0;
+}
+
+.public-site--editorial .press-room__sources button,
+.public-site--editorial .press-room__sources button.is-active {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0 !important;
+  background: transparent;
+  box-shadow: none;
+}
+
+.public-site--editorial .press-room__sources button:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.public-site--editorial .press-room__sources img {
+  width: auto;
+  max-width: 125px;
+  max-height: 58px;
+}
+
+/* A hard dark footer break gives the page a clear ending. */
+.public-site .site-footer--compact {
+  padding-top: clamp(72px, 7vw, 100px);
+  border-top: 6px solid #0d91c8;
+  background: #03070a !important;
+}
+
+.public-site .site-footer--compact::before {
+  content: none;
+  display: none;
+}
+
+.public-site .site-footer--compact .compact-footer-brand p {
+  color: #a9b5bb;
+}
+
+.public-site .site-footer--compact .compact-footer-legal {
+  color: #77858b;
+}
+
+@media (max-width: 640px) {
+  .public-site--editorial .editorial-home-flow>.section {
+    padding-block: 46px !important;
+  }
+
+  .public-site--editorial .section-corner-label span {
+    font-size: .7rem;
+  }
+
+  .public-site--editorial .case-tabs button {
+    min-height: 40px;
+    padding-inline: 14px;
+    font-size: .82rem;
+  }
+
+  .public-site--editorial .service-console__nav button>span {
+    font-size: .72rem;
+  }
+
+  .public-site--editorial .service-console__capabilities strong {
+    font-size: .8rem;
+  }
+}
+
+/* Tighter section rhythm, especially at the About -> Timeline transition. */
+.public-site--editorial .editorial-home-flow>.section {
+  padding-block: clamp(36px, 3.8vw, 54px) !important;
+}
+
+.public-site--editorial .editorial-home-flow>.newsroom-section {
+  padding-bottom: 18px !important;
+}
+
+.public-site--editorial .editorial-home-flow>.milestone-section {
+  padding-top: 18px !important;
+}
+
+.public-site--editorial .section-corner-label {
+  margin-bottom: clamp(20px, 2.3vw, 30px);
+}
+
+.public-site--editorial .press-room .press-room__papers {
+  min-height: 650px;
+}
+
+@media (max-width: 640px) {
+  .public-site--editorial .editorial-home-flow>.section {
+    padding-block: 34px !important;
+  }
+
+  .public-site--editorial .editorial-home-flow>.newsroom-section {
+    padding-bottom: 14px !important;
+  }
+
+  .public-site--editorial .editorial-home-flow>.milestone-section {
+    padding-top: 14px !important;
+  }
+
+  .public-site--editorial .press-room .press-room__papers {
+    min-height: 610px;
+  }
+}
+
+/* Larger section labels for stronger visual hierarchy. */
+.public-site--editorial .section-corner-label span,
+.public-site .site-footer--compact .section-corner-label span {
+  font-size: clamp(.94rem, 1vw, 1.08rem);
+  letter-spacing: .2em;
+}
+
+.public-site--editorial .section-corner-label span::before,
+.public-site .site-footer--compact .section-corner-label span::before {
+  width: 44px;
+  height: 3px;
+}
+
+@media (max-width: 640px) {
+  .public-site--editorial .section-corner-label span,
+  .public-site .site-footer--compact .section-corner-label span {
+    font-size: .82rem;
+    letter-spacing: .17em;
+  }
+
+  .public-site--editorial .section-corner-label span::before,
+  .public-site .site-footer--compact .section-corner-label span::before {
+    width: 34px;
+    height: 2px;
+  }
+}
+
+/* Larger, presentation-friendly content throughout Our Services. */
+@media (min-width: 1001px) {
+  .public-site--editorial .service-console {
+    grid-template-columns: minmax(285px, 335px) minmax(0, 1fr);
+  }
+}
+
+.public-site--editorial .service-console__nav button {
+  min-height: 80px;
+}
+
+.public-site--editorial .service-console__nav button>small {
+  font-size: .72rem;
+}
+
+.public-site--editorial .service-console__nav button>span {
+  font-size: clamp(.96rem, 1vw, 1.08rem);
+  line-height: 1.3;
+}
+
+.public-site--editorial .service-console__nav button svg {
+  width: 21px;
+  height: 21px;
+}
+
+.public-site--editorial .service-console__stage,
+.public-site--editorial .service-console__panel {
+  min-height: 480px;
+}
+
+.public-site--editorial .service-console__copy h3 {
+  font-size: clamp(2.6rem, 3.15vw, 3.5rem);
+}
+
+.public-site--editorial .service-console__copy p {
+  font-size: 1rem;
+}
+
+.public-site--editorial .service-console__capabilities span {
+  min-height: 70px;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+}
+
+.public-site--editorial .service-console__capabilities small {
+  font-size: .69rem;
+}
+
+.public-site--editorial .service-console__capabilities strong {
+  font-size: clamp(.96rem, 1vw, 1.08rem);
+  line-height: 1.42;
+}
+
+@media (max-width: 640px) {
+  .public-site--editorial .service-console__nav button {
+    min-height: 66px;
+  }
+
+  .public-site--editorial .service-console__nav button>span {
+    font-size: .8rem;
+  }
+
+  .public-site--editorial .service-console__stage,
+  .public-site--editorial .service-console__panel {
+    min-height: 440px;
+  }
+
+  .public-site--editorial .service-console__copy h3 {
+    font-size: clamp(2.35rem, 12vw, 3.2rem);
+  }
+
+  .public-site--editorial .service-console__copy p {
+    font-size: .9rem;
+  }
+
+  .public-site--editorial .service-console__capabilities strong {
+    font-size: .88rem;
+  }
+}
+
+/* Keep the left side compact; reserve the larger type for right capabilities. */
+@media (min-width: 1001px) {
+  .public-site--editorial .service-console {
+    grid-template-columns: minmax(245px, 310px) minmax(0, 1fr);
+  }
+
+  .public-site--editorial .service-console__panel {
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    column-gap: 32px;
+  }
+}
+
+.public-site--editorial .service-console__nav button {
+  min-height: 72px;
+}
+
+.public-site--editorial .service-console__nav button>small {
+  font-size: .58rem;
+}
+
+.public-site--editorial .service-console__nav button>span {
+  font-size: .76rem;
+  line-height: 1.2;
+}
+
+.public-site--editorial .service-console__nav button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.public-site--editorial .service-console__copy {
+  padding-right: 0;
+}
+
+.public-site--editorial .service-console__copy h3 {
+  max-width: 10ch;
+  font-size: clamp(2.15rem, 2.5vw, 2.8rem);
+}
+
+.public-site--editorial .service-console__copy p {
+  font-size: .78rem;
+}
+
+/* Only this right-hand list stays enlarged. */
+.public-site--editorial .service-console__capabilities strong {
+  font-size: clamp(.96rem, 1vw, 1.08rem);
+}
+
+@media (max-width: 1000px) {
+  .public-site--editorial .service-console__nav button>span {
+    font-size: .66rem;
+  }
+
+  .public-site--editorial .service-console__copy h3 {
+    max-width: 12ch;
+    font-size: clamp(2.25rem, 9vw, 3rem);
+  }
+
+  .public-site--editorial .service-console__copy p {
+    font-size: .78rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .public-site--editorial .service-console__nav button>span {
+    font-size: .61rem;
   }
 }

@@ -268,18 +268,18 @@ export const defaultRecognitions = [
 ]
 
 export const defaultPartners = [
-  { id: 'google', name: 'Google', group: 'Platform partner', logo: '' },
-  { id: 'meta', name: 'Meta', group: 'Platform partner', logo: '' },
-  { id: 'tiktok', name: 'TikTok', group: 'Platform partner', logo: '' },
-  { id: 'zalo', name: 'Zalo', group: 'Platform partner', logo: '' },
-  { id: 'decision-lab', name: 'Decision Lab', group: 'Research partner', logo: '' },
-  { id: 'kantar', name: 'Kantar', group: 'Research partner', logo: '' },
-  { id: 'nielsen', name: 'Nielsen', group: 'Research partner', logo: '' },
-  { id: 'skoda', name: 'Škoda', group: 'Client', logo: '' },
-  { id: 'bmw', name: 'BMW', group: 'Client', logo: '' },
-  { id: 'toyota', name: 'Toyota', group: 'Client', logo: '' },
-  { id: 'isuzu', name: 'ISUZU', group: 'Client', logo: '' },
-  { id: 'kia', name: 'KIA', group: 'Client', logo: '' }
+  { id: 'google', name: 'Google', group: 'Platform partner', logo: '', row: 1 },
+  { id: 'meta', name: 'Meta', group: 'Platform partner', logo: '', row: 1 },
+  { id: 'tiktok', name: 'TikTok', group: 'Platform partner', logo: '', row: 1 },
+  { id: 'zalo', name: 'Zalo', group: 'Platform partner', logo: '', row: 1 },
+  { id: 'decision-lab', name: 'Decision Lab', group: 'Research partner', logo: '', row: 2 },
+  { id: 'kantar', name: 'Kantar', group: 'Research partner', logo: '', row: 2 },
+  { id: 'nielsen', name: 'Nielsen', group: 'Research partner', logo: '', row: 2 },
+  { id: 'skoda', name: 'Škoda', group: 'Client', logo: '', row: 2 },
+  { id: 'bmw', name: 'BMW', group: 'Client', logo: '', row: 3 },
+  { id: 'toyota', name: 'Toyota', group: 'Client', logo: '', row: 3 },
+  { id: 'isuzu', name: 'ISUZU', group: 'Client', logo: '', row: 3 },
+  { id: 'kia', name: 'KIA', group: 'Client', logo: '', row: 3 }
 ]
 
 export const defaultCaseStudies = [

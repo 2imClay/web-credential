@@ -23,6 +23,7 @@ import { Link } from 'react-router-dom'
 import { CaseVisual } from '../components/CaseStudyCard'
 import { authService } from '../services/authService'
 import { contentRepository } from '../services/contentRepository'
+import { groupPartnersByRow, PARTNER_ROW_COUNT } from '../utils/partnerRows'
 
 const copyGroups = [
   {
@@ -113,9 +114,9 @@ const collectionDefinitions = [
   {
     key: 'partners', anchor: 'partners', no: '09', title: 'Partner logos', singular: 'partner', icon: Handshake,
     description: 'Platform, research partner và client logos.', save: contentRepository.savePartners,
-    empty: { id: '', name: '', group: 'Partner', logo: '' },
-    fields: [['name', 'Name'], ['group', 'Group'], ['logo', 'Partner logo', 'image']],
-    meta: (item) => item.group, summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
+    empty: { id: '', name: '', group: '', logo: '', row: 1 },
+    fields: [['row', 'Display row', 'partner-row'], ['name', 'Name (optional)', 'optional'], ['group', 'Group (optional)', 'optional'], ['logo', 'Partner logo', 'image']],
+    meta: (item) => item.group || (item.logo ? 'Logo only' : 'Partner'), summary: (item) => item.logo ? 'Logo uploaded' : 'Text wordmark'
   }
 ]
 
@@ -297,9 +298,10 @@ export default function AdminPage() {
     if (definition.key === 'cases') item.slug = item.slug || slugify(item.title)
 
     const current = collections[definition.key]
-    const next = current.some((entry) => entry.id === item.id)
+    let next = current.some((entry) => entry.id === item.id)
       ? current.map((entry) => entry.id === item.id ? item : entry)
       : [...current, item]
+    if (definition.key === 'partners') next = groupPartnersByRow(next).flat()
     setSaving(true)
     try {
       await definition.save(next)
@@ -315,7 +317,8 @@ export default function AdminPage() {
 
   async function removeCollectionItem(definition, id) {
     if (!window.confirm(`Xóa ${definition.singular} này?`)) return
-    const next = collections[definition.key].filter((item) => item.id !== id)
+    let next = collections[definition.key].filter((item) => item.id !== id)
+    if (definition.key === 'partners') next = groupPartnersByRow(next).flat()
     setSaving(true)
     try {
       await definition.save(next)
@@ -453,7 +456,7 @@ export default function AdminPage() {
             key={definition.key}
             definition={definition}
             items={collections[definition.key]}
-            onAdd={() => openEditor(definition)}
+            onAdd={(row) => openEditor(definition, row ? { ...definition.empty, row } : undefined)}
             onEdit={(item) => openEditor(definition, item)}
             onRemove={(id) => removeCollectionItem(definition, id)}
           />
@@ -471,6 +474,16 @@ export default function AdminPage() {
                 const value = Array.isArray(editing.item[field]) ? editing.item[field].join(', ') : (editing.item[field] ?? '')
                 if (type === 'image') {
                   return <ImageEditor key={field} label={label} value={value} onChange={(next) => updateEditing(field, next)} onUpload={(event) => readImage(event, (next) => updateEditing(field, next))} />
+                }
+                if (type === 'partner-row') {
+                  return (
+                    <label key={field}>
+                      {label}
+                      <select value={value} onChange={(event) => updateEditing(field, Number(event.target.value))}>
+                        {Array.from({ length: PARTNER_ROW_COUNT }, (_, index) => <option value={index + 1} key={index + 1}>Dòng logo {index + 1}</option>)}
+                      </select>
+                    </label>
+                  )
                 }
                 const isTextarea = type === 'textarea' || type === 'textarea-optional'
                 const isOptional = type === 'optional' || type === 'textarea-optional'
@@ -498,6 +511,10 @@ function PanelTitle({ no, title, description, action }) {
 
 function CollectionSection({ definition, items, onAdd, onEdit, onRemove }) {
   const Icon = definition.icon
+  if (definition.key === 'partners') {
+    return <PartnerCollectionSection definition={definition} items={items} onAdd={onAdd} onEdit={onEdit} onRemove={onRemove} />
+  }
+
   return (
     <section id={definition.anchor} className="admin-panel admin-collection-panel">
       <PanelTitle
@@ -515,6 +532,40 @@ function CollectionSection({ definition, items, onAdd, onEdit, onRemove }) {
           </article>
         ))}
         {!items.length && <div className="admin-empty-state"><Icon /><p>Chưa có nội dung. Hãy thêm {definition.singular} đầu tiên.</p></div>}
+      </div>
+    </section>
+  )
+}
+
+function PartnerCollectionSection({ definition, items, onAdd, onEdit, onRemove }) {
+  const rows = groupPartnersByRow(items)
+
+  return (
+    <section id={definition.anchor} className="admin-panel admin-collection-panel">
+      <PanelTitle no={definition.no} title={definition.title} description={definition.description} />
+      <p className="admin-panel-description">Mỗi dòng logo là một danh sách độc lập trên website.</p>
+      <div className="partner-admin-rows">
+        {rows.map((rowItems, index) => {
+          const row = index + 1
+          return (
+            <div className="partner-admin-row" key={row}>
+              <div className="partner-admin-row__header">
+                <div><span>ROW {String(row).padStart(2, '0')}</span><h3>Dòng logo {row}</h3><small>{rowItems.length} logo</small></div>
+                <button type="button" className="button button-dark" onClick={() => onAdd(row)}><Plus /> Thêm logo vào dòng {row}</button>
+              </div>
+              <div className="admin-content-list">
+                {rowItems.map((item) => (
+                  <article key={item.id}>
+                    <CollectionPreview type={definition.key} item={item} icon={definition.icon} />
+                    <div><span>{definition.meta(item)}</span><h3>{item.name || 'Logo không có chữ'}</h3><p>{definition.summary(item)}</p></div>
+                    <div className="row-actions"><button type="button" onClick={() => onEdit(item)} aria-label={`Sửa ${definition.singular}`}><Edit3 /></button><button type="button" onClick={() => onRemove(item.id)} aria-label={`Xóa ${definition.singular}`}><Trash2 /></button></div>
+                  </article>
+                ))}
+                {!rowItems.length && <div className="admin-empty-state"><Handshake /><p>Dòng {row} chưa có logo.</p></div>}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </section>
   )

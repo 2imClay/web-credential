@@ -33,7 +33,6 @@ export default function Footer({ settings, copy, sectionLabel }) {
 
       <div className="page-shell compact-footer-legal">
         <span>{copy.copyrightText}</span>
-        <a href="/admin">{copy.adminLinkLabel}</a>
       </div>
     </footer>
   )

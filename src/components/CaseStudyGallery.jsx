@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
 import CaseStudyCard from './CaseStudyCard'
 
 export default function CaseStudyGallery({ items, copy = {} }) {
@@ -15,13 +14,6 @@ export default function CaseStudyGallery({ items, copy = {} }) {
   useEffect(() => {
     if (!categories.includes(active)) setActive(allLabel)
   }, [active, allLabel, categories])
-
-  const scrollRail = (direction) => {
-    railRef.current?.scrollBy({
-      left: direction * Math.min(520, railRef.current.clientWidth * 0.78),
-      behavior: 'smooth'
-    })
-  }
 
   const handlePointerDown = (event) => {
     const rail = railRef.current
@@ -78,14 +70,6 @@ export default function CaseStudyGallery({ items, copy = {} }) {
           ))}
         </div>
 
-        <div className="case-gallery-nav" aria-label="Điều hướng case studies">
-          <button type="button" onClick={() => scrollRail(-1)} aria-label="Xem case study trước">
-            <ArrowLeft />
-          </button>
-          <button type="button" onClick={() => scrollRail(1)} aria-label="Xem case study tiếp theo">
-            <ArrowRight />
-          </button>
-        </div>
       </div>
 
       <div
