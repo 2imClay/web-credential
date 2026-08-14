@@ -16586,16 +16586,15 @@ body,
   height: 14px;
 }
 
-/* Let the next case peek outside the content column and fade toward the edge. */
+/* Fade the final visible case inside the section edge to hint at more content. */
 @media (min-width: 901px) {
   .public-site--editorial .cases-section .case-rail {
-    --case-rail-peek: clamp(0px, calc(50vw - 50% - 16px), 170px);
-    width: calc(100% + var(--case-rail-peek));
+    width: 100%;
   }
 
   .public-site--editorial .cases-section .case-rail.has-more-right {
-    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 125px), rgba(0, 0, 0, .72) calc(100% - 82px), transparent 100%);
-    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 125px), rgba(0, 0, 0, .72) calc(100% - 82px), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 165px), rgba(0, 0, 0, .68) calc(100% - 105px), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 165px), rgba(0, 0, 0, .68) calc(100% - 105px), transparent 100%);
   }
 }
 
