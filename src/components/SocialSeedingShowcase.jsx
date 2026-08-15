@@ -150,7 +150,7 @@ export default function SocialSeedingShowcase({ theory = [], cases = [], copy = 
           </div>
 
           <motion.div
-            className="seeding-case-carousel"
+            className={`seeding-case-carousel ${caseImages.length <= 3 ? 'is-short' : 'has-overflow'}`}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: .55, ease: [0.2, 0.8, 0.2, 1] }}

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowLeft, ArrowRight, Play, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronDown, Play, X } from 'lucide-react'
 
 const categoryKeys = ['categoryOne', 'categoryTwo', 'categoryThree', 'categoryFour']
 
@@ -57,6 +57,8 @@ const tileVariants = {
 export default function CreativePortfolio({ items = [], copy = {} }) {
   const [active, setActive] = useState(0)
   const [selectedId, setSelectedId] = useState(null)
+  const [portfolioAtEnd, setPortfolioAtEnd] = useState(false)
+  const portfolioScrollRef = useRef(null)
   const categories = categoryKeys.map((key, index) => copy[key] || `Category ${String(index + 1).padStart(2, '0')}`)
   const publishedItems = useMemo(() => items.filter((item) => getPortfolioMedia(item).preview), [items])
   const visibleItems = useMemo(
@@ -83,10 +85,26 @@ export default function CreativePortfolio({ items = [], copy = {} }) {
     }
   }, [selectedIndex, selectedItem, visibleItems])
 
+  useEffect(() => {
+    const scroller = portfolioScrollRef.current
+    if (!scroller) return
+    scroller.scrollTop = 0
+    setPortfolioAtEnd(false)
+  }, [active, visibleItems.length])
+
   if (!publishedItems.length) return null
 
   const showPrevious = () => setSelectedId(visibleItems[(selectedIndex - 1 + visibleItems.length) % visibleItems.length]?.id || null)
   const showNext = () => setSelectedId(visibleItems[(selectedIndex + 1) % visibleItems.length]?.id || null)
+  const handlePortfolioScroll = (event) => {
+    const scroller = event.currentTarget
+    setPortfolioAtEnd(scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 3)
+  }
+  const showMorePortfolio = () => {
+    const scroller = portfolioScrollRef.current
+    if (!scroller) return
+    scroller.scrollBy({ top: scroller.clientHeight * .72, behavior: 'smooth' })
+  }
 
   return (
     <>
@@ -108,34 +126,49 @@ export default function CreativePortfolio({ items = [], copy = {} }) {
           ))}
         </div>
 
-        <motion.div className="creative-portfolio__wall" layout>
-          <AnimatePresence mode="popLayout">
-            {visibleItems.map((item, index) => {
-              const media = getPortfolioMedia(item)
+        <div
+          className={`creative-portfolio__viewport ${visibleItems.length > 4 ? 'has-more-desktop' : ''} ${visibleItems.length > 2 ? 'has-more-mobile' : ''} ${portfolioAtEnd ? 'is-at-end' : ''}`}
+        >
+          <div className="creative-portfolio__scroller" ref={portfolioScrollRef} onScroll={handlePortfolioScroll}>
+            <motion.div className="creative-portfolio__wall" layout>
+              <AnimatePresence mode="popLayout">
+                {visibleItems.map((item, index) => {
+                  const media = getPortfolioMedia(item)
 
-              return (
-                <motion.button
-                  type="button"
-                  className={`creative-portfolio__tile ${media.youtubeId ? 'is-video' : 'is-image'}`}
-                  custom={index}
-                  variants={tileVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  layout
-                  onClick={() => setSelectedId(item.id)}
-                  key={`${active}-${item.id}`}
-                  aria-label={`${media.youtubeId ? 'Play video' : 'Open image'}: ${item.alt || `creative item ${index + 1}`}`}
-                >
-                  <span className="creative-portfolio__media">
-                    <img src={media.preview} alt={item.alt || ''} loading="lazy" />
-                    {media.youtubeId && <span className="creative-portfolio__action" aria-hidden="true"><Play /></span>}
-                  </span>
-                </motion.button>
-              )
-            })}
-          </AnimatePresence>
-        </motion.div>
+                  return (
+                    <motion.button
+                      type="button"
+                      className={`creative-portfolio__tile ${media.youtubeId ? 'is-video' : 'is-image'}`}
+                      custom={index}
+                      variants={tileVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      layout
+                      onClick={() => setSelectedId(item.id)}
+                      key={`${active}-${item.id}`}
+                      aria-label={`${media.youtubeId ? 'Play video' : 'Open image'}: ${item.alt || `creative item ${index + 1}`}`}
+                    >
+                      <span className="creative-portfolio__media">
+                        <img src={media.preview} alt={item.alt || ''} loading="lazy" />
+                        {media.youtubeId && <span className="creative-portfolio__action" aria-hidden="true"><Play /></span>}
+                      </span>
+                    </motion.button>
+                  )
+                })}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+
+          <button
+            className="creative-portfolio__more"
+            type="button"
+            onClick={showMorePortfolio}
+            aria-label="Show more Creative Portfolio items"
+          >
+            <ChevronDown />
+          </button>
+        </div>
       </div>
 
       {selectedItem && createPortal(
