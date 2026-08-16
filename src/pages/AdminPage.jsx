@@ -14,7 +14,6 @@ import {
   Play,
   Plus,
   RefreshCw,
-  RotateCcw,
   Save,
   Settings2,
   Trash2,
@@ -521,23 +520,6 @@ export default function AdminPage() {
     }
   }
 
-  async function restoreDefaultContent() {
-    if (!window.confirm('Khôi phục nội dung mặc định? Các thay đổi hiện tại sẽ bị xóa.')) return
-    setSaving(true)
-    try {
-      await contentRepository.reset()
-      loadAuditLogs(false)
-      setSettings(contentRepository.getSiteSettings())
-      setPageContent(contentRepository.getPageContent())
-      setCollections(loadCollections())
-      setStatus('Đã khôi phục nội dung mặc định trên Supabase.')
-    } catch (error) {
-      setStatus(`Không thể khôi phục: ${error.message}`)
-    } finally {
-      setSaving(false)
-    }
-  }
-
   if (authLoading) {
     return <main className="admin-login admin-login--refresh"><div className="admin-login-panel"><p className="eyebrow">DGM Content Studio</p><h1>Đang xác thực...</h1></div></main>
   }
@@ -684,7 +666,6 @@ export default function AdminPage() {
           {auditHasMore && <button type="button" className="button admin-audit-more" disabled={auditLoading} onClick={() => loadAuditLogs(true)}>{auditLoading ? 'Loading…' : 'Load older activity'}</button>}
         </section>
 
-        <button className="reset-button" onClick={restoreDefaultContent}><RotateCcw /> Restore default content</button>
       </div>
 
       {editing && activeDefinition && (
