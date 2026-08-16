@@ -1,6 +1,13 @@
 import { ArrowUpRight, Facebook, Linkedin, Mail, MapPin, Phone, Youtube } from 'lucide-react'
 
 export default function Footer({ settings, copy, sectionLabel }) {
+  const siteYear = String(settings.siteYear || '').trim() || String(new Date().getFullYear())
+  const savedCopyright = String(copy?.copyrightText || '').trim()
+  const copyrightText = savedCopyright
+    ? (savedCopyright.includes('{year}')
+        ? savedCopyright.replaceAll('{year}', siteYear)
+        : savedCopyright.replace(/\b(?:19|20)\d{2}\b/, siteYear))
+    : `© ${siteYear} ${settings.companyName || 'DGM'}. All rights reserved.`
   const socials = [
     [settings.linkedinUrl, 'LinkedIn', Linkedin],
     [settings.facebookUrl, 'Facebook', Facebook],
@@ -32,7 +39,7 @@ export default function Footer({ settings, copy, sectionLabel }) {
       </div>
 
       <div className="page-shell compact-footer-legal">
-        <span>{copy.copyrightText}</span>
+        <span>{copyrightText}</span>
       </div>
     </footer>
   )

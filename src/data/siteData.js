@@ -1,5 +1,6 @@
 export const defaultSiteSettings = {
   companyName: 'DGM',
+  siteYear: String(new Date().getFullYear()),
   companyLogo: '',
   teamLogo: '',
   eyebrow: 'Marketing Accelerator Partner',
@@ -167,7 +168,7 @@ export const defaultPageContent = {
     emailDetailLabel: 'Email',
     hotlineDetailLabel: 'Hotline',
     officeDetailLabel: 'Offices',
-    copyrightText: '© 2026 DGM. All rights reserved.',
+    copyrightText: '© {year} DGM. All rights reserved.',
     adminLinkLabel: 'Admin'
   }
 }

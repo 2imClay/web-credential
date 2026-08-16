@@ -131,6 +131,20 @@ export const contentRepository = {
   saveProcessSteps: (items) => save('process_steps', items),
   uploadImage,
 
+  async getAuditLogs({ limit = 40, offset = 0 } = {}) {
+    if (!supabase) return []
+    const safeLimit = Math.min(Math.max(Number(limit) || 40, 1), 100)
+    const safeOffset = Math.max(Number(offset) || 0, 0)
+    const { data, error } = await supabase
+      .from('site_content_audit_log')
+      .select('id,content_key,action,actor_id,actor_email,changed_at,old_value,new_value')
+      .order('changed_at', { ascending: false })
+      .order('id', { ascending: false })
+      .range(safeOffset, safeOffset + safeLimit - 1)
+    if (error) throw error
+    return data || []
+  },
+
   async reset() {
     if (!supabase) throw new Error('Supabase chưa được cấu hình.')
     const rows = Object.entries(defaults).map(([key, value]) => ({ key, value }))

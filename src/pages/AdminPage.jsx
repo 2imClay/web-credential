@@ -7,11 +7,13 @@ import {
   Edit3,
   Eye,
   Handshake,
+  History,
   ImagePlus,
   Layers3,
   LogOut,
   Play,
   Plus,
+  RefreshCw,
   RotateCcw,
   Save,
   Settings2,
@@ -74,7 +76,7 @@ const copyGroups = [
   },
   {
     key: 'contact', title: 'Footer', description: 'Dòng bản quyền và tên liên kết quản trị.',
-    fields: [['copyrightText', 'Copyright text'], ['adminLinkLabel', 'Admin link label']]
+    fields: [['copyrightText', 'Copyright text ({year} = website year)'], ['adminLinkLabel', 'Admin link label']]
   }
 ]
 
@@ -82,7 +84,7 @@ const collectionDefinitions = [
   {
     key: 'milestones', anchor: 'milestones', no: '03', title: 'Milestones', singular: 'milestone', icon: Clock3,
     description: 'Các cột mốc xuất hiện trong timeline dọc.', save: contentRepository.saveMilestones,
-    empty: { id: '', year: '2026', title: '', text: '' },
+    empty: { id: '', year: '', title: '', text: '' },
     fields: [['year', 'Year'], ['title', 'Title'], ['text', 'Details', 'textarea']],
     meta: (item) => item.year, summary: (item) => item.text
   },
@@ -100,7 +102,7 @@ const collectionDefinitions = [
   {
     key: 'recognitions', anchor: 'recognitions', no: '05', title: 'Recognition', singular: 'recognition', icon: Trophy,
     description: 'Giải thưởng, xếp hạng và ghi nhận chuyên môn.', save: contentRepository.saveRecognitions,
-    empty: { id: '', year: '2026', title: '', subtitle: '', description: '', image: '' },
+    empty: { id: '', year: '', title: '', subtitle: '', description: '', image: '' },
     fields: [['year', 'Year'], ['title', 'Recognition title'], ['subtitle', 'Subtitle'], ['description', 'Description', 'textarea'], ['image', 'Recognition image', 'image']],
     meta: (item) => item.year || 'Recognition', summary: (item) => item.subtitle || item.description
   },
@@ -126,7 +128,7 @@ const collectionDefinitions = [
   {
     key: 'cases', anchor: 'cases', no: '08', title: 'Case studies', singular: 'case study', icon: BriefcaseBusiness,
     description: 'Case study ưu tiên hình ảnh: một ảnh cover cho thẻ và nhiều ảnh nội dung trong box chi tiết.', save: contentRepository.saveCaseStudies,
-    empty: { id: '', slug: '', title: '', category: 'IMC', year: '2026', image: '', cardSummary: '', gallery: [], youtubeUrls: [], summary: '' },
+    empty: { id: '', slug: '', title: '', category: 'IMC', year: '', image: '', cardSummary: '', gallery: [], youtubeUrls: [], summary: '' },
     fields: [
       ['title', 'Title'], ['category', 'Category'], ['year', 'Year'], ['image', 'Cover image', 'image', 'Ảnh này chỉ dùng làm đại diện ngoài thẻ, không lặp lại trong box chi tiết. Khuyến nghị 1380 × 1000 px (tỷ lệ 1.38:1).'],
       ['cardSummary', 'Card short text', 'textarea', 'Nội dung ngắn chỉ hiển thị bên ngoài thẻ Case Study.'],
@@ -173,6 +175,74 @@ const collectionDefinitions = [
   }
 ]
 
+const auditModuleLabels = {
+  site_settings: 'Brand, Hero & Footer',
+  page_content: 'Homepage copy',
+  milestones: 'Milestones',
+  press_articles: 'About Us — Press articles',
+  recognitions: 'Recognition',
+  services: 'Services',
+  creative_portfolio: 'Creative Portfolio',
+  case_studies: 'Case studies',
+  social_seeding_theory: 'Social Seeding — Theory',
+  social_seeding_cases: 'Social Seeding — Cases',
+  team_members: 'Team departments',
+  partners: 'Partner logos',
+  process_steps: 'Process steps'
+}
+
+function auditItemName(item) {
+  return item?.title || item?.name || item?.role || item?.source || item?.alt || item?.slug || item?.id || 'untitled item'
+}
+
+function formatAuditField(field) {
+  return String(field).replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
+}
+
+function describeAuditChange(log) {
+  if (log.action === 'delete') return 'Deleted this entire content module.'
+
+  const before = log.old_value
+  const after = log.new_value
+  if (log.action === 'insert' || before == null) {
+    return Array.isArray(after)
+      ? `Created the module with ${after.length} item${after.length === 1 ? '' : 's'}.`
+      : 'Created this content module.'
+  }
+
+  if (Array.isArray(before) && Array.isArray(after)) {
+    const beforeById = new Map(before.map((item, index) => [item?.id || `index-${index}`, item]))
+    const afterById = new Map(after.map((item, index) => [item?.id || `index-${index}`, item]))
+    const added = [...afterById].filter(([id]) => !beforeById.has(id)).map(([, item]) => auditItemName(item))
+    const removed = [...beforeById].filter(([id]) => !afterById.has(id)).map(([, item]) => auditItemName(item))
+    const edited = [...afterById].filter(([id, item]) => beforeById.has(id) && JSON.stringify(beforeById.get(id)) !== JSON.stringify(item)).map(([, item]) => auditItemName(item))
+    const changes = []
+    if (added.length) changes.push(`Added: ${added.slice(0, 3).join(', ')}${added.length > 3 ? ` +${added.length - 3}` : ''}`)
+    if (edited.length) changes.push(`Edited: ${edited.slice(0, 3).join(', ')}${edited.length > 3 ? ` +${edited.length - 3}` : ''}`)
+    if (removed.length) changes.push(`Deleted: ${removed.slice(0, 3).join(', ')}${removed.length > 3 ? ` +${removed.length - 3}` : ''}`)
+    return changes.join(' · ') || 'Reordered or updated module content.'
+  }
+
+  if (before && after && typeof before === 'object' && typeof after === 'object') {
+    const fields = [...new Set([...Object.keys(before), ...Object.keys(after)])]
+      .filter((field) => JSON.stringify(before[field]) !== JSON.stringify(after[field]))
+    return fields.length
+      ? `Changed: ${fields.slice(0, 6).map(formatAuditField).join(', ')}${fields.length > 6 ? ` +${fields.length - 6}` : ''}.`
+      : 'Updated module content.'
+  }
+
+  return 'Updated module content.'
+}
+
+function formatAuditTime(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value || ''
+  return new Intl.DateTimeFormat('vi-VN', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+  }).format(date)
+}
+
 function slugify(value) {
   return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
@@ -203,6 +273,10 @@ export default function AdminPage() {
   const [editing, setEditing] = useState(null)
   const [status, setStatus] = useState('')
   const [saving, setSaving] = useState(false)
+  const [auditLogs, setAuditLogs] = useState([])
+  const [auditLoading, setAuditLoading] = useState(false)
+  const [auditHasMore, setAuditHasMore] = useState(false)
+  const [auditError, setAuditError] = useState('')
 
   const authenticated = Boolean(session)
 
@@ -238,7 +312,23 @@ export default function AdminPage() {
         setCollections(loadCollections())
       })
       .catch((error) => setStatus(`Không thể tải dữ liệu: ${error.message}`))
+    loadAuditLogs(false)
   }, [authenticated])
+
+  async function loadAuditLogs(append = false) {
+    setAuditLoading(true)
+    setAuditError('')
+    try {
+      const offset = append ? auditLogs.length : 0
+      const rows = await contentRepository.getAuditLogs({ limit: 40, offset })
+      setAuditLogs((current) => append ? [...current, ...rows] : rows)
+      setAuditHasMore(rows.length === 40)
+    } catch (error) {
+      setAuditError(`Không thể tải lịch sử chỉnh sửa: ${error.message}`)
+    } finally {
+      setAuditLoading(false)
+    }
+  }
 
   async function login(event) {
     event.preventDefault()
@@ -330,6 +420,7 @@ export default function AdminPage() {
     setSaving(true)
     try {
       await contentRepository.saveSiteSettings(settings)
+      loadAuditLogs(false)
       setStatus('Đã lưu nhận diện, Hero và thông tin footer lên Supabase.')
     } catch (error) {
       setStatus(`Không thể lưu: ${error.message}`)
@@ -343,6 +434,7 @@ export default function AdminPage() {
     setSaving(true)
     try {
       await contentRepository.savePageContent(pageContent)
+      loadAuditLogs(false)
       setStatus('Đã lưu nội dung tiêu đề và mô tả của toàn bộ trang chủ lên Supabase.')
     } catch (error) {
       setStatus(`Không thể lưu: ${error.message}`)
@@ -401,6 +493,7 @@ export default function AdminPage() {
     setSaving(true)
     try {
       await definition.save(next)
+      loadAuditLogs(false)
       setCollections((value) => ({ ...value, [definition.key]: next }))
       setEditing(null)
       setStatus(`Đã lưu ${definition.singular} lên Supabase.`)
@@ -418,6 +511,7 @@ export default function AdminPage() {
     setSaving(true)
     try {
       await definition.save(next)
+      loadAuditLogs(false)
       setCollections((value) => ({ ...value, [definition.key]: next }))
       setStatus(`Đã xóa ${definition.singular}.`)
     } catch (error) {
@@ -432,6 +526,7 @@ export default function AdminPage() {
     setSaving(true)
     try {
       await contentRepository.reset()
+      loadAuditLogs(false)
       setSettings(contentRepository.getSiteSettings())
       setPageContent(contentRepository.getPageContent())
       setCollections(loadCollections())
@@ -481,6 +576,7 @@ export default function AdminPage() {
             const Icon = definition.icon
             return <a href={`#${definition.anchor}`} key={definition.key}><Icon /> {definition.title}</a>
           })}
+          <a href="#activity-log"><History /> Activity log</a>
           <Link to="/"><Eye /> Preview website</Link>
         </nav>
         <div className="admin-sidebar-account">{session.user.email}</div>
@@ -504,6 +600,7 @@ export default function AdminPage() {
           <PanelTitle no="01" title="Brand, Hero & Footer" description="Toàn bộ text, hình ảnh nhận diện, Hero và thông tin liên hệ trên trang chủ." />
           <form className="admin-form" onSubmit={saveSettings}>
             <label>Company name<input value={settings.companyName} onChange={(event) => setSettings({ ...settings, companyName: event.target.value })} /></label>
+            <label>Website year<input inputMode="numeric" value={settings.siteYear || ''} onChange={(event) => setSettings({ ...settings, siteYear: event.target.value })} placeholder={String(new Date().getFullYear())} /></label>
             <ImageEditor label="Header logo" value={settings.companyLogo || ''} onChange={(value) => setSettings({ ...settings, companyLogo: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, companyLogo: value }))} />
             <ImageEditor label="Our Team center logo" note="Khuyến nghị: logo PNG/WebP nền trong suốt, tỷ lệ ngang hoặc vuông, tối thiểu 400 px." value={settings.teamLogo || ''} onChange={(value) => setSettings({ ...settings, teamLogo: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, teamLogo: value }))} />
             <ImageEditor label="Hero background" value={settings.heroBackground} onChange={(value) => setSettings({ ...settings, heroBackground: value })} onUpload={(event) => readImage(event, (value) => setSettings({ ...settings, heroBackground: value }))} />
@@ -561,6 +658,31 @@ export default function AdminPage() {
             onRemove={(id) => removeCollectionItem(definition, id)}
           />
         ))}
+
+        <section id="activity-log" className="admin-panel admin-audit-panel">
+          <PanelTitle
+            no="13"
+            title="Activity log"
+            action={<button type="button" className="button admin-audit-refresh" disabled={auditLoading} onClick={() => loadAuditLogs(false)}><RefreshCw /> Refresh</button>}
+          />
+          <p className="admin-panel-description">Lịch sử lưu nội dung của tất cả tài khoản quản trị, sắp xếp từ mới nhất.</p>
+          {auditError && <div className="admin-audit-error">{auditError}</div>}
+          <div className="admin-audit-list">
+            {auditLogs.map((log) => (
+              <article className="admin-audit-row" key={log.id}>
+                <div className="admin-audit-avatar" aria-hidden="true">{(log.actor_email || '?').charAt(0).toUpperCase()}</div>
+                <div className="admin-audit-copy">
+                  <div><strong>{log.actor_email || 'Unknown account'}</strong><span className={`admin-audit-action is-${log.action}`}>{log.action}</span></div>
+                  <h3>{auditModuleLabels[log.content_key] || formatAuditField(log.content_key)}</h3>
+                  <p>{describeAuditChange(log)}</p>
+                </div>
+                <time dateTime={log.changed_at}>{formatAuditTime(log.changed_at)}</time>
+              </article>
+            ))}
+            {!auditLogs.length && !auditLoading && !auditError && <div className="admin-empty-state"><History /><p>Chưa có lịch sử chỉnh sửa kể từ khi bật Activity log.</p></div>}
+          </div>
+          {auditHasMore && <button type="button" className="button admin-audit-more" disabled={auditLoading} onClick={() => loadAuditLogs(true)}>{auditLoading ? 'Loading…' : 'Load older activity'}</button>}
+        </section>
 
         <button className="reset-button" onClick={restoreDefaultContent}><RotateCcw /> Restore default content</button>
       </div>

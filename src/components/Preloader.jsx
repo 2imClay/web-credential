@@ -1,12 +1,26 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { contentRepository } from '../services/contentRepository'
+
+const currentYear = String(new Date().getFullYear())
+
+function readSiteYear() {
+  return String(contentRepository.getSiteSettings().siteYear || '').trim() || currentYear
+}
 
 export default function Preloader() {
   const reduceMotion = useReducedMotion()
+  const [siteYear, setSiteYear] = useState(readSiteYear)
   const [visible, setVisible] = useState(() => (
     !window.location.pathname.startsWith('/admin')
     && !new URLSearchParams(window.location.search).has('skipPreloader')
   ))
+
+  useEffect(() => {
+    const refreshYear = () => setSiteYear(readSiteYear())
+    window.addEventListener('dgm-content-updated', refreshYear)
+    return () => window.removeEventListener('dgm-content-updated', refreshYear)
+  }, [])
 
   useEffect(() => {
     if (!visible) return undefined
@@ -48,7 +62,7 @@ export default function Preloader() {
               <span>DGM</span>
               <small>Digimind</small>
             </div>
-            <div className="page-preloader__meta"><span>IMC CREDENTIAL</span><b>2026</b></div>
+            <div className="page-preloader__meta"><span>IMC CREDENTIAL</span><b>{siteYear}</b></div>
             <div className="page-preloader__loader"><i /></div>
           </motion.div>
         </motion.div>
