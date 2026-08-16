@@ -56,6 +56,9 @@ export default function PressRoom({ items = [], copy = {} }) {
   if (!items.length) return null
 
   const activate = (index) => setActiveIndex(index)
+  const desktopFanSlots = Math.min(items.length, 6)
+  const desktopFanStep = desktopFanSlots <= 3 ? 174 : desktopFanSlots === 4 ? 154 : desktopFanSlots === 5 ? 112 : 90
+  const desktopFanRotationStep = desktopFanSlots <= 4 ? 4.6 : desktopFanSlots === 5 ? 3.4 : 2.8
 
   return (
     <LayoutGroup id="press-room-articles">
@@ -71,11 +74,13 @@ export default function PressRoom({ items = [], copy = {} }) {
       <div className="press-room__papers" aria-label="DGM press articles">
         {items.map((item, index) => {
           const imageOnly = Boolean(item.image) && !hasArticleCopy(item)
-          const desktopX = [-235, -112, 98, 232, -168, 22, 162, -218, -62, 126][index % 10]
-          const desktopY = [92, -12, 28, 98, 154, 112, 162, 184, 202, 218][index % 10]
+          const fanSlot = (index % desktopFanSlots) - ((desktopFanSlots - 1) / 2)
           const mobileX = [-56, 0, 56, -42, 42, -58, 16, 58, -28, 44][index % 10]
           const mobileY = [48, 0, 24, 62, 88, 108, 130, 148, 166, 182][index % 10]
-          const stackCycle = Math.floor(index / 10)
+          const stackCycle = Math.floor(index / desktopFanSlots)
+          const desktopX = fanSlot * desktopFanStep + stackCycle * 4
+          const desktopY = 8 + (Math.pow(Math.abs(fanSlot), 1.35) * 22) + stackCycle * 8
+          const desktopRotation = fanSlot * desktopFanRotationStep
           return (
             <motion.button
               type="button"
@@ -92,12 +97,12 @@ export default function PressRoom({ items = [], copy = {} }) {
               viewport={{ once: true, amount: .25 }}
               transition={{ duration: .55, delay: index * .06 }}
               style={{
-                '--paper-r': `${[-7, 3.5, -2.5, 5.5, -4.5, 2, -6, 4][index % 8]}deg`,
-                '--paper-stack-x': `${desktopX + stackCycle * 4}px`,
-                '--paper-stack-y': `${desktopY + stackCycle * 5}px`,
+                '--paper-r': `${desktopRotation}deg`,
+                '--paper-stack-x': `${desktopX}px`,
+                '--paper-stack-y': `${desktopY}px`,
                 '--paper-stack-x-mobile': `${mobileX + stackCycle * 2}px`,
                 '--paper-stack-y-mobile': `${mobileY + stackCycle * 4}px`,
-                '--paper-z': 2 + index
+                '--paper-z': 20 - Math.round(Math.abs(fanSlot) * 2) + stackCycle
               }}
             >
               <ArticleVisual item={item} />
@@ -141,7 +146,6 @@ export default function PressRoom({ items = [], copy = {} }) {
           }
         }}
       >
-        <p>{copy.pressSourcesLabel || 'Featured by'}</p>
         <div>
           {sourceItems.map(({ item, index }) => (
             <motion.button

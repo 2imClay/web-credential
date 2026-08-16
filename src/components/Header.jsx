@@ -1,20 +1,37 @@
 import { useEffect, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, X } from 'lucide-react'
 
 export default function Header({ settings, copy = {}, showPortfolio = false, showSeeding = false }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const links = [
-    [copy.navAbout || 'About Us', '#about'],
-    [copy.navJourney || 'Our Journey', '#milestones'],
-    [copy.navRecognition || 'Recognition', '#recognition'],
-    [copy.navServices || 'Services', '#services'],
-    ...(showPortfolio ? [[copy.navPortfolio || 'Portfolio', '#creative-portfolio']] : []),
-    [copy.navCases || 'Case Studies', '#case-studies'],
-    ...(showSeeding ? [[copy.navSeeding || 'Social Seeding', '#social-seeding']] : []),
-    [copy.navTeam || 'Our Team', '#team'],
-    [copy.navPartners || 'Partners', '#partners'],
-    [copy.navContact || 'Contact', '#contact']
+  const navItems = [
+    {
+      label: copy.navAbout || 'About',
+      href: '#about',
+      children: [
+        [copy.navJourney || 'Our Journey', '#milestones'],
+        [copy.navRecognition || 'Recognition', '#recognition']
+      ]
+    },
+    { label: copy.navServices || 'Services', href: '#services' },
+    ...(showPortfolio ? [{
+      label: copy.navWork || 'Work',
+      href: '#creative-portfolio',
+      children: [
+        [copy.navPortfolio || 'Creative Portfolio', '#creative-portfolio'],
+        [copy.navCases || 'Case Studies', '#case-studies']
+      ]
+    }] : [{ label: copy.navCases || 'Case Studies', href: '#case-studies' }]),
+    ...(showSeeding ? [{ label: copy.navSeeding || 'Social Seeding', href: '#social-seeding' }] : []),
+    {
+      label: copy.navAgency || 'Agency',
+      href: '#team',
+      children: [
+        [copy.navTeam || 'Our Team', '#team'],
+        [copy.navPartners || 'Partners', '#partners']
+      ]
+    },
+    { label: copy.navContact || 'Contact', href: '#contact', contact: true }
   ]
 
   useEffect(() => {
@@ -33,8 +50,31 @@ export default function Header({ settings, copy = {}, showPortfolio = false, sho
       </a>
 
       <nav className={`desktop-nav reference-nav ${open ? 'desktop-nav--open' : ''}`} aria-label="Main navigation">
-        {links.map(([label, href]) => (
-          <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+        {navItems.map((item) => item.children ? (
+          <div className="header-nav__group" key={item.href}>
+            <a
+              className="header-nav__main"
+              href={item.href}
+              onClick={() => setOpen(false)}
+              aria-haspopup="true"
+            >
+              {item.label}<ChevronDown aria-hidden="true" />
+            </a>
+            <div className="header-nav__submenu">
+              {item.children.map(([label, href]) => (
+                <a href={href} onClick={() => setOpen(false)} key={href}>{label}</a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <a
+            className={`header-nav__link ${item.contact ? 'header-nav__link--contact' : ''}`}
+            key={item.href}
+            href={item.href}
+            onClick={() => setOpen(false)}
+          >
+            {item.label}
+          </a>
         ))}
       </nav>
 

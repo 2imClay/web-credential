@@ -4,16 +4,22 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 export default function Preloader() {
   const reduceMotion = useReducedMotion()
   const [visible, setVisible] = useState(() => (
-    window.location.pathname === '/'
+    !window.location.pathname.startsWith('/admin')
     && !new URLSearchParams(window.location.search).has('skipPreloader')
-    && sessionStorage.getItem('dgm_preloader_signal_seen') !== '1'
   ))
 
   useEffect(() => {
     if (!visible) return undefined
-    sessionStorage.setItem('dgm_preloader_signal_seen', '1')
+    const previousBodyOverflow = document.body.style.overflow
+    const previousRootOverflow = document.documentElement.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
     const timer = window.setTimeout(() => setVisible(false), reduceMotion ? 650 : 1900)
-    return () => window.clearTimeout(timer)
+    return () => {
+      window.clearTimeout(timer)
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousRootOverflow
+    }
   }, [reduceMotion, visible])
 
   return (

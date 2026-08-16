@@ -7,13 +7,27 @@ export default function SocialSeedingShowcase({ theory = [], cases = [], copy = 
   const slides = useMemo(() => theory.filter((item) => item?.image), [theory])
   const caseImages = useMemo(() => cases.filter((item) => item?.image), [cases])
   const [activeSlide, setActiveSlide] = useState(0)
+  const [activeCase, setActiveCase] = useState(0)
+  const [casePaused, setCasePaused] = useState(false)
   const [lightbox, setLightbox] = useState(null)
   const lastWheelAt = useRef(0)
-  const caseStripRef = useRef(null)
+  const lastCaseWheelAt = useRef(0)
 
   useEffect(() => {
     if (activeSlide >= slides.length) setActiveSlide(Math.max(0, slides.length - 1))
   }, [activeSlide, slides.length])
+
+  useEffect(() => {
+    if (activeCase >= caseImages.length) setActiveCase(Math.max(0, caseImages.length - 1))
+  }, [activeCase, caseImages.length])
+
+  useEffect(() => {
+    if (casePaused || caseImages.length < 2) return undefined
+    const timer = window.setInterval(() => {
+      setActiveCase((current) => (current + 1) % caseImages.length)
+    }, 7200)
+    return () => window.clearInterval(timer)
+  }, [caseImages.length, casePaused])
 
   const lightboxItems = lightbox?.type === 'case' ? caseImages : slides
   const lightboxItem = lightbox ? lightboxItems[lightbox.index] : null
@@ -55,6 +69,26 @@ export default function SocialSeedingShowcase({ theory = [], cases = [], copy = 
     ...current,
     index: (current.index + direction + lightboxItems.length) % lightboxItems.length
   }))
+  const moveCase = (direction) => {
+    if (caseImages.length < 2) return
+    setActiveCase((current) => (current + direction + caseImages.length) % caseImages.length)
+  }
+  const getCaseCircularOffset = (index) => {
+    let offset = index - activeCase
+    const half = Math.floor(caseImages.length / 2)
+    if (offset > half) offset -= caseImages.length
+    if (offset < -half) offset += caseImages.length
+    return offset
+  }
+  const handleCaseWheel = (event) => {
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : 0)
+    if (caseImages.length < 2 || Math.abs(delta) < 8) return
+    event.preventDefault()
+    const now = Date.now()
+    if (now - lastCaseWheelAt.current < 520) return
+    lastCaseWheelAt.current = now
+    moveCase(delta > 0 ? 1 : -1)
+  }
 
   return (
     <div className="social-seeding-showcase">
@@ -150,36 +184,90 @@ export default function SocialSeedingShowcase({ theory = [], cases = [], copy = 
           </div>
 
           <motion.div
-            className={`seeding-case-carousel ${caseImages.length <= 3 ? 'is-short' : 'has-overflow'}`}
+            className="seeding-case-carousel seeding-case-carousel--sphere"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: .55, ease: [0.2, 0.8, 0.2, 1] }}
             viewport={{ once: true, amount: .15 }}
+            onMouseEnter={() => setCasePaused(true)}
+            onMouseLeave={() => setCasePaused(false)}
+            onFocusCapture={() => setCasePaused(true)}
+            onBlurCapture={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setCasePaused(false)
+            }}
+            onWheel={handleCaseWheel}
+            onPanEnd={(_, info) => {
+              if (Math.abs(info.offset.x) > 42 || Math.abs(info.velocity.x) > 420) moveCase(info.offset.x < 0 ? 1 : -1)
+            }}
           >
-            <div className="seeding-case-strip" ref={caseStripRef}>
-              {caseImages.map((item, index) => (
-                <button
-                  type="button"
-                  className="seeding-case-card"
-                  onClick={() => setLightbox({ type: 'case', index })}
-                  aria-label={item.alt || `Open ${copy.caseLabel || 'case image'} ${index + 1}`}
-                  key={item.id || item.image}
-                >
-                  <img src={item.image} alt={item.alt || ''} loading="lazy" />
-                  <span aria-hidden="true"><Maximize2 /></span>
-                </button>
-              ))}
+            <div className="seeding-case-sphere">
+              {caseImages.map((item, index) => {
+                const offset = getCaseCircularOffset(index)
+                const depth = Math.abs(offset)
+                const isActive = index === activeCase
+
+                return (
+                  <button
+                    type="button"
+                    className={`seeding-case-card ${isActive ? 'is-active' : ''} ${depth > 2 ? 'is-hidden' : ''}`}
+                    onClick={() => isActive ? setLightbox({ type: 'case', index }) : setActiveCase(index)}
+                    aria-label={isActive ? (item.alt || `Open ${copy.caseLabel || 'case image'} ${index + 1}`) : `Bring ${item.alt || `case image ${index + 1}`} to center`}
+                    aria-hidden={depth > 2}
+                    tabIndex={depth > 2 ? -1 : 0}
+                    style={{
+                      '--case-x': `${offset * 330}px`,
+                      '--case-x-tablet': `${offset * 238}px`,
+                      '--case-x-mobile': `${offset * 68}vw`,
+                      '--case-y': `${isActive ? -10 : 12 + depth * 8}px`,
+                      '--case-scale': Math.max(.7, 1.03 - depth * .15),
+                      '--case-rotate-y': `${offset * -11}deg`,
+                      '--case-opacity': Math.max(.16, 1 - depth * .43),
+                      '--case-blur': `${depth * 1.35}px`,
+                      zIndex: 10 - depth
+                    }}
+                    key={item.id || item.image}
+                  >
+                    <img src={item.image} alt={isActive ? (item.alt || '') : ''} loading="lazy" />
+                    <span aria-hidden="true"><Maximize2 /></span>
+                  </button>
+                )
+              })}
             </div>
 
-            {caseImages.length > 3 && (
+            {caseImages.length > 1 && <>
               <button
                 type="button"
-                className="seeding-case-carousel__next"
-                onClick={() => caseStripRef.current?.scrollBy({ left: caseStripRef.current.clientWidth * .72, behavior: 'smooth' })}
-                aria-label="Show more Social Seeding cases"
+                className="seeding-case-carousel__nav seeding-case-carousel__nav--prev"
+                onClick={() => moveCase(-1)}
+                aria-label="Previous Social Seeding case"
+              >
+                <ArrowLeft />
+              </button>
+              <button
+                type="button"
+                className="seeding-case-carousel__nav seeding-case-carousel__nav--next"
+                onClick={() => moveCase(1)}
+                aria-label="Next Social Seeding case"
               >
                 <ArrowRight />
               </button>
+            </>}
+
+            {caseImages.length > 1 && (
+              <div className="seeding-case-carousel__status" aria-label={`Case ${activeCase + 1} of ${caseImages.length}`}>
+                <span>{String(activeCase + 1).padStart(2, '0')} / {String(caseImages.length).padStart(2, '0')}</span>
+                <div>
+                  {caseImages.map((item, index) => (
+                    <button
+                      type="button"
+                      className={index === activeCase ? 'is-active' : ''}
+                      onClick={() => setActiveCase(index)}
+                      aria-label={`Show Social Seeding case ${index + 1}`}
+                      key={`case-dot-${item.id || item.image}`}
+                    />
+                  ))}
+                </div>
+              </div>
             )}
           </motion.div>
         </div>
