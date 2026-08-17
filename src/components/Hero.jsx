@@ -19,6 +19,12 @@ export default function Hero({ settings, services = [] }) {
         className={`hero-section hero-section--reference ${customBackground ? 'has-custom-background' : ''}`}
         style={heroStyle}
       >
+        {customBackground && (
+          <h1 className="visually-hidden">
+            {[settings.heroTitle, settings.heroSecondTitle].filter(Boolean).join(' — ') || settings.companyName || 'DGM'}
+          </h1>
+        )}
+
         {!customBackground && (
           <div className="hero-reference-ambient" aria-hidden="true">
             <span /><span /><span />

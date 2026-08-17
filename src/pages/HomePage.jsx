@@ -43,7 +43,7 @@ export default function HomePage() {
 
       <div className="editorial-home-flow">
         <section id="about" className="section newsroom-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.about}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.about}</h2></div>
           {pageContent.about.intro?.trim() && (
             <div className="page-shell newsroom-heading newsroom-heading--intro-only">
               <Reveal>
@@ -55,23 +55,23 @@ export default function HomePage() {
         </section>
 
         <section id="milestones" className="section milestone-section milestone-section--compact content-only-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.milestones}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.milestones}</h2></div>
           <div className="page-shell"><MilestoneRail items={milestones} copy={pageContent.ui} /></div>
         </section>
 
         <section id="recognition" className="section recognition-section recognition-section--content-only content-only-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.recognition}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.recognition}</h2></div>
           <div className="page-shell"><RecognitionShowcase items={recognitions} /></div>
         </section>
 
         <section id="services" className="section services-showcase services-showcase--content-only content-only-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.services}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.services}</h2></div>
           <div className="page-shell"><ServicesShowcase items={services} /></div>
         </section>
 
         {creativePortfolio.some((item) => item?.image || item?.youtubeUrl) && (
           <section id="creative-portfolio" className="section creative-portfolio-section content-only-section">
-            <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.portfolio}</span></div>
+            <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.portfolio}</h2></div>
             <div className="page-shell">
               <CreativePortfolio items={creativePortfolio} copy={pageContent.portfolio} />
             </div>
@@ -79,13 +79,13 @@ export default function HomePage() {
         )}
 
         <section id="case-studies" className="section cases-section cases-section--content-only content-only-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.cases}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.cases}</h2></div>
           <div className="page-shell"><Reveal><CaseStudyGallery items={caseStudies} copy={pageContent.ui} /></Reveal></div>
         </section>
 
         {[...socialSeedingTheory, ...socialSeedingCases].some((item) => item?.image) && (
           <section id="social-seeding" className="section social-seeding-section content-only-section">
-            <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.seeding}</span></div>
+            <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.seeding}</h2></div>
             <div className="page-shell">
               <SocialSeedingShowcase
                 theory={socialSeedingTheory}
@@ -97,7 +97,7 @@ export default function HomePage() {
         )}
 
         <section id="team" className="section team-section team-section--content-only content-only-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.team}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.team}</h2></div>
           <div className="page-shell team-fullwidth">
             <TeamScroll
               items={teamMembers}
@@ -109,7 +109,7 @@ export default function HomePage() {
         </section>
 
         <section id="partners" className="section partners-section partners-section--content-only content-only-section">
-          <div className="page-shell section-corner-label"><span>{pageContent.sectionLabels.partners}</span></div>
+          <div className="page-shell section-corner-label"><h2>{pageContent.sectionLabels.partners}</h2></div>
           <PartnerLogoMarquee items={partners} />
         </section>
       </div>

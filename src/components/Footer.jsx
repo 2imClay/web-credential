@@ -1,6 +1,7 @@
 import { ArrowUpRight, Facebook, Linkedin, Mail, MapPin, Phone, Youtube } from 'lucide-react'
 
 export default function Footer({ settings, copy, sectionLabel }) {
+  const visibleSectionLabel = String(sectionLabel || 'Contact DGM').trim()
   const siteYear = String(settings.siteYear || '').trim() || String(new Date().getFullYear())
   const savedCopyright = String(copy?.copyrightText || '').trim()
   const copyrightText = savedCopyright
@@ -16,7 +17,7 @@ export default function Footer({ settings, copy, sectionLabel }) {
 
   return (
     <footer id="contact" className="site-footer site-footer--compact">
-      <div className="page-shell section-corner-label section-corner-label--dark"><span>{sectionLabel}</span></div>
+      <div className="page-shell section-corner-label section-corner-label--dark"><h2>{visibleSectionLabel}</h2></div>
       <div className="page-shell compact-footer-grid">
         <div className="compact-footer-brand">
           {settings.companyLogo

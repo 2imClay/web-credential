@@ -1,6 +1,6 @@
-import { Award } from 'lucide-react'
+import { ArrowUpRight, Award, X } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function RecognitionCardVisual({ item }) {
   if (item.image) {
@@ -17,7 +17,24 @@ function RecognitionCardVisual({ item }) {
   )
 }
 
-function MobileRecognitionCard({ item, index, count, progress }) {
+function RecognitionCaption({ item, onOpen }) {
+  const description = item.description || item.subtitle
+
+  return (
+    <figcaption>
+      {item.title && <h3>{item.title}</h3>}
+      {description && <p>{description}</p>}
+      {description && (
+        <button className="recognition-paper__read-more" type="button" onClick={() => onOpen(item)}>
+          <span>Read more</span>
+          <ArrowUpRight aria-hidden="true" />
+        </button>
+      )}
+    </figcaption>
+  )
+}
+
+function MobileRecognitionCard({ item, index, count, progress, onOpen }) {
   const cardAngles = [-3.2, 2.4, -1.8, 3]
   const entryStart = index === 0 ? 0 : Math.max(0, index / count - .08)
   const entryEnd = index === 0 ? .01 : Math.min(1, index / count + .06)
@@ -34,20 +51,35 @@ function MobileRecognitionCard({ item, index, count, progress }) {
       <div className="recognition-paper__media">
         <RecognitionCardVisual item={item} />
       </div>
-      <figcaption>
-        {item.title && <h3>{item.title}</h3>}
-        {(item.description || item.subtitle) && <p>{item.description || item.subtitle}</p>}
-      </figcaption>
+      <RecognitionCaption item={item} onOpen={onOpen} />
     </motion.figure>
   )
 }
 
 export default function RecognitionShowcase({ items }) {
   const mobileStackRef = useRef(null)
+  const [activeItem, setActiveItem] = useState(null)
   const { scrollYProgress } = useScroll({
     target: mobileStackRef,
     offset: ['start start', 'end end']
   })
+
+  useEffect(() => {
+    if (!activeItem) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setActiveItem(null)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [activeItem])
 
   if (!items?.length) return null
 
@@ -67,10 +99,7 @@ export default function RecognitionShowcase({ items }) {
             <div className="recognition-paper__media">
               <RecognitionCardVisual item={item} />
             </div>
-            <figcaption>
-              {item.title && <h3>{item.title}</h3>}
-              {(item.description || item.subtitle) && <p>{item.description || item.subtitle}</p>}
-            </figcaption>
+            <RecognitionCaption item={item} onOpen={setActiveItem} />
           </figure>
         ))}
       </div>
@@ -87,11 +116,48 @@ export default function RecognitionShowcase({ items }) {
               index={index}
               count={items.length}
               progress={scrollYProgress}
+              onOpen={setActiveItem}
               key={`mobile-${item.id}`}
             />
           ))}
         </div>
       </div>
+
+      {activeItem && (
+        <div
+          className="recognition-detail-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="recognition-detail-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActiveItem(null)
+          }}
+        >
+          <article className="recognition-detail-modal__panel">
+            <button
+              className="recognition-detail-modal__close"
+              type="button"
+              aria-label="Close recognition details"
+              onClick={() => setActiveItem(null)}
+              autoFocus
+            >
+              <X aria-hidden="true" />
+            </button>
+            <span className="recognition-detail-modal__eyebrow">
+              {activeItem.year || 'Recognition'}
+            </span>
+            <h2 id="recognition-detail-title">{activeItem.title || 'Recognition details'}</h2>
+            {activeItem.subtitle && activeItem.subtitle !== activeItem.description && (
+              <p className="recognition-detail-modal__subtitle">{activeItem.subtitle}</p>
+            )}
+            {(activeItem.description || activeItem.subtitle) && (
+              <p className="recognition-detail-modal__description">
+                {activeItem.description || activeItem.subtitle}
+              </p>
+            )}
+          </article>
+        </div>
+      )}
     </div>
   )
 }

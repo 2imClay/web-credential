@@ -34,7 +34,7 @@ export default function CaseStudyDetailPage() {
         ))}
         <a className="button button-dark" href={`mailto:${settings.contactEmail}`}>Discuss a similar project <ArrowUpRight size={18} /></a>
       </section>
-      <Footer settings={settings} copy={pageContent.contact} />
+      <Footer settings={settings} copy={pageContent.contact} sectionLabel={pageContent.sectionLabels?.footer} />
     </main>
   )
 }

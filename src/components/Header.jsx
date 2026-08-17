@@ -43,7 +43,13 @@ export default function Header({ settings, copy = {}, showPortfolio = false, sho
 
   return (
     <header className={`site-header site-header--reference ${scrolled ? 'site-header--scrolled' : ''}`}>
-      <a href="#top" className="brand-mark brand-mark--reference" aria-label="DGM Home">
+        <a
+          href="https://digimind.asia"
+          className="brand-mark brand-mark--reference"
+          aria-label="Visit DGM company website"
+          target="_blank"
+          rel="noreferrer"
+        >
         {settings?.companyLogo
           ? <img src={settings.companyLogo} alt={settings.companyName || 'DGM'} />
           : <span>{settings?.companyName || 'DGM'}</span>}

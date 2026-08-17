@@ -90,7 +90,6 @@ Không sửa trực tiếp thư mục `dist`. Đây là kết quả được Vit
 | Supabase Storage | Lưu logo, ảnh bài báo, recognition và case study |
 | Supabase Realtime | Thông báo frontend khi nội dung database thay đổi |
 | CSS thuần | Hệ thống giao diện chính trong `src/styles/site.css` |
-| Tailwind CSS | Đã được cấu hình nhưng hiện không phải hệ thống style chính |
 | PostCSS + Autoprefixer | Xử lý CSS khi build |
 
 Danh sách và version dependency chính thức nằm trong `package.json` và `package-lock.json`.
@@ -102,8 +101,6 @@ dgm-credential-react/
 ├─ public/
 │  ├─ favicon.svg
 │  └─ hero.jpg
-├─ reference/
-│  └─ Các ảnh tham khảo thiết kế, không được render trực tiếp
 ├─ src/
 │  ├─ components/          Component giao diện
 │  ├─ data/siteData.js     Nội dung mặc định/fallback
