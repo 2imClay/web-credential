@@ -90,10 +90,12 @@ const collectionDefinitions = [
   {
     key: 'pressArticles', anchor: 'press-articles', no: '04', title: 'About Us — Press articles', singular: 'press article', icon: Trophy,
     description: 'Upload ảnh bài báo và logo tòa soạn. Các bài được tự động xếp nghiêng, chồng lớp ở About Us.', save: contentRepository.savePressArticles,
-    empty: { id: '', year: '', title: '', source: '', subtitle: '', description: '', image: '', logo: '', url: '' },
+    empty: { id: '', year: '', title: '', source: '', subtitle: '', description: '', image: '', fullImage: '', logo: '', url: '' },
     fields: [
       ['title', 'Article title (optional)', 'optional'], ['source', 'Publication / source (optional)', 'optional'], ['year', 'Year (optional)', 'optional'],
-      ['description', 'Short description (optional)', 'textarea-optional'], ['image', 'Article image', 'image'],
+      ['description', 'Short description (optional)', 'textarea-optional'],
+      ['image', 'Thumbnail image', 'image', 'Ảnh nhỏ dùng cho thẻ bài báo bên ngoài. Khuyến nghị ảnh rõ nét và có bố cục dễ nhận biết khi thu nhỏ.'],
+      ['fullImage', 'Full article image', 'image', 'Ảnh dọc chụp toàn bộ bài báo, chỉ hiển thị trong box đọc. File được giữ nguyên kích thước để chữ không bị mờ; tối đa 20 MB.'],
       ['logo', 'Publication logo', 'image'], ['url', 'Full article URL (optional)', 'optional']
     ],
     meta: (item) => `${item.source || 'Press'} / ${item.year || ''}`, summary: (item) => item.description || item.subtitle
@@ -344,9 +346,9 @@ export default function AdminPage() {
     }
   }
 
-  async function uploadImageFile(file, { preserveOriginal = false } = {}) {
+  async function uploadImageFile(file, { preserveOriginal = false, maxSizeMb } = {}) {
     if (!file.type.startsWith('image/')) throw new Error('Vui lòng chọn đúng file hình ảnh.')
-    const maxSize = file.type === 'image/gif' ? 20 : 8
+    const maxSize = maxSizeMb || (file.type === 'image/gif' ? 20 : 8)
     if (file.size > maxSize * 1024 * 1024) throw new Error(`Ảnh tải lên cần nhỏ hơn ${maxSize} MB.`)
     const objectUrl = URL.createObjectURL(file)
 
@@ -374,16 +376,16 @@ export default function AdminPage() {
     }
   }
 
-  async function readImage(event, onReady, { preserveOriginal = false } = {}) {
+  async function readImage(event, onReady, { preserveOriginal = false, maxSizeMb } = {}) {
     const file = event.target.files?.[0]
     if (!file) return
 
     setSaving(true)
     setStatus(preserveOriginal
-      ? 'Đang tải nguyên file logo lên Supabase Storage...'
+      ? 'Đang tải nguyên file ảnh lên Supabase Storage...'
       : 'Đang tối ưu và tải ảnh lên Supabase Storage...')
     try {
-      onReady(await uploadImageFile(file, { preserveOriginal }))
+      onReady(await uploadImageFile(file, { preserveOriginal, maxSizeMb }))
       setStatus('Đã tải ảnh lên Supabase Storage.')
     } catch (error) {
       setStatus(`Không thể tải ảnh: ${error.message}`)
@@ -693,6 +695,8 @@ export default function AdminPage() {
                 }
                 const value = Array.isArray(rawValue) ? rawValue.join(', ') : (rawValue ?? '')
                 if (type === 'image') {
+                  const preserveOriginal = (activeDefinition.key === 'partners' && field === 'logo')
+                    || (activeDefinition.key === 'pressArticles' && field === 'fullImage')
                   return (
                     <ImageEditor
                       key={field}
@@ -703,7 +707,10 @@ export default function AdminPage() {
                       onUpload={(event) => readImage(
                         event,
                         (next) => updateEditing(field, next),
-                        { preserveOriginal: activeDefinition.key === 'partners' && field === 'logo' }
+                        {
+                          preserveOriginal,
+                          maxSizeMb: activeDefinition.key === 'pressArticles' && field === 'fullImage' ? 20 : undefined
+                        }
                       )}
                     />
                   )

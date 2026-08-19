@@ -240,7 +240,7 @@ Database không chứa binary của ảnh; nó chỉ chứa URL. File thật n�
 
 - Xóa một item content hiện chỉ bỏ URL khỏi JSON; code chưa tự xóa object tương ứng trong Storage. Cần dọn file rác định kỳ nếu upload/thay ảnh nhiều.
 - Bucket public nghĩa là ai có URL đều xem được ảnh; phù hợp tài sản công khai của website nhưng không phù hợp tài liệu riêng tư.
-- Migration Storage đặt giới hạn bucket là 8 MB. Frontend cho GIF đến 20 MB, vì vậy GIF trên 8 MB vẫn có thể bị Storage từ chối. Khi bị hỏi, đây là một điểm cấu hình cần đồng bộ lại.
+- Migration Storage đặt giới hạn bucket là 20 MiB, đồng bộ với giới hạn ảnh nguyên bản ở Admin.
 
 ## 9. YouTube được nhúng như thế nào?
 
@@ -438,7 +438,7 @@ Vì một module được lưu thành một JSONB document, lần Save sau cùng
 2. Kiểm tra bucket `site-assets` tồn tại và public.
 3. Kiểm tra Storage insert policy.
 4. Kiểm tra session.
-5. Kiểm tra giới hạn 8 MB của bucket.
+5. Kiểm tra giới hạn 20 MiB của bucket.
 
 ### Activity Log không có bản ghi
 

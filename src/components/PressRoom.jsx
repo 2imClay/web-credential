@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowUpRight, FileText, X } from 'lucide-react'
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion'
 
-function ArticleVisual({ item, large = false }) {
-  if (item.image) return <img src={item.image} alt={item.title || item.source || 'Press article'} />
+function ArticleVisual({ item, large = false, image = item.image }) {
+  if (image) return <img src={image} alt={item.title || item.source || 'Press article'} />
 
   return (
     <div className={`press-placeholder ${large ? 'press-placeholder--large' : ''}`}>
@@ -33,6 +34,7 @@ export default function PressRoom({ items = [], copy = {} }) {
   const [touchMode, setTouchMode] = useState(false)
   const reduceMotion = useReducedMotion()
   const activeItem = activeIndex === null ? null : items[activeIndex]
+  const activeArticleImage = activeItem?.fullImage || activeItem?.image || ''
   const logoPreviewItem = logoPreviewIndex === null ? null : items[logoPreviewIndex]
   const sourceItems = items
     .map((item, index) => ({ item, index }))
@@ -49,8 +51,13 @@ export default function PressRoom({ items = [], copy = {} }) {
   useEffect(() => {
     if (!activeItem) return undefined
     const close = (event) => event.key === 'Escape' && setActiveIndex(null)
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', close)
-    return () => window.removeEventListener('keydown', close)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', close)
+    }
   }, [activeItem])
 
   if (!items.length) return null
@@ -179,17 +186,20 @@ export default function PressRoom({ items = [], copy = {} }) {
         </div>
       </div>}
 
-      <AnimatePresence>
+      {typeof document !== 'undefined' && createPortal(<AnimatePresence>
         {activeItem && (
           <motion.div
-            className="press-focus-layer"
+            className="press-focus-layer public-site--editorial"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveIndex(null)}
           >
             <motion.article
-              className={`press-focus-card ${!hasArticleCopy(activeItem) && activeItem.image ? 'press-focus-card--image-only' : ''}`}
+              className={`press-focus-card ${activeArticleImage ? 'press-focus-card--article-image' : ''} ${!hasArticleCopy(activeItem) && activeArticleImage ? 'press-focus-card--image-only' : ''}`}
+              role="dialog"
+              aria-modal="true"
+              aria-label={activeItem.title || activeItem.source || 'Press article preview'}
               initial={reduceMotion ? false : { opacity: 0, scale: .86, y: 25, rotate: -2 }}
               animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
               exit={reduceMotion ? undefined : { opacity: 0, scale: .9, y: 18 }}
@@ -197,7 +207,7 @@ export default function PressRoom({ items = [], copy = {} }) {
               onClick={(event) => event.stopPropagation()}
             >
               <button className="press-focus-close" type="button" onClick={() => setActiveIndex(null)} aria-label="Close article preview"><X /></button>
-              <div className="press-focus-card__visual"><ArticleVisual item={activeItem} large /></div>
+              <div className="press-focus-card__visual"><ArticleVisual item={activeItem} image={activeArticleImage} large /></div>
               {hasArticleCopy(activeItem) && <div className="press-focus-card__copy">
                 {(activeItem.logo || activeItem.source || activeItem.title) && <div className="press-focus-source"><SourceLogo item={activeItem} /></div>}
                 {activeItem.year && <span>{activeItem.year}</span>}
@@ -210,7 +220,7 @@ export default function PressRoom({ items = [], copy = {} }) {
             </motion.article>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>, document.body)}
     </div>
     </LayoutGroup>
   )
